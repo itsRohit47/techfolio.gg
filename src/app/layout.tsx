@@ -1,9 +1,13 @@
 import "@/styles/globals.css";
-
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
+import NavBar from "@/components/nav-bar";
+import AppContextProvider from "@/components/context";
 
 import { TRPCReactProvider } from "@/trpc/react";
+import SessionProviderClientComponent from "@/components/SessionProviderClientComponent";
+import DotPattern from "@/components/ui/dot-pattern";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -16,9 +20,28 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+      <body className="mx-auto dark bg-primary min-h-screen">
+        <AppContextProvider>
+          <SessionProviderClientComponent >
+            <TRPCReactProvider>
+              <NavBar />
+              {children}
+              <DotPattern
+                width={20}
+                height={20}
+                cx={1}
+                cy={1}
+                cr={1}
+                className={cn(
+                  "[mask-image:linear-gradient(to_top_left,white,transparent,transparent)] ",
+                )}
+              />
+            </TRPCReactProvider>
+          </SessionProviderClientComponent>
+        </AppContextProvider>
       </body>
     </html>
   );
 }
+
+
