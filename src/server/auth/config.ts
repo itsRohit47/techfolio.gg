@@ -35,9 +35,6 @@ GitHubProvider({
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
-  pages: {
-    signIn: "/auth/signin",
-  },
   providers: [
     DiscordProvider,
     GitHubProvider({
@@ -47,17 +44,6 @@ export const authConfig = {
   ],
   adapter: PrismaAdapter(db),
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnBuild = nextUrl.pathname.startsWith("/build");
-      if (isOnBuild) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL("/build", nextUrl));
-      }
-      return true;
-    },
     session: ({ session, user }) => ({
       ...session,
       user: {
