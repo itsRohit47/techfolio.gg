@@ -1,3 +1,26 @@
+// Relations Summary in English:
+// - An Account belongs to a User.
+// - A Session belongs to a User.
+// - A VerificationToken has no relations.
+// - A User can have one schedulingLink.
+// - A User can have multiple certifications.
+// - A User can have multiple skills.
+// - A User can have multiple Accounts.
+// - A User can have multiple Sessions.
+// - A User can have multiple Education records.
+// - A User can have multiple Experience records.
+// - A User can have multiple projects.
+// - An Experience belongs to a User.
+// - An Education belongs to a University and a User.
+// - A schedulingLink belongs to a User.
+// - A University can have multiple Education records.
+// - A Project belongs to one User only.
+// - A CertificationDefinition can have multiple UserCertifications.
+// - A UserCertification belongs to a User and a CertificationDefinition.
+// - A Skill can have multiple UserSkills.
+// - A UserSkill belongs to a User and a Skill.
+// - A UserProject belongs to a User and a Project.
+
 generator client {
     provider = "prisma-client-js"
 }
@@ -43,63 +66,125 @@ model VerificationToken {
 }
 
 model User {
-    id             String          @id @default(cuid())
+    id             String              @id @default(cuid())
     name           String?
-    username       String?         @unique
-    email          String?         @unique
+    username       String?             @unique
+    email          String?             @unique
     emailVerified  DateTime?
     image          String?
     bio            String?
     headline       String?
     location       String?
-    links          String[]
-    projects       Project[]       @relation("UserProjects")
-    certifications Certification[]
-    skills         Skill[]
+    github         String?
+    linkedin       String?
+    schedulingLink schedulingLink?
+    certifications UserCertification[]
+    skills         UserSkill[]
     accounts       Account[]
     sessions       Session[]
-    Project        Project[]
+    education      Education[]
+    Experience     Experience[]
+    projectsId     String?
+    Projects       Projects[]
 }
 
-model Project {
+model Experience {
     id          String   @id @default(cuid())
-    title       String
-    description String
-    links       String[]
-    tags        Tags[]
     userId      String
-    user        User     @relation(fields: [userId], references: [id])
+    title       String
+    company     String
+    companyLogo String?
+    companyUrl  String?
+    location    String
+    startYear   Int
+    endYear     Int?
+    description String?
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-    User        User[]   @relation("UserProjects")
+    User        User     @relation(fields: [userId], references: [id])
 }
 
-model Tags {
+model Education {
+    id             String   @id @default(cuid())
+    userId         String
+    courseName     String?
+    fieldOfStudy   String?
+    startYear      Int?
+    endYear        Int?
+    createdAt      DateTime @default(now())
+    updatedAt      DateTime @updatedAt
+    universityName String?
+    uniLogo        String?
+    user           User     @relation(fields: [userId], references: [id])
+}
+
+model schedulingLink {
+    id     String @id @default(cuid())
+    link   String
+    label  String
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id])
+}
+
+model Projects {
+    id          String             @id @default(cuid())
+    title       String
+    description String?
+    icon        String?
+    body        String?
+    links       String?
+    userId      String
+    skills      SkillsOnProjects[]
+    user        User               @relation(fields: [userId], references: [id])
+    createdAt   DateTime           @default(now())
+    updatedAt   DateTime           @updatedAt
+}
+
+model CertificationDefinition {
+    id                 String              @id @default(cuid())
+    name               String              @unique
+    issuer             String
+    createdAt          DateTime            @default(now())
+    userCertifications UserCertification[]
+}
+
+model UserCertification {
+    id                      String                    @id @default(cuid())
+    name                    String
+    issuer                  String
+    image                   String
+    expiry                  DateTime
+    issued                  DateTime
+    userId                  String
+    user                    User                      @relation(fields: [userId], references: [id])
+    CertificationDefinition CertificationDefinition[]
+}
+
+model Skills {
+    id         String             @id @default(cuid())
+    name       String             @unique
+    createdAt  DateTime           @default(now())
+    userSkills UserSkill[]
+    projects   SkillsOnProjects[]
+}
+
+model SkillsOnProjects {
+    skill      Skills   @relation(fields: [skillId], references: [id])
+    skillId    String
+    project    Projects @relation(fields: [projectId], references: [id])
+    projectId  String
+    assignedAt DateTime @default(now())
+
+    @@id([skillId, projectId])
+}
+
+model UserSkill {
     id        String   @id @default(cuid())
-    name      String
-    Project   Project? @relation(fields: [projectId], references: [id])
-    projectId String?
-}
+    userId    String
+    skillId   String
+    user      User     @relation(fields: [userId], references: [id])
+    skill     Skills   @relation(fields: [skillId], references: [id])
+    createdAt DateTime @default(now())
 
-model Certification {
-    id           String   @id @default(cuid())
-    name         String
-    issuingBody  String
-    dateAchieved DateTime
-    userId       String
-    user         User     @relation(fields: [userId], references: [id])
-}
-
-enum SkillLevel {
-    Beginner
-    Intermediate
-    Expert
-}
-
-model Skill {
-    id     String     @id @default(cuid())
-    name   String
-    level  SkillLevel
-    userId String
-    user   User       @relation(fields: [userId], references: [id])
+    @@unique([userId, skillId])
 }

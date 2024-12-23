@@ -1,33 +1,148 @@
 'use client';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
-import { MapIcon, LinkIcon } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { api } from '@/trpc/react';
+import { ArrowUpRight, SquarePenIcon } from 'lucide-react';
+import EditCardButton from '../edit-card-button';
+import { useState } from 'react';
+import AbouteMe from './about-me';
+import ContactCard from './contact-card';
+
+
 export default function HeroCard() {
-    const session = useSession();
+    const username = usePathname().split('/')[1]!;
+    const { data: userBasicData } = api.user.getUserBasicData.useQuery({
+        username: username
+    });
+    const ctx = api.useUtils();
+    const { mutate: updateUserBasicData } = api.user.updateUserBasicData.useMutation({
+        onMutate: async (newData) => {
+            await ctx.user.getUserBasicData.cancel();
+            const previousData = ctx.user.getUserBasicData.getData();
+            ctx.user.getUserBasicData.setData({ username }, { ...newData, id: userBasicData?.id ?? '', schedulingLink: { ...newData.schedulingLink, userId: userBasicData?.schedulingLink?.userId ?? '', id: userBasicData?.schedulingLink?.id ?? '' } });
+            return { previousData };
+        },
+        onError: (err, newData, context) => {
+            if (context?.previousData) {
+                ctx.user.getUserBasicData.setData({ username }, context.previousData);
+            }
+        },
+        onSettled: () => {
+            void ctx.user.getUserBasicData.invalidate();
+        }
+    });
+
+    const [isEditing, setIsEditing] = useState(false);
+    const [formData, setFormData] = useState({
+        name: '',
+        headline: '',
+        location: '',
+        schedulingLink: { label: '', link: '' },
+        github: '',
+        linkedin: '',
+        image: '',
+        email: ''
+    });
+
+    const editCard = () => {
+        setIsEditing(true);
+        setFormData({
+            name: userBasicData?.name || '',
+            headline: userBasicData?.headline || '',
+            location: userBasicData?.location || '',
+            schedulingLink: userBasicData?.schedulingLink ?? { label: '', link: '' },
+            github: userBasicData?.github || '',
+            image: userBasicData?.image || '',
+            email: userBasicData?.email || '',
+            linkedin: userBasicData?.linkedin || '',
+        });
+    };
+
+    const saveCard = () => {
+        updateUserBasicData(formData);
+        setIsEditing(false);
+    };
+
+    const handleChange = (e: { target: { name: string; value: string; }; }) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
     return (
-        <section className="p-4 flex flex-col gap-3 border-dashed border-2 rounded-lg bg-secondary">
-            <div className="flex flex-col w-full gap-3">
-                <div className="h-36 w-36">
-                    <Image src={session.data?.user?.image ?? '/default-profile.png'} alt="profile" width={100} height={100} className="rounded-md border h-full w-full object-cover" />
-                </div>
-                <div className="flex flex-col gap-2">
-                    <h1 className="text-xl">{session.data?.user.name}</h1>
-                    <span className="text-base text-tertiary">Cyber security consultant @ Delloite, Australia</span>
-                    <div className="flex gap-3 items-center">
-                        <div className="flex gap-2 items-center">
-                            <MapIcon size={16} />
-                            <span className="text-sm text-tertiary">Melbourne</span>
-                        </div>
-                        <div className="flex gap-2 items-center">
-                            <LinkIcon size={16} />
-                            <a href="https://example.com" className="text-sm hover:underline text-blue-500">itsrohitbajaj</a>
-                        </div>
+        <section className="grid w-full min-w-96 lg:grid-cols-2 gap-5 items-center col-span-2" >
+            <div className="flex flex-col gap-3 relative h-full ">
+                <div className="flex gap-2 items-center">
+                    <EditCardButton
+                        className='absolute top-1 right-2'
+                        onEdit={editCard}
+                        onSave={saveCard} />
+                    <div className="max-w-24 border rounded-full p-1 group overflow-hidden lightBg dark:bg-primary relative">
+                        <Image src={userBasicData?.image ?? '/avatar.png'} alt="profile" width={100} height={100} className="rounded-full h-full w-full object-cover" />
+                        {isEditing &&
+                            <label className="absolute bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 bg-white rounded-full p-1 cursor-pointer">
+                                <SquarePenIcon className="h-4 w-4 text-gray-500 p-px" />
+                                <input type='file' accept="image/png, image/jpeg, image/jpg" className="hidden" onChange={async (e) => {
+                                    const file = e.target.files?.[0];
+                                    console.log(file);
+                                    if (file) {
+                                        console.log(file);
+                                        const formData = new FormData();
+                                        formData.append('file', file);
+                                        console.log(formData.get('file'));
+                                        // const response = await fetch('/api/image/upload', {
+                                        //     method: 'POST',
+                                        //     headers: {
+                                        //         'Content-Type': 'multipart/form-data'
+                                        //     },
+                                        //     body: formData
+                                        // });
+                                        alert("Not implemented yet");
+                                        // const data = await response.json();
+                                        // console.log(data);
+                                        // if (response.ok) {
+                                        //     setFormData((prev) => ({
+                                        //         ...prev,
+                                        //         image: URL.createObjectURL(file)
+                                        //     }));
+                                        // }
+                                    }
+                                }} />
+                            </label>
+                        }
+
                     </div>
+                    {isEditing ? (
+                        <div className="flex gap-1 flex-col w-full">
+                            <input autoFocus type="text" placeholder='Full Name' name="name" value={formData.name} onChange={handleChange} className="input-usercard" />
+                            <input type="text" placeholder='Headline' name="headline" value={formData.headline} onChange={handleChange} className="input-usercard" />
+                            <input type="text" placeholder='Location' name="location" value={formData.location} onChange={handleChange} className="input-usercard" />
+                            <input type="text" placeholder='Schedule Link lable (eg. Grab a coffee with me)' name="schedulingLink.label" value={formData.schedulingLink.label} onChange={handleChange} className="input-usercard" />
+                            <input type="text" placeholder='eg. cal.com/me' name="schedulingLink.link" value={formData.schedulingLink.link} onChange={handleChange} className="input-usercard text-blue-500" />
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-1">
+                            <h1 className="text-xl text-dark dark:text-white">{userBasicData?.name}</h1>
+                            <span className="flex gap-1 items-center text-sm">
+                                <span className="text-gray-500 dark:text-gray-400 line-clamp-1">{userBasicData?.headline}</span>
+                            </span>
+                            <span className="flex gap-1 items-center text-xs">
+                                <span className="text-gray-500 dark:text-gray-400">Based in {userBasicData?.location}</span>
+                            </span>
+                            {userBasicData?.schedulingLink && (
+                                <a target='_blank' href={userBasicData.schedulingLink.link} className="text-xs text-blue-500 flex items-center gap-1">
+                                    {userBasicData.schedulingLink.label}
+                                    <ArrowUpRight size={14} />
+                                </a>
+                            )}
+                        </div>
+                    )}
                 </div>
+                <AbouteMe />
             </div>
-            <p className="text-sm text-tertiary">
-                I am a cyber security consultant with 5 years of experience in the field. I have worked with multiple organizations and have helped them secure their systems and networks. I am passionate about cyber security and always looking for new challenges. I am a quick learner and always ready to learn new things.
-            </p>
-        </section>
+            <ContactCard />
+        </section >
     );
 }

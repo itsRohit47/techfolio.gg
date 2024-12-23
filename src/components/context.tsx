@@ -9,7 +9,7 @@ import React, {
 
 
 interface AppContextProps {
-    setting: boolean;
+    setting: boolean
     setSetting: (setting: boolean) => void;
     edit: boolean;
     setEdit: (edit: boolean) => void;
@@ -21,6 +21,10 @@ interface AppContextProps {
     setSelectedCase: (selectedCase: string) => void;
     username: string | null;
     setUsername: (username: string | null) => void;
+    uid: string | undefined;
+    setUid: (uid: string | undefined) => void;
+    isUserPage: boolean;
+    setIsUserPage: (isUserPage: boolean) => void;
 }
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -32,6 +36,8 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
     const [notification, setNotification] = useState(false);
     const [selectedCase, setSelectedCase] = useState<string>('Overview');
     const [username, setUsername] = useState<string | null>(null);
+    const [uid, setUid] = useState<string | undefined>(undefined);
+    const [isUserPage, setIsUserPage] = useState(false);
 
     const value = {
         setting,
@@ -46,6 +52,10 @@ const AppContextProvider = ({ children }: { children: ReactNode }) => {
         setSelectedCase,
         username,
         setUsername,
+        uid,
+        setUid,
+        isUserPage,
+        setIsUserPage,
     };
     return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
