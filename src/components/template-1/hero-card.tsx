@@ -72,14 +72,14 @@ export default function HeroCard() {
     };
 
     return (
-        <section className="grid w-full min-w-96 lg:grid-cols-2 gap-5 items-center col-span-2" >
-            <div className="flex flex-col gap-3 relative h-full ">
-                <div className="flex gap-2 items-center">
+        <section className="flex w-full gap-5 items-center p-2" >
+            <div className="flex  gap-3 relative h-full w-full">
+                <div className="flex gap-5 w-full">
                     <EditCardButton
-                        className='absolute top-1 right-2'
+                        className='hidden absolute top-1 right-2'
                         onEdit={editCard}
                         onSave={saveCard} />
-                    <div className="max-w-24 border rounded-full p-1 group overflow-hidden lightBg dark:bg-primary relative">
+                    <div className="max-w-24 border rounded-full p-1 group lightBg dark:bg-primary relative">
                         <Image src={userBasicData?.image ?? '/avatar.png'} alt="profile" width={100} height={100} className="rounded-full h-full w-full object-cover" />
                         {isEditing &&
                             <label className="absolute bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 bg-white rounded-full p-1 cursor-pointer">
@@ -123,7 +123,7 @@ export default function HeroCard() {
                             <input type="text" placeholder='eg. cal.com/me' name="schedulingLink.link" value={formData.schedulingLink.link} onChange={handleChange} className="input-usercard text-blue-500" />
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-1 ">
                             <h1 className="text-xl text-dark dark:text-white">{userBasicData?.name}</h1>
                             <span className="flex gap-1 items-center text-sm">
                                 <span className="text-gray-500 dark:text-gray-400 line-clamp-1">{userBasicData?.headline}</span>
@@ -140,9 +140,7 @@ export default function HeroCard() {
                         </div>
                     )}
                 </div>
-                <AbouteMe />
             </div>
-            <ContactCard />
         </section >
     );
 }

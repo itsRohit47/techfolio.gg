@@ -5,7 +5,6 @@ import { useSession } from "next-auth/react";
 import { BriefcaseBusinessIcon, ChevronRight, DownloadIcon } from "lucide-react";
 import EditCardButton from "../edit-card-button";
 import { useState, useMemo } from "react";
-import BlurFade from "../ui/blur-fade";
 
 const ExperienceOverview = () => {
     const session = useSession();
@@ -27,11 +26,11 @@ const ExperienceOverview = () => {
         <section className=" ">
             {sortedExperiences?.length ? <div className="p-4 rounded-lg lightBg dark:bg-secondary text-xs flex flex-col gap-5 w-full">
                 <div className="flex gap-2 mb-2 opacity-70">
-                    <BriefcaseBusinessIcon size={16} opacity={.7}/>
+                    <BriefcaseBusinessIcon size={16} opacity={.7} />
                     <div>Work</div>
                     <EditCardButton className="ml-auto" onEdit={() => { console.log('') }} onSave={() => { console.log('') }} />
                 </div>
-                <div className="flex flex-col gap-3 overflow-y-auto">
+                <div className="flex flex-col max-h-10 gap-3 overflow-y-auto">
                     {sortedExperiences.map((exp, index) => (
                         <div key={index} className={`flex  group flex-col gap-3 items-start justify-between  ${sortedExperiences.indexOf(exp) !== sortedExperiences.length - 1 ? 'border-b pb-3 border-b-white/10' : ''}`}>
                             <div className="flex gap-2 items-start justify-between w-full cursor-pointer" onClick={() => handleToggle(exp.id)}>

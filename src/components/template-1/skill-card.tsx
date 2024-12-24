@@ -77,12 +77,7 @@ const SkillSection = () => {
 
 
     return (
-        <div className="flex h-max flex-col gap-2  text-xs flex-wrap min-w-96 lightBg dark:bg-secondary  p-3 rounded-lg relative">
-            <div className="flex items-center gap-2 mb-3 opacity-70">
-                <WrenchIcon size={16} opacity={.7}/>
-                <div>Skills</div>
-                <EditCardButton className="ml-auto" onEdit={editSkills} onSave={saveSkills} />
-            </div>
+        <div className="flex h-max flex-col gap-2  text-xs flex-wrap min-w-96   p-3 rounded-lg relative">
             {showInput && (
                 <div className="flex gap-2 items-center w-full mb-3 relative">
                     <input

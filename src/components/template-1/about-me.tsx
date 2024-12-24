@@ -47,16 +47,11 @@ export default function AbouteMe() {
     };
 
     return (
-        <div className="flex flex-col gap-2  text-xs flex-wrap border min-w-96 h-full lightBg dark:bg-secondary p-3 rounded-lg relative">
-            <div className="flex items-center gap-2 mb-3 opacity-70">
-                <UserIcon size={16} opacity={.7} />
-                <div>About me</div>
-                <EditCardButton className="ml-auto" onEdit={editBio} onSave={saveBio} />
-            </div>
+        <div className="flex flex-col gap-2  text-xs flex-wrap h-max  p-3 rounded-lg relative">
             {isEditing ? (
                 <textarea rows={6} value={bio} onChange={handleChange} className="input-usercard w-full" />
             ) : (
-                <p className="text-xs text-gray-500 dark:text-gray-400">{useBio?.bio ? useBio.bio : "No bio found"}</p>
+                <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400 line-clamp-4">{useBio?.bio ? useBio.bio : "No bio found"}</p>
             )}
         </div>
     );

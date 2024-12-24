@@ -13,7 +13,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="mx-auto min-h-screen max-w-7xl py-4 flex flex-col gap-5 font-light transition-colors duration-300">
+      <body className="mx-auto h-full max-w-7xl dark py-4  text-xs lg:text-sm dark:bg-primary flex flex-col gap-5 font-light transition-colors duration-300 min-h-screen">
         <SessionProviderClientComponent>
           <TRPCReactProvider>
             <AppContextProvider>

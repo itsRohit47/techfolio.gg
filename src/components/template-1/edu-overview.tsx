@@ -38,7 +38,7 @@ const EducationOverview = () => {
                     <div>Education</div>
                     <EditCardButton className="ml-auto" onEdit={() => { onEdit() }} onSave={() => { console.log('') }} />
                 </div>
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 max-h-10 overflow-y-auto">
                     {edus.map((edu) => (
                         <div key={edu.id} className={`flex flex-col group gap-3 items-start justify-between  ${edus.indexOf(edu) !== edus.length - 1 ? 'border-b border-b-white/10 pb-3' : ''}`}>
                             <div className="flex gap-2 items-start justify-between w-full cursor-pointer" onClick={() => handleToggle(edu.id)}>

@@ -16,17 +16,16 @@ export default function ProjectsOverview() {
     };
 
     return (
-        <section className="grid lg:grid-cols-3 gap-5">
+        <section className="grid grid-cols-3 gap-3">
             {projs?.length ? (
                 projs.map((proj, index) => (
-                    <div key={index} className="dark:bg-secondary lightBg min-w-96 group flex w-full flex-col gap-3 text-xs items-start p-4 rounded-lg">
+                    <div key={index} className="dark:bg-secondary lightBg group flex w-full flex-col gap-3 text-xs items-start p-4 rounded-lg">
                         <div className="flex gap-3 items-center justify-between w-full cursor-pointer" onClick={() => handleToggle(proj.id)}>
                             {proj.icon ? <img src={proj.icon} alt={proj.title ?? 'Project Logo'} className="w-10 h-10 p-1 border dark:border-white/20 rounded-full bg-white/10 object-cover" /> : <div className="flex items-center justify-center border dark:border-white/20 rounded-full p-2 bg-gray-100 dark:bg-secondaryLight"><CodeIcon size={20} className="" strokeWidth={1}></CodeIcon></div>}
                             <div className="flex flex-col gap-1 w-full">
                                 <div className="flex gap-2 items-center">
                                     <div className="font-semibold">{proj.title}</div>
                                     <ChevronRight size={14} strokeWidth={1} className={`transition-transform group-hover:translate-x-1 ${expanded === proj.id ? 'rotate-90' : ''}`} />
-                                    <EditCardButton className="ml-auto" onEdit={() => { console.log('') }} onSave={() => { console.log('') }} />
                                 </div>
                                 <div className="text-gray-500 dark:text-gray-400">{proj.description}</div>
                             </div>
