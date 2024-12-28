@@ -101,7 +101,7 @@ model Experience {
     description String?
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-    User        User     @relation(fields: [userId], references: [id])
+    User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Education {
@@ -115,7 +115,7 @@ model Education {
     updatedAt      DateTime @updatedAt
     universityName String?
     uniLogo        String?
-    user           User     @relation(fields: [userId], references: [id])
+    user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model schedulingLink {
@@ -123,7 +123,7 @@ model schedulingLink {
     link   String
     label  String
     userId String @unique
-    user   User   @relation(fields: [userId], references: [id])
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Projects {
@@ -135,7 +135,7 @@ model Projects {
     links       String?
     userId      String
     skills      SkillsOnProjects[]
-    user        User               @relation(fields: [userId], references: [id])
+    user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
     createdAt   DateTime           @default(now())
     updatedAt   DateTime           @updatedAt
 }
@@ -156,7 +156,7 @@ model UserCertification {
     expiry                  DateTime
     issued                  DateTime
     userId                  String
-    user                    User                      @relation(fields: [userId], references: [id])
+    user                    User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
     CertificationDefinition CertificationDefinition[]
 }
 
@@ -169,9 +169,9 @@ model Skills {
 }
 
 model SkillsOnProjects {
-    skill      Skills   @relation(fields: [skillId], references: [id])
+    skill      Skills   @relation(fields: [skillId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     skillId    String
-    project    Projects @relation(fields: [projectId], references: [id])
+    project    Projects @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     projectId  String
     assignedAt DateTime @default(now())
 
@@ -182,8 +182,8 @@ model UserSkill {
     id        String   @id @default(cuid())
     userId    String
     skillId   String
-    user      User     @relation(fields: [userId], references: [id])
-    skill     Skills   @relation(fields: [skillId], references: [id])
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    skill     Skills   @relation(fields: [skillId], references: [id], onDelete: Cascade)
     createdAt DateTime @default(now())
 
     @@unique([userId, skillId])

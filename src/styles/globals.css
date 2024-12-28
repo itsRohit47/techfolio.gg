@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer base {
   :root {
     --radius: 0.5rem;
@@ -34,8 +35,9 @@
     --color-4: 195 100% 63%;
     --color-5: 90 100% 63%;
   }
+
   .dark {
-    --background: 240 10% 3.9%;
+    --background: 0 0% 7%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
@@ -66,6 +68,13 @@
     --color-5: 90 100% 63%;
   }
 }
+
+
+* {
+  outline: none;
+}
+
+
 @layer base {
   * {
     @apply border-border;
@@ -75,32 +84,25 @@
   }
 }
 
-button {
-  @apply rounded-lg border bg-gray-100 p-1 text-xs dark:bg-secondary dark:hover:bg-secondary/80;
+.btn {
+  @apply flex items-center justify-center gap-3 rounded-lg border border-white/10 bg-gray-200/80 p-3  text-gray-500 hover:bg-gray-200 dark:bg-primary/50 dark:text-gray-300 dark:hover:bg-primary/70;
 }
 
 a {
-  @apply hover:text-gray-500 dark:text-primary/50 dark:hover:text-primary/70;
-}
-
-h2 {
-  @apply dark:text-primary/50;
+  @apply hover:text-gray-700 dark:text-primary/50 dark:hover:text-primary/70;
 }
 
 .lightBg {
-  @apply border border-gray-300 bg-gray-100 text-black shadow-inner shadow-zinc-100/20 transition-all duration-100 ease-in-out dark:border-white/10 dark:text-white dark:shadow-sm;
+  @apply border border-gray-300 h-full bg-gray-100 text-black  transition-all duration-100 ease-in-out dark:border-white/10 dark:text-white dark:shadow-sm;
 }
 
-.btn {
-  @apply flex items-center justify-center gap-3 rounded-lg border border-white/10 bg-gray-200/80 p-3 text-xs text-gray-500 hover:bg-gray-200 dark:bg-primary/50 dark:text-gray-300 dark:hover:bg-primary/70;
-}
 .input-usercard {
-  @apply w-full bg-transparent px-2 py-1 text-xs;
+  @apply w-full bg-transparent px-2 py-1 
 }
 
 input,
 textarea {
-  @apply w-full rounded-lg border p-2 text-xs outline-none dark:border-white/10 dark:bg-secondary;
+  @apply w-full rounded-lg border p-2 outline-none dark:border-white/10 dark:bg-secondary;
 }
 
 input::placeholder {

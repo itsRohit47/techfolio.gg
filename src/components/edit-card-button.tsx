@@ -30,20 +30,20 @@ export default function EditCardButton({ onEdit, onSave, className }: { onEdit: 
     return (
         <>
             {!isEditing ?
-                <button onClick={() => {
+                <div onClick={(e) => {
+                    e.preventDefault();
                     setIsEditing(true);
                     onEdit();
-                }} className={`shadow-2xl text-xs flex items-center gap-x-1 dark:text-white transition duration-300  ${isEditing ? 'bg-green-600' : ''} ${className}`}>
-                    <SquarePenIcon size={14} opacity={.7} />
-                    Edit
-                </button> :
-                <button onClick={() => {
+                }} >
+                    <SquarePenIcon size={20} className={`shadow-2xl text-xs flex items-center gap-x-1 cursor-pointer bg-blue-500/30 border border-blue-500/50 rounded-sm text-blue-500 p-1 ${className}`} />
+                </div> :
+                <div onClick={(e) => {
+                    e.preventDefault();
                     setIsEditing(false);
                     onSave();
-                }} className={`shadow-2xl text-xs items-center flex gap-x-1 transition duration-300  ${isEditing ? 'text-green-500' : ''} ${className}`}>
-                    <SaveIcon size={14} opacity={.7} />
-                    Save
-                </button>
+                }} >
+                    <SaveIcon size={20} className={`shadow-2xl text-xs items-center flex gap-x-1 cursor-pointer bg-green-500/30 border  border-green-500/50 rounded-sm text-blue-500 p-1  ${isEditing ? 'text-green-500' : ''} ${className}`} />
+                </div>
             }
         </>
     )

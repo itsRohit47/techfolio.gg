@@ -232,10 +232,11 @@ export const userRouter = createTRPCRouter({
       await ctx.db.education.delete({
         where: {
           id: input.eduId,
+          userId: ctx.session?.user?.id,
         },
       });
     }),
-  
+
   updateUserEducation: protectedProcedure
     .input(
       z.object({
@@ -278,6 +279,21 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  deleteUserExperience: protectedProcedure
+    .input(
+      z.object({
+        expId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.experience.delete({
+        where: {
+          id: input.expId,
+          userId: ctx.session?.user?.id,
+        },
+      });
+    }),
+
   getUserSkills: publicProcedure
     .input(
       z.object({
@@ -296,6 +312,21 @@ export const userRouter = createTRPCRouter({
         },
       });
       return skillList;
+    }),
+
+  deleteUserProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.projects.delete({
+        where: {
+          id: input.projectId,
+          userId: ctx.session?.user?.id,
+        },
+      });
     }),
 
   getUserProjects: publicProcedure

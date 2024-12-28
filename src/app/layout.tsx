@@ -1,4 +1,3 @@
-'use client';
 import "@/styles/globals.css";
 import { GeistSans } from "geist/font/sans";
 import NavBar from "@/components/nav-bar";
@@ -7,13 +6,23 @@ import { TRPCReactProvider } from "@/trpc/react";
 import SessionProviderClientComponent from "@/components/SessionProviderClientComponent";
 import NextTopLoader from 'nextjs-toploader';
 
+//metadata
+import { Metadata } from 'next';
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: 'Home',
+    description: 'Home page',
+  };
+}
+
+
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="mx-auto h-full max-w-7xl dark py-4  text-xs lg:text-sm dark:bg-primary flex flex-col gap-5 font-light transition-colors duration-300 min-h-screen">
+      <body className=" w-full  flex-col flex min-h-screen bg-zinc-100 text-xs md:text-sm">
         <SessionProviderClientComponent>
           <TRPCReactProvider>
             <AppContextProvider>

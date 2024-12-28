@@ -2,12 +2,9 @@
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { api } from '@/trpc/react';
-import { ArrowUpRight, SquarePenIcon } from 'lucide-react';
+import { SquarePenIcon } from 'lucide-react';
 import EditCardButton from '../edit-card-button';
 import { useState } from 'react';
-import AbouteMe from './about-me';
-import ContactCard from './contact-card';
-
 
 export default function HeroCard() {
     const username = usePathname().split('/')[1]!;
@@ -72,17 +69,17 @@ export default function HeroCard() {
     };
 
     return (
-        <section className="flex w-full gap-5 items-center p-2" >
-            <div className="flex  gap-3 relative h-full w-full">
-                <div className="flex gap-5 w-full">
-                    <EditCardButton
-                        className='hidden absolute top-1 right-2'
-                        onEdit={editCard}
-                        onSave={saveCard} />
-                    <div className="max-w-24 border rounded-full p-1 group lightBg dark:bg-primary relative">
-                        <Image src={userBasicData?.image ?? '/avatar.png'} alt="profile" width={100} height={100} className="rounded-full h-full w-full object-cover" />
+        <section className="flex w-full items-center relative" >
+            <EditCardButton
+                className='absolute top-0 -left-8'
+                onEdit={editCard}
+                onSave={saveCard} />
+            <div className="flex h-full w-full">
+                <div className="flex w-full gap-3 items-start">
+                    <div className="border max-w-24 max-h-24 rounded-lg p-1 group lightBg dark:bg-primary relative">
+                        <Image src={userBasicData?.image ?? '/avatar.png'} alt="profile" width={100} height={100} className="rounded-md h-full w-full object-cover" />
                         {isEditing &&
-                            <label className="absolute bottom-1/2 right-1/2 translate-x-1/2 translate-y-1/2 bg-white rounded-full p-1 cursor-pointer">
+                            <label className="absolute bottom-1/2  right-1/2 translate-x-1/2 translate-y-1/2 bg-white rounded-full p-1 cursor-pointer">
                                 <SquarePenIcon className="h-4 w-4 text-gray-500 p-px" />
                                 <input type='file' accept="image/png, image/jpeg, image/jpg" className="hidden" onChange={async (e) => {
                                     const file = e.target.files?.[0];
@@ -112,31 +109,20 @@ export default function HeroCard() {
                                 }} />
                             </label>
                         }
-
                     </div>
                     {isEditing ? (
-                        <div className="flex gap-1 flex-col w-full">
+                        <div className="flex gap-1 flex-col w-full max-w-xl">
                             <input autoFocus type="text" placeholder='Full Name' name="name" value={formData.name} onChange={handleChange} className="input-usercard" />
                             <input type="text" placeholder='Headline' name="headline" value={formData.headline} onChange={handleChange} className="input-usercard" />
                             <input type="text" placeholder='Location' name="location" value={formData.location} onChange={handleChange} className="input-usercard" />
-                            <input type="text" placeholder='Schedule Link lable (eg. Grab a coffee with me)' name="schedulingLink.label" value={formData.schedulingLink.label} onChange={handleChange} className="input-usercard" />
-                            <input type="text" placeholder='eg. cal.com/me' name="schedulingLink.link" value={formData.schedulingLink.link} onChange={handleChange} className="input-usercard text-blue-500" />
+                            <input type="text" placeholder='Github' name="github" value={formData.github} onChange={handleChange} className="input-usercard" />
+                            <input type="text" placeholder='LinkedIn' name="linkedin" value={formData.linkedin} onChange={handleChange} className="input-usercard" />
                         </div>
                     ) : (
-                        <div className="flex flex-col gap-1 ">
-                            <h1 className="text-xl text-dark dark:text-white">{userBasicData?.name}</h1>
-                            <span className="flex gap-1 items-center text-sm">
-                                <span className="text-gray-500 dark:text-gray-400 line-clamp-1">{userBasicData?.headline}</span>
-                            </span>
-                            <span className="flex gap-1 items-center text-xs">
-                                <span className="text-gray-500 dark:text-gray-400">Based in {userBasicData?.location}</span>
-                            </span>
-                            {userBasicData?.schedulingLink && (
-                                <a target='_blank' href={userBasicData.schedulingLink.link} className="text-xs text-blue-500 flex items-center gap-1">
-                                    {userBasicData.schedulingLink.label}
-                                    <ArrowUpRight size={14} />
-                                </a>
-                            )}
+                        <div className="flex flex-col justify-center">
+                            <h1 className="text-3xl">{userBasicData?.name}</h1>
+                            <h2 className="text-lg">{userBasicData?.headline}</h2>
+                            <h3 className="text-gray-500 dark:text-gray-300 text-sm">{userBasicData?.location}</h3>
                         </div>
                     )}
                 </div>

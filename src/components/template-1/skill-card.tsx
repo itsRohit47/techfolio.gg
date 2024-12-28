@@ -2,7 +2,7 @@
 import { Badge } from "@/components/ui/badge";
 import EditCardButton from "../edit-card-button";
 import { useState } from "react";
-import { X, WrenchIcon } from "lucide-react";
+import { X, WrenchIcon, CodeIcon } from "lucide-react";
 import { api } from "@/trpc/react";
 import { useSession } from "next-auth/react";
 
@@ -77,13 +77,13 @@ const SkillSection = () => {
 
 
     return (
-        <div className="flex h-max flex-col gap-2  text-xs flex-wrap min-w-96   p-3 rounded-lg relative">
+        <div className="flex h-max flex-col gap-2 relative">
             {showInput && (
-                <div className="flex gap-2 items-center w-full mb-3 relative">
+                <div className="flex gap-2 items-center w-full mb-3">
                     <input
                         type="text"
                         value={newSkill}
-                        className="p-2 w-full bg-secondary border rounded-lg text-xs"
+                        className="p-2 w-full active:bg-gray-50/10 dark:bg-secondary border rounded-lg relative "
                         onChange={(e) => setNewSkill(e.target.value)}
                         placeholder="Search for a skill"
                         onKeyDown={(e) => {
@@ -93,14 +93,14 @@ const SkillSection = () => {
                         }}
 
                     />
-                    {newSkill.length > 0 && <div className="flex flex-col gap-2 w-full bg-primary border-2 z-10 rounded-lg p-2 absolute top-10 left-0 max-h-44 overflow-auto">
-                        {skillsLoading && <div className="flex flex-col  gap-2 w-full">
+                    {newSkill.length > 0 && <div className="flex flex-col gap-2 w-full bg-gray-50 dark:bg-primary border-2 z-10 rounded-lg p-2 absolute top-10 left-0  max-h-96 overflow-auto">
+                        {skillsLoading && <div className="flex flex-col gap-2 w-full">
                             {[...Array(3)].map((_, index) => (
-                                <div key={index} className="animate-pulse bg-tertiary h-6 rounded-md"></div>
+                                <div key={index} className="animate-pulse dark:bg-tertiary h-6 rounded-md"></div>
                             ))}
                         </div>}
                         {filteredSkills && filteredSkills.length > 0 && !skillsLoading && filteredSkills.map((skill: { name: string, isDisabled: boolean }, index) => (
-                            <button key={index} className={`text-xs text-left w-full hover:bg-tertiary p-2 rounded-md ${skill.isDisabled ? 'opacity-50 hover:bg-transparent pointer-events-none cursor-not-allowed' : ''}`} onClick={() => {
+                            <button key={index} className={` text-left w-full hover:bg-gray-100 dark:hover:bg-tertiary p-2 rounded-md ${skill.isDisabled ? 'opacity-50 hover:bg-transparent pointer-events-none cursor-not-allowed' : ''}`} onClick={() => {
                                 if (!skill.isDisabled) {
                                     addUserSkill({
                                         skill: skill.name,
@@ -111,18 +111,17 @@ const SkillSection = () => {
                             </button>
                         ))
                         }
-                        {filteredSkills && !skillsLoading &&
+                        {filteredSkills && !skillsLoading && filteredSkills.every(skill => skill.name !== newSkill) &&
                             <button onClick={
                                 () => {
                                     addUserSkill({ skill: newSkill });
                                 }
-                            } className="text-xs flex items-center justify-between rounded-md p-2 hover:bg-tertiary"><div>Add <span className="font-bold ml-1">{newSkill}</span></div>
+                            } className=" flex items-center justify-between rounded-md p-2 hover:bg-gray-100 dark:hover:bg-tertiary"><div>Add <span className="font-bold ml-1">{newSkill}</span></div>
                             </button>}
                     </div>}
 
 
                 </div >)}
-
             {userSkillsLoading ? (
                 <div className="flex flex-wrap items-center gap-2">
                     {[...Array(3)].map((_, index) => (
@@ -130,15 +129,25 @@ const SkillSection = () => {
                     ))}
                 </div>
             ) : (
-                <div className="flex flex-wrap items-center gap-2">
-                    {userSkills?.length === 0 && <div className="text-secondary text-sm">No skills added</div>}
+                <div className="flex gap-3 flex-wrap relative items-start">
+                    <EditCardButton className="absolute top-0 -left-8" onSave={saveSkills} onEdit={editSkills} />
+                    {userSkills?.length === 0 && !showInput && <div className="text-xs border w-full p-10 rounded-lg flex items-center justify-center flex-col gap-3">
+                        <WrenchIcon size={24} />
+                        <h1 className="text-lg font-semibold">No Skills found</h1>
+                        <p className="text-base text-gray-500">Add your skills to showcase your skills</p>
+                        <button className="border hover:bg-gray-50 dark:bg-secondary px-2 py-1 rounded-md text-sm" onClick={
+                            () => {
+                                setShowInput(true);
+                            }
+                        }>Add Skills</button>
+                    </div>}
                     {userSkills?.map((skill, index) => (
                         <Badge key={index} className="flex items-center gap-2">
                             {skill.skill.name}
                             {showInput && (
                                 <X
                                     size={14}
-                                    className="cursor-pointer bg-secondary rounded-sm p-px hover:bg-red-500"
+                                    className="cursor-pointer dark:bg-secondary rounded-sm p-px hover:bg-red-500/50 hover:text-red-500"
                                     onClick={() => deleteUserSkill({
                                         skillId: skill.skill.id,
                                     })}
