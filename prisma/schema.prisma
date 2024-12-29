@@ -77,6 +77,8 @@ model User {
     location       String?
     github         String?
     linkedin       String?
+    template       Int?
+    isPro          Boolean?
     schedulingLink schedulingLink?
     certifications UserCertification[]
     skills         UserSkill[]

@@ -5,6 +5,7 @@ import {
   publicProcedure,
   protectedProcedure,
 } from "@/server/api/trpc";
+import { link } from "fs";
 
 export const userRouter = createTRPCRouter({
   isUserNameAvailable: publicProcedure
@@ -43,14 +44,14 @@ export const userRouter = createTRPCRouter({
       return user ? user.id : null;
     }),
 
-  getUserBasicData: publicProcedure
+  getUserTemplate: publicProcedure
     .input(
       z.object({
-        username: z.string(),
+        username: z.string().nullish(),
       }),
     )
-    .query(({ ctx, input }) => {
-      return ctx.db.user.findFirst({
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findFirst({
         where: {
           username: {
             equals: input.username,
@@ -58,43 +59,16 @@ export const userRouter = createTRPCRouter({
           },
         },
         select: {
-          id: true,
-          name: true,
-          image: true,
-          headline: true,
-          location: true,
-          github: true,
-          linkedin: true,
-          email: true,
-          schedulingLink: true,
+          template: true,
         },
       });
+      return user?.template;
     }),
 
-  getUserBio: publicProcedure
+  setUserTemplate: protectedProcedure
     .input(
       z.object({
-        username: z.string(),
-      }),
-    )
-    .query(({ ctx, input }) => {
-      return ctx.db.user.findFirst({
-        where: {
-          username: {
-            equals: input.username,
-            mode: "insensitive",
-          },
-        },
-        select: {
-          bio: true,
-        },
-      });
-    }),
-
-  updateUserBio: protectedProcedure
-    .input(
-      z.object({
-        bio: z.string(),
+        template: z.number(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -114,7 +88,32 @@ export const userRouter = createTRPCRouter({
           id: user.id,
         },
         data: {
-          bio: input.bio,
+          template: input.template,
+        },
+      });
+    }),
+
+  getUserBasicData: publicProcedure
+    .input(
+      z.object({
+        username: z.string().nullish(),
+      }),
+    )
+    .query(({ ctx, input }) => {
+      return ctx.db.user.findFirst({
+        where: {
+          username: {
+            equals: input.username,
+            mode: "insensitive",
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          headline: true,
+          location: true,
+          bio: true,
         },
       });
     }),
@@ -126,13 +125,7 @@ export const userRouter = createTRPCRouter({
         image: z.string(),
         headline: z.string(),
         location: z.string(),
-        github: z.string(),
-        linkedin: z.string(),
-        email: z.string(),
-        schedulingLink: z.object({
-          label: z.string(),
-          link: z.string(),
-        }),
+        bio: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -156,12 +149,7 @@ export const userRouter = createTRPCRouter({
           image: input.image,
           headline: input.headline,
           location: input.location,
-          github: input.github,
-          linkedin: input.linkedin,
-          email: input.email,
-          schedulingLink: {
-            update: input.schedulingLink,
-          },
+          bio: input.bio,
         },
       });
     }),
@@ -353,13 +341,15 @@ export const userRouter = createTRPCRouter({
 
       const projectDetails = await Promise.all(
         projects.map(async (project) => {
-          const skills = await ctx.db.skills.findMany({
-            where: {
-              id: {
-                in: project.skills.map((skill) => skill.skillId),
-              },
-            },
-          });
+          const skills = project
+            ? await ctx.db.skills.findMany({
+                where: {
+                  id: {
+                    in: project.skills.map((skill) => skill.skillId),
+                  },
+                },
+              })
+            : [];
           return {
             ...project,
             skills,
@@ -368,6 +358,114 @@ export const userRouter = createTRPCRouter({
       );
 
       return projectDetails;
+    }),
+
+  addProject: protectedProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        body: z.string(),
+        icon: z.string().nullish(),
+        skills: z.array(z.string()),
+        link: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const project = await ctx.db.projects.create({
+        data: {
+          userId: ctx.session?.user?.id,
+          title: input.title,
+          description: input.description,
+          body: input.body,
+          icon: input.icon,
+          links: input.link,
+          skills: {
+            create: input.skills.map((skill) => ({
+              skill: {
+                connectOrCreate: {
+                  where: {
+                    name: skill,
+                  },
+                  create: {
+                    name: skill,
+                  },
+                },
+              },
+            })),
+          },
+        },
+      });
+      return project;
+    }),
+
+  getProjectById: publicProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const project = await ctx.db.projects.findFirst({
+        where: {
+          id: input.projectId,
+        },
+        include: {
+          skills: {
+            select: {
+              skillId: true,
+            },
+          },
+        },
+      });
+      const skills = project
+        ? await ctx.db.skills.findMany({
+            where: {
+              id: {
+                in: project.skills.map((skill) => skill.skillId),
+              },
+            },
+          })
+        : [];
+      return {
+        ...project,
+        skills,
+      };
+    }),
+  updateProject: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        title: z.string(),
+        description: z.string(),
+        body: z.string(),
+        icon: z.string().nullish(),
+        skills: z.array(z.string()),
+        link: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const project = await ctx.db.projects.update({
+        where: {
+          id: input.projectId,
+        },
+        data: {
+          title: input.title,
+          description: input.description,
+          body: input.body,
+          icon: input.icon,
+          links: input.link,
+          skills: {
+            set: input.skills.map((skill) => ({
+              skillId_projectId: {
+                skillId: skill,
+                projectId: input.projectId,
+              },
+            })),
+          },
+        },
+      });
+      return project;
     }),
 
   getSkillsBySearch: publicProcedure

@@ -1,6 +1,6 @@
 function Badge({ className, children }: { className?: string, children: React.ReactNode }) {
   return (
-    <div className={`dark:bg-secondary bg-gray-50 border border-gray-100 px-3 py-1 text-sm rounded-sm ${className}`}>
+    <div className={`bg-gray-100 border border-gray-200 px-2 py-1 text-xs rounded-sm ${className}`}>
       {children}
     </div>
   )
