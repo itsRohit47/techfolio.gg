@@ -1,29 +1,7 @@
-# Create T3 App
+[ IN PROGRESS ]
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+mytechportfolio.com aims to streamline the nuances of building an eye-catching tech portfolio by providing users with a platform to simply fill out their details such as their projects, experiences, and other assets and provides templates to choose from. 
 
-## What's next? How do I make an app with this?
+How is this different from other website builders such as Wix and web flow - while these no-code solutions are very useful, they don't serve the purpose of showcasing your projects well, users will have to design a website, work out the SEO, also user experience is very time-consuming - the idea here to allow users to focus more on building their projects than maintaining the website, for example, a cyber security engineer might have some projects they want to showcase - will they design a website or simply add their projects and pick a template? to be honest, we can add projects to LinkedIn as well, but this is not effective when you try to reach out to someone via cold email, they would always ask "Can I see some of your work?", that's where if you have a portfolio to showcase your work - chances are they would want to interview you!
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
-
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+<img width="1470" alt="Screenshot 2024-12-30 at 3 19 50 pm" src="https://github.com/user-attachments/assets/41152176-f531-4dd2-8b98-dfee385d543f" />
