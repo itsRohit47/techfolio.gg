@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import { api } from "@/trpc/react"
 import { useSession } from "next-auth/react";
@@ -47,7 +48,7 @@ export default function ProjectsOverview() {
                                 </DialogTrigger>
                                 <DialogContent className="p-4">
                                     <DialogTitle className="hidden">Edit Project</DialogTitle>
-                                    <EditProjectDialog project_id={selectedProject!!} onClose={
+                                    <EditProjectDialog project_id={selectedProject!} onClose={
                                         () => setProjectDialogOpen(false)
                                     } />
                                 </DialogContent>

@@ -13,7 +13,7 @@ export default function AddSkilllsDialog({ onClose }: { onClose: () => void }) {
     const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
     const [isSaving, setIsSaving] = useState(false);
     const { data } = api.user.getUserSkills.useQuery(
-        { userId: session.data?.user?.id!! }
+        { userId: session.data?.user?.id ?? "" }
     );
 
     const { mutate: deleteUserSkill } = api.user.deleteUserSkill.useMutation({

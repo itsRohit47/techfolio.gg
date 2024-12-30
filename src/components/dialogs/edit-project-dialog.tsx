@@ -46,7 +46,7 @@ export default function EditProjectDialog({ project_id, onClose, }: EditProjectD
                             skills: []
                         }, {
                             onSuccess: () => {
-                                ctx.user.getUserProjects.invalidate();
+                                void ctx.user.getUserProjects.invalidate();
                                 setIsLoading(false);
                                 onClose();
                             },
