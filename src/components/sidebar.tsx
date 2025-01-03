@@ -34,7 +34,7 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
                     <h1 className="text-base font-bold">Basic Info</h1>
                     <Dialog open={isBasicInfoDialogOpen} onOpenChange={setBasicInfoDialogOpen}>
                         <DialogTrigger>
-                            <div className="hover:bg-gray-100 p-1 rounded-md cursor-pointer border border-gray-200 bg-gray-100 text-xs text-gray-600">
+                            <div className="hover:bg-stone-100 p-1 rounded-md cursor-pointer border border-stone-200 bg-stone-50 text-xs text-stone-600">
                                 Edit Basic Info
                             </div>
                         </DialogTrigger>
@@ -53,7 +53,7 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
                     <h1 className="text-base font-bold">Skills</h1>
                     <Dialog open={isSkillsDialogOpen} onOpenChange={setSkillsDialogOpen}>
                         <DialogTrigger>
-                            <div className="hover:bg-gray-100 p-1 rounded-md cursor-pointer border border-gray-200 bg-gray-100 text-xs text-gray-600">
+                            <div className="hover:bg-stone-100 p-1 rounded-md cursor-pointer border border-stone-200 bg-stone-50 text-xs text-stone-600">
                                 Edit Skills
                             </div>
                         </DialogTrigger>
@@ -72,7 +72,7 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
                     <h1 className="text-base font-bold">Projects</h1>
                     <Dialog open={isProjectDialogOpen} onOpenChange={setProjectDialogOpen}>
                         <DialogTrigger>
-                            <div className="hover:bg-gray-100 p-1 rounded-md cursor-pointer border border-gray-200 bg-gray-100 text-xs text-gray-600">
+                            <div className="hover:bg-stone-100 p-1 rounded-md cursor-pointer border border-stone-200 bg-stone-50 text-xs text-stone-600">
                                 Add Project
                             </div>
                         </DialogTrigger>
@@ -91,7 +91,7 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
                     <h1 className="text-base font-bold">Education</h1>
                     <Dialog>
                         <DialogTrigger>
-                            <div className="hover:bg-gray-100 p-1 rounded-md cursor-pointer border border-gray-200 bg-gray-100 text-xs text-gray-600">
+                            <div className="hover:bg-stone-100 p-1 rounded-md cursor-pointer border border-stone-200 bg-stone-50 text-xs text-stone-600">
                                 Add Education
                             </div>
                         </DialogTrigger>
@@ -110,7 +110,7 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
                     <h1 className="text-base font-bold">Experience</h1>
                     <Dialog>
                         <DialogTrigger>
-                            <div className="hover:bg-gray-100 p-1 rounded-md cursor-pointer border border-gray-200 bg-gray-100 text-xs text-gray-600">
+                            <div className="hover:bg-stone-100 p-1 rounded-md cursor-pointer border border-stone-200 bg-stone-50 text-xs text-stone-600">
                                 Add Experience
                             </div>
                         </DialogTrigger>

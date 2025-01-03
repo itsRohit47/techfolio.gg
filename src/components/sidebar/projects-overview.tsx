@@ -39,6 +39,9 @@ export default function ProjectsOverview() {
                             <div className="flex items-center gap-2 w-full">
                                 {proj.icon ? <img src={proj.icon} alt="project" className="w-6 h-6 border rounded-full object-cover" /> : <div className="w-6 h-6 rounded-full bg-gray-200"></div>}
                                 <p key={index} className="text-sm">{proj.title}</p>
+                                {proj.skills.slice(0, 4).map((skill, index) => (
+                                    <div key={index} className="text-xs bg-gray-100 border text-gray-600 px-1 rounded-md">{skill.name}</div>
+                                ))}
                             </div>
                             <Dialog onOpenChange={setProjectDialogOpen} open={isProjectDialogOpen}>
                                 <DialogTrigger>
@@ -53,8 +56,8 @@ export default function ProjectsOverview() {
                                     } />
                                 </DialogContent>
                             </Dialog>
-                            <div className="hover:bg-red-100 flex gap-px items-center p-1 rounded-md cursor-pointer border border-red-200 bg-red-50 text-xs text-red-600" onClick={() => deleteProject({ projectId: proj.id })}>
-                                {isDeleting.status && isDeleting.projectId === proj.id ? <Loader2 className="h-4 w-4 animate-spin" /> : ''} Delete
+                            <div className="hover:bg-red-100 flex gap-1 items-center p-1 rounded-md cursor-pointer border border-red-200 bg-red-50 text-xs text-red-600" onClick={() => deleteProject({ projectId: proj.id })}>
+                                {isDeleting.status && isDeleting.projectId === proj.id ? <Loader2 className="h-3 w-3 animate-spin" /> : ''} Delete
                             </div>
                         </div>
                     ))}

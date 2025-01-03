@@ -16,8 +16,8 @@ export default function BasicInfo() {
         <div className="flex flex-col gap-4 border border-gray-200 p-4 rounded-md shadow-sm">
             <div className="flex gap-4">
                 <div>
-                    <img src={session.data?.user.image || '/avatar.png'}
-                        alt="avatar" className="rounded-full w-16 h-16" />
+                    <img src={data.image|| '/avatar.png'}
+                        alt="avatar" className="rounded-full w-16 h-16 object-cover" />
                 </div>
                 <div>
                     <h1 className="text-base font-semibold">{data.name}</h1>

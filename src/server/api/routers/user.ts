@@ -396,6 +396,41 @@ export const userRouter = createTRPCRouter({
           },
         },
       });
+
+      // Add skills to userSkills if not already present
+      for (const skillName of input.skills) {
+        let skill = await ctx.db.skills.findFirst({
+          where: {
+            name: skillName,
+          },
+        });
+
+        if (!skill) {
+          skill = await ctx.db.skills.create({
+            data: {
+              name: skillName,
+            },
+          });
+        }
+
+        const userSkill = await ctx.db.userSkill.findFirst({
+          where: {
+            userId: ctx.session?.user?.id,
+            skillId: skill.id,
+          },
+        });
+
+        if (!userSkill) {
+          await ctx.db.userSkill.create({
+            data: {
+              userId: ctx.session?.user?.id,
+              skillId: skill.id,
+            },
+          });
+        }
+      }
+
+      return project;
       return project;
     }),
 
@@ -432,6 +467,7 @@ export const userRouter = createTRPCRouter({
         skills,
       };
     }),
+
   updateProject: protectedProcedure
     .input(
       z.object({
@@ -456,15 +492,56 @@ export const userRouter = createTRPCRouter({
           icon: input.icon,
           links: input.link,
           skills: {
-            set: input.skills.map((skill) => ({
-              skillId_projectId: {
-                skillId: skill,
-                projectId: input.projectId,
+            deleteMany: {},
+            create: input.skills.map((skill) => ({
+              skill: {
+                connectOrCreate: {
+                  where: {
+                    name: skill,
+                  },
+                  create: {
+                    name: skill,
+                  },
+                },
               },
             })),
           },
         },
       });
+
+      // Add skills to userSkills if not already present
+      for (const skillName of input.skills) {
+        let skill = await ctx.db.skills.findFirst({
+          where: {
+            name: skillName,
+          },
+        });
+
+        if (!skill) {
+          skill = await ctx.db.skills.create({
+            data: {
+              name: skillName,
+            },
+          });
+        }
+
+        const userSkill = await ctx.db.userSkill.findFirst({
+          where: {
+            userId: ctx.session?.user?.id,
+            skillId: skill.id,
+          },
+        });
+
+        if (!userSkill) {
+          await ctx.db.userSkill.create({
+            data: {
+              userId: ctx.session?.user?.id,
+              skillId: skill.id,
+            },
+          });
+        }
+      }
+
       return project;
     }),
 
@@ -485,11 +562,10 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
-  //add user skills, create new skill if not exist
-  addUserSkill: protectedProcedure
+  updateUserSkills: protectedProcedure
     .input(
       z.object({
-        skill: z.string(),
+        skills: z.array(z.string()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -504,55 +580,65 @@ export const userRouter = createTRPCRouter({
       if (!user) {
         throw new Error("User not found");
       }
-      let skill = await ctx.db.skills.findFirst({
+
+      // Get current skills
+      const currentSkills = await ctx.db.userSkill.findMany({
         where: {
-          name: {
-            equals: input.skill,
+          userId: user.id,
+        },
+        select: {
+          skill: true,
+        },
+      });
+
+      const currentSkillNames = currentSkills.map(
+        (userSkill) => userSkill.skill.name,
+      );
+
+      // Determine skills to add and remove
+      const skillsToAdd = input.skills.filter(
+        (skill) => !currentSkillNames.includes(skill),
+      );
+      const skillsToRemove = currentSkillNames.filter(
+        (skill) => !input.skills.includes(skill),
+      );
+
+      // Remove skills
+      await ctx.db.userSkill.deleteMany({
+        where: {
+          userId: user.id,
+          skill: {
+            name: {
+              in: skillsToRemove,
+            },
           },
         },
       });
-      if (!skill) {
-        skill = await ctx.db.skills.create({
+
+      // Add new skills
+      for (const skillName of skillsToAdd) {
+        let skill = await ctx.db.skills.findFirst({
+          where: {
+            name: skillName,
+          },
+        });
+
+        if (!skill) {
+          skill = await ctx.db.skills.create({
+            data: {
+              name: skillName,
+            },
+          });
+        }
+
+        await ctx.db.userSkill.create({
           data: {
-            name: input.skill,
+            userId: user.id,
+            skillId: skill.id,
           },
         });
       }
-      await ctx.db.userSkill.create({
-        data: {
-          userId: user.id,
-          skillId: skill.id,
-        },
-      });
-    }),
 
-  //delete user skills
-  deleteUserSkill: protectedProcedure
-    .input(
-      z.object({
-        skillId: z.string(),
-      }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      const user = await ctx.db.user.findFirst({
-        where: {
-          username: {
-            equals: ctx.session?.user?.username,
-            mode: "insensitive",
-          },
-        },
-      });
-      if (!user) {
-        throw new Error("User not found");
-      }
-      await ctx.db.userSkill.delete({
-        where: {
-          userId_skillId: {
-            userId: user.id,
-            skillId: input.skillId,
-          },
-        },
-      });
       return true;
     }),
 
