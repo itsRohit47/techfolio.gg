@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @font-face {
   font-family: "row";
   src: url("/fonts/row.woff2") format("woff2");
@@ -10,7 +9,26 @@
   font-style: normal;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
 
 @layer base {
   :root {
@@ -79,11 +97,9 @@
   }
 }
 
-
 * {
   outline: none;
 }
-
 
 @layer base {
   * {
@@ -95,7 +111,7 @@
 }
 
 .btn {
-  @apply flex items-center justify-center gap-3 rounded-lg border border-white/10 bg-gray-200/80 p-3  text-gray-500 hover:bg-gray-200 dark:bg-primary/50 dark:text-gray-300 dark:hover:bg-primary/70;
+  @apply flex items-center justify-center gap-3 rounded-lg border border-white/10 bg-gray-200/80 p-3 text-gray-500 hover:bg-gray-200 dark:bg-primary/50 dark:text-gray-300 dark:hover:bg-primary/70;
 }
 
 a {
@@ -103,11 +119,11 @@ a {
 }
 
 .lightBg {
-  @apply border border-gray-300 h-full bg-gray-100 text-black  transition-all duration-100 ease-in-out dark:border-white/10 dark:text-white dark:shadow-sm;
+  @apply h-full border border-gray-300 bg-gray-100 text-black transition-all duration-100 ease-in-out dark:border-white/10 dark:text-white dark:shadow-sm;
 }
 
 .input-usercard {
-  @apply w-full bg-transparent px-2 py-1 
+  @apply w-full bg-transparent px-2 py-1;
 }
 
 input,

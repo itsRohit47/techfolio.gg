@@ -5,7 +5,6 @@ import EducationOverview from "./sidebar/edu-overview";
 import ExperienceOverview from "./sidebar/experience-overview";
 import ProjectsOverview from "./sidebar/projects-overview";
 import TemplatesSection from "./sidebar/template-overview";
-import { EditIcon, PlusIcon } from "lucide-react";
 import { Dialog, DialogTitle } from "./ui/dialog";
 import { DialogTrigger } from "./ui/dialog";
 import { DialogContent } from "./ui/dialog";
@@ -17,14 +16,16 @@ import AddSkilllsDialog from "./dialogs/add-skills-dialog";
 import BasicInfo from "./sidebar/basic-info-overview";
 import { useState } from "react";
 
-export default function SideBar({ className }: Readonly<{ className?: string }>) {
+export default function SideBar({ className }: { className?: string }) {
     const { data: session } = useSession();
     const [isBasicInfoDialogOpen, setBasicInfoDialogOpen] = useState(false);
     const [isSkillsDialogOpen, setSkillsDialogOpen] = useState(false);
     const [isProjectDialogOpen, setProjectDialogOpen] = useState(false);
+    const [isEducationDialogOpen, setEducationDialogOpen] = useState(false);
+    const [isExperienceDialogOpen, setExperienceDialogOpen] = useState(false);
 
     return (
-        <div className={`flex flex-col gap-5 max-w-xl h-screen  pb-32 p-5 shadow-2xl bg-gray-50 overflow-auto ${className}`}>
+        <div className={`flex flex-col gap-5 w-max max-w-xl h-screen pb-32 p-5 shadow-2xl bg-gray-50 overflow-auto ${className}`}>
             <div className="flex flex-col gap-2">
                 <h1 className="text-base font-bold">Pick a template</h1>
                 <TemplatesSection />
@@ -89,7 +90,7 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center">
                     <h1 className="text-base font-bold">Education</h1>
-                    <Dialog>
+                    <Dialog open={isEducationDialogOpen} onOpenChange={setEducationDialogOpen}>
                         <DialogTrigger>
                             <div className="hover:bg-stone-100 p-1 rounded-md cursor-pointer border border-stone-200 bg-stone-50 text-xs text-stone-600">
                                 Add Education
@@ -99,7 +100,9 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
                             <DialogTitle className="hidden">
                                 Add an education
                             </DialogTitle>
-                            <AddEducationDialog />
+                            <AddEducationDialog onClose={
+                                () => setEducationDialogOpen(false)
+                            } />
                         </DialogContent>
                     </Dialog>
                 </div>
@@ -108,7 +111,7 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
             <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center">
                     <h1 className="text-base font-bold">Experience</h1>
-                    <Dialog>
+                    <Dialog open={isExperienceDialogOpen} onOpenChange={setExperienceDialogOpen}>
                         <DialogTrigger>
                             <div className="hover:bg-stone-100 p-1 rounded-md cursor-pointer border border-stone-200 bg-stone-50 text-xs text-stone-600">
                                 Add Experience
@@ -118,7 +121,9 @@ export default function SideBar({ className }: Readonly<{ className?: string }>)
                             <DialogTitle className="hidden">
                                 Add an experience
                             </DialogTitle>
-                            <AddExperienceDialog />
+                            <AddExperienceDialog onClose={
+                                () => setExperienceDialogOpen(false)
+                            } />
                         </DialogContent>
                     </Dialog>
                 </div>

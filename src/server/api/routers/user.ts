@@ -122,10 +122,10 @@ export const userRouter = createTRPCRouter({
     .input(
       z.object({
         name: z.string(),
-        image: z.string(),
-        headline: z.string(),
-        location: z.string(),
-        bio: z.string(),
+        image: z.string().nullish(),
+        headline: z.string().nullish(),
+        location: z.string().nullish(),
+        bio: z.string().nullish(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -434,6 +434,34 @@ export const userRouter = createTRPCRouter({
       return project;
     }),
 
+  getEducationById: publicProcedure
+    .input(
+      z.object({
+        educationId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.db.education.findFirst({
+        where: {
+          id: input.educationId,
+        },
+      });
+    }),
+
+  getExperienceById: publicProcedure
+    .input(
+      z.object({
+        experienceId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.db.experience.findFirst({
+        where: {
+          id: input.experienceId,
+        },
+      });
+    }),
+
   getProjectById: publicProcedure
     .input(
       z.object({
@@ -466,6 +494,66 @@ export const userRouter = createTRPCRouter({
         ...project,
         skills,
       };
+    }),
+
+  updateEducation: protectedProcedure
+    .input(
+      z.object({
+        educationId: z.string(),
+        university: z.string(),
+        degree: z.string(),
+        field: z.string(),
+        startYear: z.number(),
+        endYear: z.number(),
+        uniLogo: z.string().nullish(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.education.update({
+        where: {
+          id: input.educationId,
+        },
+        data: {
+          universityName: input.university,
+          courseName: input.degree,
+          fieldOfStudy: input.field,
+          startYear: input.startYear,
+          endYear: input.endYear,
+          uniLogo: input.uniLogo,
+        },
+      });
+    }),
+
+  updateExperience: protectedProcedure
+    .input(
+      z.object({
+        experienceId: z.string(),
+        logo: z.string().nullish(),
+        title: z.string(),
+        company: z.string(),
+        companuUrl: z.string().nullish(),
+        location: z.string(),
+        startDate: z.number(),
+        endDate: z.number().nullish(),
+        description: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.experience.update({
+        where: {
+          id: input.experienceId,
+        },
+        data: {
+          companyLogo: input.logo,
+          title: input.title,
+          company: input.company,
+          companyUrl: input.companuUrl,
+          location: input.location,
+          startYear: input.startDate,
+          endYear: input.endDate,
+          description: input.description,
+        },
+      });
     }),
 
   updateProject: protectedProcedure
@@ -645,24 +733,83 @@ export const userRouter = createTRPCRouter({
   addEducation: protectedProcedure
     .input(
       z.object({
-        userId: z.string(),
         university: z.string(),
         degree: z.string(),
         field: z.string(),
         startYear: z.number(),
         endYear: z.number(),
+        uniLogo: z.string().nullish(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       await ctx.db.education.create({
         data: {
-          userId: input.userId,
+          userId: ctx.session?.user?.id,
           universityName: input.university,
           courseName: input.degree,
           fieldOfStudy: input.field,
           startYear: input.startYear,
           endYear: input.endYear,
+          uniLogo: input.uniLogo,
         },
       });
     }),
+
+  addExperience: protectedProcedure
+    .input(
+      z.object({
+        logo: z.string().nullish(),
+        title: z.string(),
+        company: z.string(),
+        location: z.string(),
+        startDate: z.number(),
+        endDate: z.number().nullish(),
+        description: z.string(),
+        url: z.string().nullish(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.experience.create({
+        data: {
+          userId: ctx.session?.user?.id,
+          companyLogo: input.logo,
+          title: input.title,
+          company: input.company,
+          location: input.location,
+          startYear: input.startDate,
+          endYear: input.endDate,
+          description: input.description,
+          companyUrl: input.url,
+        },
+      });
+    }),
+
+  updateIneedThis: protectedProcedure
+    .input(
+      z.object({
+        caseNum: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findFirst({
+        where: {
+          username: {
+            equals: ctx.session?.user?.username,
+            mode: "insensitive",
+          },
+        },
+      });
+      if (!user) {
+        throw new Error("User not found");
+      }
+      await ctx.db.user.update({
+        where: {
+          id: user.id,
+        },
+        data: {
+          iNeedThis: input.caseNum,
+        },
+      });
+    }),
+  
 });

@@ -1,26 +1,3 @@
-// Relations Summary in English:
-// - An Account belongs to a User.
-// - A Session belongs to a User.
-// - A VerificationToken has no relations.
-// - A User can have one schedulingLink.
-// - A User can have multiple certifications.
-// - A User can have multiple skills.
-// - A User can have multiple Accounts.
-// - A User can have multiple Sessions.
-// - A User can have multiple Education records.
-// - A User can have multiple Experience records.
-// - A User can have multiple projects.
-// - An Experience belongs to a User.
-// - An Education belongs to a University and a User.
-// - A schedulingLink belongs to a User.
-// - A University can have multiple Education records.
-// - A Project belongs to one User only.
-// - A CertificationDefinition can have multiple UserCertifications.
-// - A UserCertification belongs to a User and a CertificationDefinition.
-// - A Skill can have multiple UserSkills.
-// - A UserSkill belongs to a User and a Skill.
-// - A UserProject belongs to a User and a Project.
-
 generator client {
     provider = "prisma-client-js"
 }
@@ -80,6 +57,7 @@ model User {
     template       Int?
     isPro          Boolean?
     schedulingLink schedulingLink?
+    iNeedThis      Int?
     certifications UserCertification[]
     skills         UserSkill[]
     accounts       Account[]

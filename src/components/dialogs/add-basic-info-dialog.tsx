@@ -3,17 +3,32 @@
 import { api } from "@/trpc/react";
 import { useSession } from "next-auth/react";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PencilIcon } from "lucide-react";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from '@tiptap/starter-kit'
+import Placeholder from '@tiptap/extension-placeholder'
+
 export default function AddBasicInfoDialog({ onClose }: { onClose: () => void }) {
     const session = useSession();
     const { data } = api.user.getUserBasicData.useQuery(
-        { username: session.data?.user?.username }
-    );
+        { username: session.data?.user?.username });
     const ctx = api.useUtils();
-
     const [isLoading, setIsLoading] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [image, setImage] = useState<string | null>(data?.image || null);
+    const [name, setName] = useState<string>(data?.name || 'John Doe');
+    const [headline, setHeadline] = useState<string | null>(data?.headline || null);
+    const [location, setLocation] = useState<string | null>(data?.location || null);
+
+
+    useEffect(() => {
+        setImage(data?.image || '/avatar.png');
+        setName(data?.name || 'John Doe');
+        setHeadline(data?.headline || null);
+        setLocation(data?.location  || null);
+    }, []);
+
 
     const { mutate: updateBasicInfo } = api.user.updateUserBasicData.useMutation(
         {
@@ -21,18 +36,24 @@ export default function AddBasicInfoDialog({ onClose }: { onClose: () => void })
                 setIsLoading(true);
             },
             onSuccess: () => {
-                setIsLoading(false);
                 void ctx.user.getUserBasicData.invalidate();
                 onClose();
             }
         }
     );
 
-    const [image, setImage] = useState(data?.image || '');
-    const [name, setName] = useState(data?.name || 'John Doe');
-    const [headline, setHeadline] = useState(data?.headline || 'Software Engineer with 5 years of experience');
-    const [location, setLocation] = useState(data?.location || 'New York');
-    const [bio, setBio] = useState(data?.bio || 'I love coding');
+    const editor = useEditor({
+        extensions: [
+            StarterKit,
+            Placeholder.configure({ placeholder: 'I love coding' }),
+        ],
+        content: data?.bio || 'I love coding',
+        editorProps: {
+            attributes: {
+                class: 'mt-2 w-full p-2 border border-gray-200 rounded-md min-h-[100px]',
+            },
+        },
+    })
 
     return (
         <div className="">
@@ -75,20 +96,20 @@ export default function AddBasicInfoDialog({ onClose }: { onClose: () => void })
                         <PencilIcon size={12} />
                     </div>
                 </div>
-                <input type="text" placeholder={name} defaultValue={name} className="w-full p-2 border border-gray-200 rounded-md mt-3" onChange={(e) => setName(e.target.value)} />
+                <input type="text" placeholder='Title' defaultValue={name ?? ''} className="w-full p-2 border border-gray-200 rounded-md mt-3" onChange={(e) => setName(e.target.value)} />
                 {name === "" && <span className="text-red-500 text-xs">* Title is required</span>}
-                <input type="text" placeholder={headline} defaultValue={headline} className="mt-2 w-full p-2 border border-gray-200 rounded-md" onChange={(e) => setHeadline(e.target.value)} />
-                <input type="text" placeholder={location} defaultValue={location} className="mt-2 w-full p-2 border border-gray-200 rounded-md" onChange={(e) => setLocation(e.target.value)} />
-                <textarea rows={4} placeholder={bio} defaultValue={bio} className="mt-2 w-full p-2 border border-gray-200 rounded-md" onChange={(e) => setBio(e.target.value)} />
+                <input type="text" placeholder="Headline" defaultValue={headline ?? ''} className="mt-2 w-full p-2 border border-gray-200 rounded-md" onChange={(e) => setHeadline(e.target.value)} />
+                <input type="text" placeholder='Location' defaultValue={location ?? ''} className="mt-2 w-full p-2 border border-gray-200 rounded-md" onChange={(e) => setLocation(e.target.value)} />
+                <EditorContent editor={editor} />
                 <div className="flex justify-end mt-4">
                     <button className="bg-violet-500 text-white p-2 rounded-md flex items-center disabled:opacity-50"
                         disabled={isLoading || name === ''}
                         onClick={async () => {
                             updateBasicInfo({
-                                name,
+                                name: name,
                                 headline,
                                 location,
-                                bio,
+                                bio: editor?.getHTML() || '',
                                 image: image || '/avatar.png',
                             });
                         }}>

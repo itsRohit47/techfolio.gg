@@ -8,7 +8,7 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 export default function ProjectsOverview() {
     const session = useSession();
-    const { data: projs } = api.user.getUserProjects.useQuery({ uid: session.data?.user?.id ?? "" });
+    const { data: projs, isLoading } = api.user.getUserProjects.useQuery({ uid: session.data?.user?.id ?? "" });
     const [isProjectDialogOpen, setProjectDialogOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState({
@@ -28,6 +28,23 @@ export default function ProjectsOverview() {
             }
         }
     );
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col gap-2 w-full">
+                <div className="flex items-center gap-2 group w-full pb-2 border-b border-gray-100 flex-col">
+                    <div className="flex items-center gap-2 w-full">
+                        <div className="w-6 h-6 rounded-full bg-gray-100"></div>
+                        <div className="w-1/2 h-4 bg-gray-100 rounded-md"></div>
+                    </div>
+                    <div className="flex items-center gap-2 w-full">
+                        <div className="w-6 h-6 rounded-full bg-gray-100"></div>
+                        <div className="w-1/2 h-4 bg-gray-100 rounded-md"></div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
 
     return (

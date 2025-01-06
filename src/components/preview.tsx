@@ -1,5 +1,5 @@
 'use client';
-import ClassicDark from "@/templates/Classic/ClassicDark";
+import INeedThis from "@/templates/Classic/ClassicDark";
 import ClassicPortfolio from "@/templates/Classic/ClassicPortfolio";
 import ModernPortfolio from "@/templates/Modern/ModernPortfolio";
 import { api } from "@/trpc/react";
@@ -7,21 +7,32 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 
-function GetTemplate(template: any) {
+function GetTemplate(template: any, username: string) {
     switch (template) {
         case 1:
-            return <ClassicPortfolio />;
+            return <ClassicPortfolio username={username} />;
         case 2:
-            return <ModernPortfolio />;
         case 3:
-            return <ClassicDark />;
+        case 4:
+        case 5:
+        case 6:
+        case 7:
+        case 8:
+        case 9:
+        case 10:
+            return <INeedThis caseNum={
+                template
+            } />;
+        case -1:
+            return <ModernPortfolio />;
         default:
-            return <div className="flex justify-center items-center h-screen">
-                <h1>Select a template</h1>
-            </div>;
+            return (
+                <div className="flex justify-center items-center h-screen">
+                    <h1>Select a template</h1>
+                </div>);
     }
 }
-export default function Preview() {
+export default function Preview({ username }: { username: string }) {
     const { data: session } = useSession();
     const { data } = api.user.getUserTemplate.useQuery(
         { username: session?.user?.username },
@@ -36,8 +47,8 @@ export default function Preview() {
         return <div>Loading...</div>;
     }
     return (
-        <div className="-z-10 min-h-screen">
-            {GetTemplate(template)}
+        <div className=" min-h-screen">
+            {GetTemplate(template, username)}
         </div>
     );
 }
