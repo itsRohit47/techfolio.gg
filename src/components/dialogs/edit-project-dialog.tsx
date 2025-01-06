@@ -4,51 +4,52 @@ import { useState, useEffect } from 'react';
 import { api } from '@/trpc/react';
 import { Loader2, PencilIcon, X } from 'lucide-react';
 import { Badge } from '../ui/badge';
-import { Skeleton } from '../ui/skeleton'; // Added Skeleton import
 
 
 interface EditProjectDialogProps {
-    exp_id: string;
+    project_id: string;
     onClose: () => void;
 }
 
-export default function EditProjectDialog({ exp_id, onClose, }: EditProjectDialogProps) {
-    const { mutate: editExperience } = api.user.updateExperience.useMutation();
-    const { data, isLoading: isLoadingProject } = api.user.getExperienceById.useQuery({ experienceId: exp_id });
+export default function EditProjectDialog({ project_id, onClose, }: EditProjectDialogProps) {
+    const { mutate: editProject } = api.user.updateProject.useMutation();
+    const { data } = api.user.getProjectById.useQuery({ projectId: project_id });
     const ctx = api.useUtils();
-    const [logo, setLogo] = useState<string | null>(null);
-    const [company, setCompany] = useState(data?.company ?? '');
+    const [icon, setIcon] = useState<string | null>(data?.icon ?? null);
     const [title, setTitle] = useState(data?.title ?? '');
     const [description, setDescription] = useState(data?.description ?? '');
-    const [location, setLocation] = useState(data?.location ?? '');
-    const [startYear, setStartYear] = useState(data?.startYear ?? '');
-    const [endYear, setEndYear] = useState(data?.endYear ?? '');
-    const [url, setUrl] = useState(data?.companyUrl ?? '');
+    const [body, setBody] = useState(data?.body ?? '');
+    const [link, setLink] = useState(data?.links ?? '');
     const [isLoading, setIsLoading] = useState(false);
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [icon, setIcon] = useState<string | null>(null);
+    const [skills, setSkills] = useState<string[]>(data?.skills?.map(skill => skill.name) ?? []);
+    const [search, setSearch] = useState("");
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const { data: skillSuggestions, isLoading: isLoadingSkills } = api.user.getSkillsBySearch.useQuery({
+        search: search,
+    });
+
+    const handleAddSkill = (skill: string) => {
+        if (!skills.includes(skill)) {
+            setSkills([...skills, skill]);
+        }
+        setSearch("");
+        setShowSuggestions(false);
+    };
+
+    const handleDeleteSkill = (skill: string) => {
+        setSkills(skills.filter(s => s !== skill));
+    };
 
     useEffect(() => {
-        setLogo(data?.companyLogo ?? null);
+        setIcon(data?.icon ?? null);
         setTitle(data?.title ?? '');
         setDescription(data?.description ?? '');
-        setUrl(data?.companyUrl ?? '');
-        setLocation(data?.location ?? '');
-        setStartYear(data?.startYear ?? '');
-        setEndYear(data?.endYear ?? '');
-
+        setBody(data?.body ?? '');
+        setLink(data?.links ?? '');
+        setSkills(data?.skills?.map(skill => skill.name) ?? []);
     }, [data]);
 
-    if (isLoadingProject) {
-        return (
-            <div className="flex flex-col space-y-4 p-4">
-                <Skeleton className="w-16 h-16 rounded-full" />
-                <Skeleton className="w-3/4 h-6" />
-                <Skeleton className="w-full h-4" />
-                <Skeleton className="w-full h-4" />
-            </div>
-        );
-    }
 
     return (
         <div className="">
@@ -93,33 +94,79 @@ export default function EditProjectDialog({ exp_id, onClose, }: EditProjectDialo
                 </div>
                 <input type="text" placeholder="Title" className="mt-3 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={title} onChange={(e) => setTitle(e.target.value)} />
                 {title === "" && <span className="text-red-500 text-xs">* Title is required</span>}
-                <input type="text" placeholder="Company" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={company} onChange={(e) => setCompany(e.target.value)} />
-                {company === "" && <span className="text-red-500 text-xs">* Company is required</span>}
-                <input type="text" placeholder="Location" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={location} onChange={(e) => setLocation(e.target.value)} />
-                {location === "" && <span className="text-red-500 text-xs">* Location is required</span>}
-                <input type="text" placeholder="Start Year" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={startYear} onChange={(e) => setStartYear(e.target.value)} />
-                {startYear === "" && <span className="text-red-500 text-xs">* Start Year is required</span>}
-                <input type="text" placeholder="End Year" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={endYear} onChange={(e) => setEndYear(e.target.value)} />
-                <input type="text" placeholder="URL" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={url} onChange={(e) => setUrl(e.target.value)} />
-                {url === "" && <span className="text-red-500 text-xs">* URL is required</span>}
-                <textarea placeholder="Description" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={description} onChange={(e) => setDescription(e.target.value)} />
-                {description === "" && <span className="text-red-500 text-xs">* Description is required</span>}
+                <input type="text" placeholder="Project Description" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={description} onChange={(e) => setDescription(e.target.value)} />
+                <input type="text" placeholder="Project URL" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={link} onChange={(e) => setLink(e.target.value)} />
+                <div className='relative'>
+                    <input type="text" placeholder="Add Skill" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" value={search} onChange={(e) => {
+                        setShowSuggestions(true);
+                        setSearch(e.target.value);
+                    }} />
+                    {showSuggestions && search && (
+                        <div className="absolute top-12 z-10 w-full bg-white rounded-md shadow-md p-2 max-h-60 border overflow-auto">
+                            {
+                                !isLoadingSkills && skillSuggestions && !skillSuggestions.some(skill => skill.name === search) && (
+                                    <button className="flex items-center justify-between bg-slate-100 hover:bg-gray-100 p-2 rounded-md w-full" onClick={() => handleAddSkill(search)}>
+                                        <p>Add <span className="font-bold">{search}</span></p>
+                                    </button>
+                                )
+                            }
+                            {
+                                skillSuggestions?.map((skill) => (
+                                    <button key={skill.id} className="flex items-center mt-1 justify-between p-2 rounded-md w-full hover:bg-gray-100" onClick={() => handleAddSkill(skill.name)}>
+                                        <p>{skill.name}</p>
+                                    </button>
+                                ))
+                            }
+                            {
+                                isLoadingSkills && (
+                                    <div className="flex items-center justify-between mt-2 hover:bg-gray-100 p-2 rounded-md">
+                                        <p>Loading...</p>
+                                    </div>
+                                )
+                            }
+                            {
+                                !isLoadingSkills && skillSuggestions?.length === 0 && (
+                                    <div className="flex items-center justify-between mt-2 p-2 rounded-md w-full">
+                                        <p>No skill found related to <span className="font-bold">{search}</span></p>
+                                    </div>
+                                )
+                            }
+                        </div>
+                    )}
+                    {skills.length > 0 &&
+                        <div className="flex gap-2 flex-wrap mt-2">
+                            {
+                                skills.map((skill, index) => (
+                                    <Badge key={index} className="flex items-center gap-2 bg-blue-200">
+                                        {skill}
+                                        <button onClick={() => handleDeleteSkill(skill)} className="text-red-500">
+                                            <X size={12} />
+                                        </button>
+                                    </Badge>
+                                ))
+                            }
+                        </div>
+                    }
+                </div>
+
+                <textarea rows={6} placeholder="Project Body" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={body} onChange={(e) => setBody(e.target.value)} />
                 <div className="flex justify-end mt-4">
                     <button className="bg-violet-500 text-white p-2 rounded-md flex items-center disabled:opacity-50" onClick={() => {
                         setIsLoading(true);
-                        editExperience({
-                            experienceId: exp_id,
-                            logo: logo,
+                        editProject({
+                            projectId: project_id,
+                            icon,
                             title,
                             description,
-                            company,
-                            location,
-                            companuUrl: url,
-                            startDate: Number(startYear),
-                            endDate: Number(endYear),
+                            body,
+                            link,
+                            skills: skills,
                         }, {
                             onSuccess: () => {
-                                void ctx.user.getUserExperiences.invalidate();
+                                void ctx.user.getUserProjects.invalidate();
+                                void ctx.user.getUserSkills.invalidate();
+                                void ctx.user.getSkillsBySearch.invalidate({ search: '' });
+                                void ctx.user.getProjectById.invalidate({ projectId: project_id });
                                 setIsLoading(false);
                                 onClose();
                             },
@@ -127,7 +174,7 @@ export default function EditProjectDialog({ exp_id, onClose, }: EditProjectDialo
                                 setIsLoading(false);
                             }
                         });
-                    }} disabled={isLoading || title === '' || description === '' || company === '' || location === '' || startYear === '' || url === ''}>
+                    }} disabled={isLoading || title === ''}>
                         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                         Update
                     </button>
