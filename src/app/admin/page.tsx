@@ -10,7 +10,7 @@ import { PaletteIcon, Edit2Icon, RocketIcon } from "lucide-react";
 export default function AdminPage() {
     const { data: session } = useSession();
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [designMode, setDesignMode] = useState(true);
+    const [designMode, setDesignMode] = useState(false);
     return (
         <div className="">
             <div className={`fixed inset-0 h-screen w-max transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} z-50 transition-transform duration-300 ease-in-out`}>
