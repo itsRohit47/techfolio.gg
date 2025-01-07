@@ -4,6 +4,9 @@ import { useState, useEffect } from 'react';
 import { api } from '@/trpc/react';
 import { Loader2, PencilIcon, X } from 'lucide-react';
 import { Badge } from '../ui/badge';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
 
 
 interface EditProjectDialogProps {
@@ -49,6 +52,20 @@ export default function EditProjectDialog({ project_id, onClose, }: EditProjectD
         setLink(data?.links ?? '');
         setSkills(data?.skills?.map(skill => skill.name) ?? []);
     }, [data]);
+
+
+    const editor = useEditor({
+        extensions: [
+            StarterKit,
+            Placeholder.configure({ placeholder: 'I love coding' }),
+        ],
+        content: data?.body || 'I love coding',
+        editorProps: {
+            attributes: {
+                class: 'mt-2 w-full p-2 border border-gray-200 rounded-md min-h-[100px]',
+            },
+        },
+    })
 
 
     return (
@@ -149,7 +166,7 @@ export default function EditProjectDialog({ project_id, onClose, }: EditProjectD
                     }
                 </div>
 
-                <textarea rows={6} placeholder="Project Body" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" defaultValue={body} onChange={(e) => setBody(e.target.value)} />
+                <EditorContent editor={editor} />
                 <div className="flex justify-end mt-4">
                     <button className="bg-violet-500 text-white p-2 rounded-md flex items-center disabled:opacity-50" onClick={() => {
                         setIsLoading(true);
@@ -158,7 +175,7 @@ export default function EditProjectDialog({ project_id, onClose, }: EditProjectD
                             icon,
                             title,
                             description,
-                            body,
+                            body: editor?.getHTML() || '',
                             link,
                             skills: skills,
                         }, {

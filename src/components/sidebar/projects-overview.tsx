@@ -55,10 +55,15 @@ export default function ProjectsOverview() {
                         <div key={index} className={`flex items-center gap-2 group  w-full pb-2 ${index === projs.length - 1 ? '' : 'border-b border-gray-200'}`}>
                             <div className="flex items-center gap-2 w-full">
                                 {proj.icon ? <img src={proj.icon} alt="project" className="w-6 h-6 border rounded-full object-cover" /> : <div className="w-6 h-6 rounded-full bg-gray-200"></div>}
-                                <p key={index} className="text-sm">{proj.title}</p>
-                                {proj.skills.slice(0, 4).map((skill, index) => (
-                                    <div key={index} className="text-xs bg-gray-100 border text-gray-600 px-1 rounded-md">{skill.name}</div>
-                                ))}
+                                <p key={index} className="text-sm line-clamp-1 w-full">{proj.title}</p>
+                                <div className="flex gap-1">
+                                    {proj.skills.slice(0, 2).map((skill, index) => (
+                                        <div key={index} className="text-xs bg-gray-100 text-nowrap border text-gray-600 px-1 rounded-md">{skill.name}</div>
+                                    ))}
+                                    {proj.skills.length > 2 && (
+                                        <span className="text-xs bg-gray-100 text-nowrap border text-gray-600 px-1 rounded-md">...</span>
+                                    )}
+                                </div>
                             </div>
                             <Dialog onOpenChange={setProjectDialogOpen} open={isProjectDialogOpen}>
                                 <DialogTrigger>

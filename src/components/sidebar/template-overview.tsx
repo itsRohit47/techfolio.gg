@@ -24,54 +24,9 @@ export default function TemplatesSection() {
     }, [data]);
     const templateList = [
         {
-            name: "Project Focused",
-            description: "This template aims to provide a simple and clean look, focusing on your projects and skills over other information such as education and experience, making it a great choice for students and recent graduates.",
+            name: "Minimal",
+            description: "A minimalistic template with only the necessary information.",
             value: 1
-        },
-        {
-            name: "Experience Focused",
-            description: "This template is designed to highlight your work experience and education, making it a great choice for professionals with a lot of experience.",
-            value: 2
-        },
-        {
-            name: "Cyber Security",
-            description: "Coming soon, this template is designed to highlight your cyber security skills and experience.",
-            value: 3
-        },
-        {
-            name: "Data Science",
-            description: "Coming soon, this template is designed to highlight your data science skills and experience.",
-            value: 4
-        },
-        {
-            name: "Machine Learning",
-            description: "Coming soon, this template is designed to highlight your machine learning skills and experience.",
-            value: 5
-        },
-        {
-            name: "Software Development",
-            description: "Coming soon, this template is designed to highlight your software development skills and experience.",
-            value: 6
-        },
-        {
-            name: "Web Development",
-            description: "Coming soon, this template is designed to highlight your web development skills and experience.",
-            value: 7
-        },
-        {
-            name: "Mobile Development",
-            description: "Coming soon, this template is designed to highlight your mobile development skills and experience.",
-            value: 8
-        },
-        {
-            name: "Design",
-            description: "Coming soon, this template is designed to highlight your design skills and experience.",
-            value: 9
-        },
-        {
-            name: "Marketing",
-            description: "Coming soon, this template is designed to highlight your marketing skills and experience.",
-            value: 10
         },
         {
             name: "Generate with AI",
@@ -106,7 +61,7 @@ export default function TemplatesSection() {
                             setNewTemplate(template.value);
                             setUserTemplate({ template: template.value });
                         }}>
-                       {template.value === -1 && <WandSparklesIcon size={12}></WandSparklesIcon>} {template.name} {newTemplate === template.value && isPending && <Loader2 className="h-3 w-3 animate-spin" />}
+                        {template.value === -1 && <WandSparklesIcon size={12}></WandSparklesIcon>} {template.name} {newTemplate === template.value && isPending && <Loader2 className="h-3 w-3 animate-spin" />}
                     </button>
                 ))}
             </div>

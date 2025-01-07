@@ -17,7 +17,6 @@ import BasicInfo from "./sidebar/basic-info-overview";
 import { useState } from "react";
 
 export default function SideBar({ className }: { className?: string }) {
-    const { data: session } = useSession();
     const [isBasicInfoDialogOpen, setBasicInfoDialogOpen] = useState(false);
     const [isSkillsDialogOpen, setSkillsDialogOpen] = useState(false);
     const [isProjectDialogOpen, setProjectDialogOpen] = useState(false);
