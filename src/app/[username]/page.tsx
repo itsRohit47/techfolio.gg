@@ -1,6 +1,8 @@
 import ClassicPortfolio from "@/templates/Classic/ClassicPortfolio";
-export default function UserPortfolio({ params }: { params: { username: string } }) {
+export default async function UserPortfolio({ params }: { params: Promise<{ username: string }> }) {
+    const p = await params;
     return (
-        <ClassicPortfolio username={params.username} />
+
+        <ClassicPortfolio username={p.username} />
     );
 }
