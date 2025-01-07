@@ -7,7 +7,7 @@ import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerT
 import { Skeleton } from "@/components/ui/skeleton";
 export default function ClassicPortfolio({ username }: { username: string }) {
     return (
-        <section className="max-w-xl mx-auto flex justify-center items-center p-10 w-full flex-col gap-4 h-full min-h-screen">
+        <section className="max-w-xl mx-auto flex justify-center items-center p-4 py-10 md:p-10 w-full flex-col gap-4 h-full min-h-screen">
             <BasicCard username={username} />
             {/* <Tabs defaultValue="projects" className="w-full">
                 <TabsList className="transition-all ease-in-out duration-300 flex gap-2">
@@ -19,8 +19,8 @@ export default function ClassicPortfolio({ username }: { username: string }) {
                 <TabsContent value="education" className="p-2">Change your password here.</TabsContent>
             </Tabs> */}
             <ProjectCard username={username} />
-            <button className="mt-2 bg-black text-white px-3 py-2 text-xs rounded-full hover:bg-black/80">
-                Build your own portfolio
+            <button className="mt-2 bg-black text-white px-3 py-2 text-xs rounded-full hover:bg-black/80" onClick={() => window.location.href = 'https://mytechportfolio.vercel.app/'}>
+                Build your tech portfolio
             </button>
         </section>
     );
@@ -50,12 +50,12 @@ function BasicCard({ username }: { username: string }) {
             {error && <p>Error: {error.message}</p>}
             {data && (
                 <section className="w-full">
-                    <div className="flex gap-4 items-center flex-col text-center">
+                    <div className="flex gap-2 items-center flex-col text-center">
                         <div className="bg-gray-100 rounded-full flex items-center justify-center">
                             <img
                                 src={`${data.image}`}
                                 alt="avatar"
-                                className="rounded-full w-16 h-16 object-cover border border-gray-400 p-px"
+                                className="rounded-full w-20 h-20 object-cover border border-gray-400 p-px"
                             />
                         </div>
                         <div className="">
@@ -65,7 +65,7 @@ function BasicCard({ username }: { username: string }) {
 
                     </div>
                     <div className="flex flex-col gap-4 mt-2 mb-2 text-center">
-                        <div className="text-gray-500 prose-sm leading-5" dangerouslySetInnerHTML={{ __html: data.bio ?? '' }}></div>
+                        <div className="text-gray-500 prose-sm leading-5 text-sm" dangerouslySetInnerHTML={{ __html: data.bio ?? '' }}></div>
                     </div>
                 </section>
             )

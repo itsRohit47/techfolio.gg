@@ -8,8 +8,8 @@ import NextTopLoader from 'nextjs-toploader';
 import { Metadata } from 'next';
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Home',
-    description: 'Home page',
+    title: 'Tech Portfolio',
+    description: 'Build your tech portfolio',
   };
 }
 
