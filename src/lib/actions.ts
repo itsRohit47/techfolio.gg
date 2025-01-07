@@ -1,5 +1,5 @@
 "use client";
-import { api } from "@/trpc/react";
+import { api } from "../trpc/react";
 
 // get user basic info
 export default function getUserBasicInfo({ username }: { username: string }) {
