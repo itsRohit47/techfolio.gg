@@ -99,7 +99,7 @@ function ProjectCard({ username }: { username: string }) {
                 <div className="flex flex-col gap-3">
                     {projects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((project) => (
                         <Drawer key={project.id}>
-                            <DrawerTrigger className="border cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-500">
+                            <DrawerTrigger className="border cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
                                 <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-md border p-px border-gray-200 bg-gray-100" />
                                 <div className="flex flex-col gap-1 text-start">
                                     <div className="font-semibold text-sm flex items-center gap-1">

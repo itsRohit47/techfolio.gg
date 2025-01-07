@@ -10,7 +10,7 @@ export default function TemplatesSection() {
         { username: session.data?.user?.username }
     );
     const ctx = api.useUtils();
-    const [newTemplate, setNewTemplate] = useState(data);
+    const [newTemplate, setNewTemplate] = useState(data ? data : 0);
     const { mutate: setUserTemplate, isPending } = api.user.setUserTemplate.useMutation(
         {
             onSettled: () => {
@@ -22,6 +22,7 @@ export default function TemplatesSection() {
     useEffect(() => {
         setNewTemplate(data);
     }, [data]);
+
     const templateList = [
         {
             name: "Minimal",
@@ -35,7 +36,7 @@ export default function TemplatesSection() {
         },
     ];
 
-    if (!data) {
+    if (!data ) {
         return (
             <div className="flex flex-col gap-4">
                 {/* Skeleton for radio buttons */}
