@@ -1,5 +1,4 @@
-'use client';
-import { useState } from "react";
+"use client";
 import { api } from "@/trpc/react";
 
 // get user basic info
@@ -13,8 +12,5 @@ export function getUserIdgivenUsername({ username }: { username: string }) {
 
 export function getUserProjects({ username }: { username: string }) {
   const uid = getUserIdgivenUsername({ username });
-  return api.user.getUserProjects.useQuery(
-    { uid: uid.data ?? '' },
-    { enabled: !!uid.data }
-  );
+  return api.user.getUserProjects.useQuery({ uid: uid.data ?? "" });
 }

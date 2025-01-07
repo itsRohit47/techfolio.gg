@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { api } from "@/trpc/react";
-import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { Loader2, PencilIcon } from "lucide-react";
 import { Badge } from "../ui/badge";

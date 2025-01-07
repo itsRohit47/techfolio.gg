@@ -143,3 +143,96 @@ textarea::placeholder {
 ::-webkit-scrollbar {
   display: none;
 }
+
+.tiptap {
+  :first-child {
+    margin-top: 0;
+  }
+
+  p {
+    @apply mb-5;
+  }
+
+  /* Heading styles */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+    margin-top: 2.5rem;
+    text-wrap: pretty;
+    ;
+  }
+
+  h1,
+  h2 {
+    margin-top: 3.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 1rem;
+  }
+
+  a {
+    color: blue;
+    cursor: pointer;
+
+    &:hover {
+      color: blue;
+    }
+  }
+
+  img {
+    @apply h-60 w-full rounded-lg border object-cover;
+  }
+
+  pre {
+    @apply rounded-lg bg-gray-100 p-2 dark:bg-gray-800;
+
+    code {
+      @apply rounded-lg bg-gray-100 text-xs dark:bg-gray-800;
+    }
+  }
+
+  div[data-youtube-video] {
+    cursor: move;
+
+    iframe {
+      @apply h-60 w-full rounded-lg border;
+    }
+
+    &.ProseMirror-selectednode iframe {
+      outline: 3px solid var(--purple);
+      transition: outline 0.15s;
+    }
+  }
+
+  blockquote {
+    @apply mb-5 border-l-4 pl-5 dark:border-white/10;
+  }
+
+  ul {
+    @apply list-disc pl-5;
+  }
+
+  ol {
+    @apply list-decimal pl-5;
+  }
+}

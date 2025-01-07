@@ -20,7 +20,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`font-row antialiased`}>
-      <body className=" w-full  flex-col flex min-h-screen bg-zinc-100 text-xs md:text-sm">
+      <body className=" w-full  flex-col flex min-h-screen bg-zinc-100 text-sm">
         <SessionProviderClientComponent>
           <TRPCReactProvider>
             <AppContextProvider>

@@ -113,6 +113,8 @@ model Projects {
     icon        String?
     body        String?
     links       String?
+    github      String?
+    order       Int?
     userId      String
     skills      SkillsOnProjects[]
     user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)

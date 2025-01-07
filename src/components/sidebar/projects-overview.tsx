@@ -4,7 +4,7 @@ import { api } from "@/trpc/react"
 import { useSession } from "next-auth/react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
 import EditProjectDialog from "../dialogs/edit-project-dialog";
-import { Loader2 } from "lucide-react";
+import { Loader2, GripVertical } from "lucide-react";
 import { useState } from "react";
 export default function ProjectsOverview() {
     const session = useSession();
@@ -16,6 +16,11 @@ export default function ProjectsOverview() {
         projectId: ""
     });
     const ctx = api.useUtils();
+    const { mutate: updateOrder } = api.user.updateProjectOrder.useMutation({
+        onMutate: async (updateData) => {
+            void ctx.user.getUserProjects.invalidate();
+        }
+    });
     const { mutate: deleteProject } = api.user.deleteUserProject.useMutation(
         {
             onMutate: async (deleteData) => {
@@ -51,7 +56,7 @@ export default function ProjectsOverview() {
         <>
             {projs?.length ? (
                 <div className="flex flex-col gap-2 w-full">
-                    {projs.map((proj, index) => (
+                    {projs.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((proj, index) => (
                         <div key={index} className={`flex items-center gap-2 group  w-full pb-2 ${index === projs.length - 1 ? '' : 'border-b border-gray-200'}`}>
                             <div className="flex items-center gap-2 w-full">
                                 {proj.icon ? <img src={proj.icon} alt="project" className="w-6 h-6 border rounded-full object-cover" /> : <div className="w-6 h-6 rounded-full bg-gray-200"></div>}
@@ -64,6 +69,7 @@ export default function ProjectsOverview() {
                                         <span className="text-xs bg-gray-100 text-nowrap border text-gray-600 px-1 rounded-md">...</span>
                                     )}
                                 </div>
+
                             </div>
                             <Dialog onOpenChange={setProjectDialogOpen} open={isProjectDialogOpen}>
                                 <DialogTrigger>
@@ -81,6 +87,8 @@ export default function ProjectsOverview() {
                             <div className="hover:bg-red-100 flex gap-1 items-center p-1 rounded-md cursor-pointer border border-red-200 bg-red-50 text-xs text-red-600" onClick={() => deleteProject({ projectId: proj.id })}>
                                 {isDeleting.status && isDeleting.projectId === proj.id ? <Loader2 className="h-3 w-3 animate-spin" /> : ''} Delete
                             </div>
+                            <GripVertical className="cursor-grab" size={20} />
+
                         </div>
                     ))}
                 </div>

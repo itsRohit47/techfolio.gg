@@ -462,6 +462,24 @@ export const userRouter = createTRPCRouter({
       });
     }),
 
+  updateProjectOrder: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+        order: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.projects.update({
+        where: {
+          id: input.projectId,
+        },
+        data: {
+          order: input.order,
+        },
+      });
+    }),
+
   getProjectById: publicProcedure
     .input(
       z.object({
@@ -811,5 +829,4 @@ export const userRouter = createTRPCRouter({
         },
       });
     }),
-  
 });

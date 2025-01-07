@@ -2,14 +2,26 @@
 'use client'
 import getUserBasicInfo from "@/lib/actions";
 import { getUserProjects } from "@/lib/actions";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import Image from "next/image";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
+import { Skeleton } from "@/components/ui/skeleton";
 export default function ClassicPortfolio({ username }: { username: string }) {
-    const { data: projects } = getUserProjects({ username });
     return (
-        <section className="max-w-xl mx-auto flex justify-center items-center p-10 w-full flex-col gap-4 h-full">
+        <section className="max-w-xl mx-auto flex justify-center items-center p-10 w-full flex-col gap-4 h-full min-h-screen">
             <BasicCard username={username} />
+            {/* <Tabs defaultValue="projects" className="w-full">
+                <TabsList className="transition-all ease-in-out duration-300 flex gap-2">
+                    <TabsTrigger value="projects" defaultChecked>Projects</TabsTrigger>
+                    <TabsTrigger value="education">Education</TabsTrigger>
+                    <TabsTrigger value="experience">Experience</TabsTrigger>
+                </TabsList>
+                <TabsContent value="projects" className="p-2"></TabsContent>
+                <TabsContent value="education" className="p-2">Change your password here.</TabsContent>
+            </Tabs> */}
             <ProjectCard username={username} />
+            <button className="mt-2 bg-black text-white px-3 py-2 text-xs rounded-full hover:bg-black/80">
+                Build your own portfolio
+            </button>
         </section>
     );
 }
@@ -18,18 +30,31 @@ function BasicCard({ username }: { username: string }) {
     const { data, isLoading, error } = getUserBasicInfo({ username });
     return (
         <div className="w-full px-2">
-            {isLoading && <p>Loading...</p>}
+            {isLoading &&
+                <section className="w-full">
+                    <div className="flex gap-4 items-center flex-col text-center">
+                        <Skeleton className="w-16 h-16 rounded-full bg-gray-100" />
+                        <div className="space-y-2">
+                            <Skeleton className="h-8 w-48" />
+                            <Skeleton className="h-4 w-full" />
+                        </div>
+                    </div>
+                    <div className="flex flex-col gap-4 mt-2 mb-2 text-center">
+                        <div className="space-y-2">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-5/6 mx-auto" />
+                            <Skeleton className="h-4 w-4/6 mx-auto" />
+                        </div>
+                    </div>
+                </section>}
             {error && <p>Error: {error.message}</p>}
             {data && (
                 <section className="w-full">
                     <div className="flex gap-4 items-center flex-col text-center">
                         <div className="bg-gray-100 rounded-full flex items-center justify-center">
-                            <Image
+                            <img
                                 src={`${data.image}`}
-                                width={100}
-                                height={100}
                                 alt="avatar"
-                                priority
                                 className="rounded-full w-16 h-16 object-cover border border-gray-400 p-px"
                             />
                         </div>
@@ -50,16 +75,31 @@ function BasicCard({ username }: { username: string }) {
 }
 
 function ProjectCard({ username }: { username: string }) {
-    const { data: projects, isLoading, error } = getUserProjects({ username });
+    const { data: projects, isLoading: projectsLoading, error } = getUserProjects({ username });
     return (
-        <div className="w-full">
-            {isLoading && <p>Loading...</p>}
+        <div className="w-full flex-grow h-full">
+            {projectsLoading &&
+                <div className="flex flex-col gap-3">
+                    {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="border cursor-pointer border-gray-200 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md">
+                            <Skeleton className="w-12 h-12 rounded-md" />
+                            <div className="flex flex-col gap-1 text-start flex-grow">
+                                <div className="font-semibold text-sm flex items-center gap-1">
+                                    <Skeleton className="h-4 w-24" />
+                                    <Skeleton className="h-4 w-12" />
+                                    <Skeleton className="h-4 w-12" />
+                                </div>
+                                <Skeleton className="h-4 w-full" />
+                            </div>
+                        </div>
+                    ))}
+                </div>}
             {error && <p>Error: {error.message}</p>}
             {projects && (
                 <div className="flex flex-col gap-3">
-                    {projects.map((project) => (
-                        <Dialog key={project.id}>
-                            <DialogTrigger className="border cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/50 backdrop-blur-md hover:border-violet-300">
+                    {projects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((project) => (
+                        <Drawer key={project.id}>
+                            <DrawerTrigger className="border cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-500">
                                 <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-md border p-px border-gray-200 bg-gray-100" />
                                 <div className="flex flex-col gap-1 text-start">
                                     <div className="font-semibold text-sm flex items-center gap-1">
@@ -67,34 +107,48 @@ function ProjectCard({ username }: { username: string }) {
                                         {project.skills.slice(0, 2).map((skill) => (
                                             <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-thin text-gray-700 px-1 ml-1 py-[1px] rounded-md">{skill.name}</span>
                                         ))}
-                                        {project.skills.length > 2 && <span className="text-xs bg-gray-100 text-nowrap border font-thin text-gray-700 ml-1 px-2 py-[1px] rounded-md">...</span>}
+                                        {project.skills.length > 2 && <span className="text-xs bg-gray-100 text-nowrap border font-thin text-gray-700 ml-1 px-2 py-[1px] rounded-sm">...</span>}
                                     </div>
                                     <p className="text-gray-500 line-clamp-1 text-sm">{project.description}</p>
                                 </div>
-                            </DialogTrigger>
-                            <DialogContent className="p-4">
-                                <DialogHeader>
-                                    <DialogTitle className="flex gap-4 flex-col">
-                                        <img src={`${project.icon}`} alt={project.title} className="w-full h-32 object-cover rounded-md border" />
-                                        <div className="flex flex-col gap-2 ">
+                            </DrawerTrigger>
+                            <DrawerContent className="max-w-xl mx-auto max-h-[90vh] ">
+                                <DrawerHeader className="px-4 py-4">
+                                    <DrawerTitle className="flex gap-4 items-center">
+                                        <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-md border p-px border-gray-200 bg-gray-100" />
+                                        <div className="flex flex-col gap-1 text-left">
                                             {project.title}
                                             <span className="text-gray-500 font-thin text-sm ">{project.description}</span>
                                         </div>
-                                    </DialogTitle>
-                                </DialogHeader>
-                                    <div className="flex flex-col gap-4 ">
-                                        <div className="flex gap-2">
-                                            {project.skills.map((skill) => (
-                                                <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-thin text-gray-700 px-2 py-[1px] rounded-md">{skill.name}</span>
-                                            ))}
-                                        </div>
-                                        <p className="text-gray-500" dangerouslySetInnerHTML={{ __html: project.body ?? '' }}></p>
+                                    </DrawerTitle>
+                                </DrawerHeader>
+                                <div className="flex gap-2 px-4 py-2">
+                                    {project.skills.map((skill) => (
+                                        <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-thin text-gray-700 px-2 py-[1px] rounded-md">{skill.name}</span>
+                                    ))}
+                                </div>
+                                <div className="text-gray-500 h-full p-4 overflow-y-auto tiptap relative">
+                                    <div dangerouslySetInnerHTML={{ __html: project.body ?? '' }}>
                                     </div>
-                            </DialogContent>
-                        </Dialog>
+                                </div>
+                                <div className="absolute bottom-12 h-10 w-full bg-gradient-to-t from-white to-transparent" />
+                                <DrawerFooter className="px-4 py-2">
+                                    <div className="flex gap-2">
+                                        <a className="bg-black text-white hover:text-white p-2 rounded-md text-sm text-center w-full hover:bg-black/80" href={`${project.github}`} target="_blank" rel="noreferrer">
+                                            Source code
+                                        </a>
+                                        <a className="bg-blue-600 text-white hover:text-white p-2 rounded-md text-sm text-center w-full hover:bg-blue-00" href={`${project.links}`} target="_blank" rel="noreferrer">
+                                            Demo
+                                        </a>
+                                    </div>
+                                </DrawerFooter>
+                            </DrawerContent>
+
+                        </Drawer>
                     ))}
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }

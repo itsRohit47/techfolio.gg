@@ -30,7 +30,7 @@ export default function AdminPage() {
                         if (!sidebarOpen) setDesignMode(false);
                     }}
                 >
-                    <Edit2Icon size={16} />  {sidebarOpen ? "Preview" : "Edit"}
+                    {sidebarOpen ? "Preview" : <Edit2Icon size={14} />} {sidebarOpen ? null : "Edit"}
                 </button>
                 <button className="flex items-center gap-2 border-gray-200 px-4 py-2 rounded-md bg-white text-gray-800 shadow-sm border hover:bg-gray-50 active:scale-95"
                     onClick={() => {
@@ -38,7 +38,7 @@ export default function AdminPage() {
                         if (!designMode) setSidebarOpen(false);
                     }}
                 >
-                    <PaletteIcon size={16} /> {designMode ? "Preview" : "Design"}
+                    {designMode ? "Preview" : <PaletteIcon size={14}/>} {designMode ? null : "Design"}
                 </button>
 
                 <button className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-500 text-white shadow-sm border border-blue-600 hover:bg-blue-600 active:scale-95">
