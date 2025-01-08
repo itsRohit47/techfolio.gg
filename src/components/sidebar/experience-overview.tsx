@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "../ui/dialog";
 import EditProjectDialog from "../dialogs/edit-project-dialog";
+import EditExperienceDialog from "../dialogs/edit-experience-dialog";
 
 interface Experience {
     id: string;
@@ -55,7 +56,7 @@ function ExperienceItem({ exp, isLast }: { exp: Experience, isLast: boolean }) {
                 </DialogTrigger>
                 <DialogContent className="p-4">
                     <DialogTitle className="hidden">Edit Project</DialogTitle>
-                    <EditProjectDialog exp_id={selectedExperience ?? ""} onClose={
+                    <EditExperienceDialog exp_id={selectedExperience ?? ''} onClose={
                         () => setExperienceDialogOpen(false)
                     } />
                 </DialogContent>

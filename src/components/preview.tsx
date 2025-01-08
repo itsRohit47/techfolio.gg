@@ -1,30 +1,20 @@
 'use client';
-import INeedThis from "@/templates/Classic/ClassicDark";
 import ClassicPortfolio from "@/templates/Classic/ClassicPortfolio";
-import ModernPortfolio from "@/templates/Modern/ModernPortfolio";
 import { api } from "@/trpc/react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import PreviewSkeleton from "./skeletons/preview";
 
 
 function GetTemplate(template: any, username: string) {
     switch (template) {
         case 1:
             return <ClassicPortfolio username={username} />;
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-        case 6:
-        case 7:
-        case 8:
-        case 9:
-        case 10:
-            return <INeedThis caseNum={
-                template
-            } />;
         case -1:
-            return <ModernPortfolio />;
+            return (
+                <div className="flex justify-center items-center h-screen">
+                    <h1>More templates, including, generate with AI, coming soon</h1>
+                </div>);
         default:
             return (
                 <div className="flex justify-center items-center h-screen">
@@ -44,7 +34,7 @@ export default function Preview({ username }: { username: string }) {
     }, [data]);
 
     if (!data) {
-        return <div>Loading...</div>;
+        return <PreviewSkeleton />;
     }
     return (
         <div className=" min-h-screen">

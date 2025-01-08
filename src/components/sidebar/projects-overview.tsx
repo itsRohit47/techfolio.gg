@@ -8,7 +8,9 @@ import { Loader2, GripVertical } from "lucide-react";
 import { useState } from "react";
 export default function ProjectsOverview() {
     const session = useSession();
-    const { data: projs, isLoading } = api.user.getUserProjects.useQuery({ uid: session.data?.user?.id ?? "" });
+    const { data: projs, isLoading } = api.user.getUserProjects.useQuery({ username: session.data?.user?.username ?? "" }, {
+        enabled: !!session.data?.user?.username
+    });
     const [isProjectDialogOpen, setProjectDialogOpen] = useState(false);
     const [selectedProject, setSelectedProject] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState({
@@ -16,11 +18,6 @@ export default function ProjectsOverview() {
         projectId: ""
     });
     const ctx = api.useUtils();
-    const { mutate: updateOrder } = api.user.updateProjectOrder.useMutation({
-        onMutate: async (updateData) => {
-            void ctx.user.getUserProjects.invalidate();
-        }
-    });
     const { mutate: deleteProject } = api.user.deleteUserProject.useMutation(
         {
             onMutate: async (deleteData) => {
@@ -30,6 +27,7 @@ export default function ProjectsOverview() {
             onSettled: () => {
                 setIsDeleting({ status: false, projectId: "" });
                 void ctx.user.getUserProjects.invalidate();
+                void ctx.user.getUserPortfolio.invalidate();
             }
         }
     );

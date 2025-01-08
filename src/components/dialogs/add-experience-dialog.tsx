@@ -37,7 +37,7 @@ export default function AddExperienceDialog({ onClose }: { onClose: () => void }
                     const reader = new FileReader();
                     const input = document.createElement('input');
                     input.type = 'file';
-                    input.accept = 'image/jpeg, image/png, image/jpg, image/gif';
+                    input.accept = 'image/jpeg, image/png, image/jpg, image/gif, image/svg+xml';
                     input.onchange = () => {
                         const file = input.files?.[0];
                         if (file) {

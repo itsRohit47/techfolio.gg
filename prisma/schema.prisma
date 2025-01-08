@@ -75,6 +75,7 @@ model Experience {
     company     String
     companyLogo String?
     companyUrl  String?
+    order       Int?
     location    String
     startYear   Int
     endYear     Int?
@@ -85,17 +86,20 @@ model Experience {
 }
 
 model Education {
-    id             String   @id @default(cuid())
-    userId         String
-    courseName     String?
-    fieldOfStudy   String?
-    startYear      Int?
-    endYear        Int?
-    createdAt      DateTime @default(now())
-    updatedAt      DateTime @updatedAt
-    universityName String?
-    uniLogo        String?
-    user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id                 String   @id @default(cuid())
+    userId             String
+    courseName         String?
+    fieldOfStudy       String?
+    startYear          Int?
+    academicTranscript String?
+    description        String?
+    endYear            Int?
+    order              Int?
+    createdAt          DateTime @default(now())
+    updatedAt          DateTime @updatedAt
+    universityName     String?
+    uniLogo            String?
+    user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model schedulingLink {

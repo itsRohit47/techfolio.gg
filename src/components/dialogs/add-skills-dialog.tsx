@@ -27,6 +27,7 @@ export default function AddSkilllsDialog({ onClose }: { onClose: () => void }) {
         {
             onSettled: () => {
                 void ctx.user.getUserSkills.invalidate();
+                void ctx.user.getUserPortfolio.invalidate();
                 setSelectedSkills([]);
                 onClose();
             },
@@ -99,7 +100,7 @@ export default function AddSkilllsDialog({ onClose }: { onClose: () => void }) {
                                 </div>
                             )
                         }
-                        
+
                     </div>
                 )}
                 <div className="flex gap-2 flex-wrap">

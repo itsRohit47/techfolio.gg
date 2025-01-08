@@ -32,14 +32,14 @@ export default function AdminPage() {
                 >
                     {sidebarOpen ? "Preview" : <Edit2Icon size={14} />} {sidebarOpen ? null : "Edit"}
                 </button>
-                <button className="flex items-center gap-2 border-gray-200 px-4 py-2 rounded-md bg-white text-gray-800 shadow-sm border hover:bg-gray-50 active:scale-95"
+                {/* <button className="flex items-center gap-2 border-gray-200 px-4 py-2 rounded-md bg-white text-gray-800 shadow-sm border hover:bg-gray-50 active:scale-95"
                     onClick={() => {
                         setDesignMode(!designMode);
                         if (!designMode) setSidebarOpen(false);
                     }}
                 >
                     {designMode ? "Preview" : <PaletteIcon size={14}/>} {designMode ? null : "Design"}
-                </button>
+                </button> */}
 
                 <button className="flex items-center gap-2 px-4 py-2 rounded-md bg-blue-500 text-white shadow-sm border border-blue-600 hover:bg-blue-600 active:scale-95">
                     <RocketIcon size={16} />  Deploy

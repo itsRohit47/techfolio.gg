@@ -1,7 +1,6 @@
 'use client';
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
-import { X, WrenchIcon, CodeIcon } from "lucide-react";
 import { api } from "@/trpc/react";
 import { useSession } from "next-auth/react";
 

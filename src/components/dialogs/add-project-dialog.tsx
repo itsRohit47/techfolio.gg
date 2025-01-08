@@ -147,6 +147,7 @@ export default function AddProjectDialog({ onClose }: { onClose: () => void }) {
                             onSuccess: () => {
                                 setIsLoading(false);
                                 void ctx.user.getUserProjects.invalidate();
+                                void ctx.user.getUserPortfolio.invalidate();
                                 void ctx.user.getUserSkills.invalidate();
                                 onClose();
                             },

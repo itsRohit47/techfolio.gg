@@ -320,14 +320,27 @@ export const userRouter = createTRPCRouter({
   getUserProjects: publicProcedure
     .input(
       z.object({
-        uid: z.string(),
+        username: z.string(),
       }),
     )
     .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findFirst({
+        where: {
+          username: {
+            equals: input.username,
+            mode: "insensitive",
+          },
+        },
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
       const projects = await ctx.db.projects.findMany({
         where: {
           userId: {
-            equals: input.uid,
+            equals: user.id,
           },
         },
         include: {
@@ -828,5 +841,88 @@ export const userRouter = createTRPCRouter({
           iNeedThis: input.caseNum,
         },
       });
+    }),
+
+  getUserPortfolio: publicProcedure
+    .input(
+      z.object({
+        username: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findFirst({
+        where: {
+          username: {
+            equals: input.username,
+            mode: "insensitive",
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          headline: true,
+          github: true,
+          linkedin: true,
+          location: true,
+          bio: true,
+          template: true,
+          skills: {
+            select: {
+              skill: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+          Projects: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              body: true,
+              icon: true,
+              links: true,
+              github: true,
+              order: true,
+              skills: {
+                select: {
+                  skill: true,
+                },
+              },
+            },
+          },
+          education: {
+            select: {
+              id: true,
+              universityName: true,
+              courseName: true,
+              fieldOfStudy: true,
+              startYear: true,
+              endYear: true,
+              uniLogo: true,
+              academicTranscript: true,
+              description: true,
+              order: true,
+            },
+          },
+          Experience: {
+            select: {
+              id: true,
+              companyLogo: true,
+              title: true,
+              company: true,
+              companyUrl: true,
+              location: true,
+              startYear: true,
+              endYear: true,
+              description: true,
+              order: true,
+            },
+          },
+        },
+      });
+      return user;
     }),
 });

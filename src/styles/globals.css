@@ -149,9 +149,7 @@ textarea::placeholder {
     margin-top: 0;
   }
 
-  p {
-    @apply mb-5;
-  }
+  @apply mt-3 mb-6 flex flex-col gap-1;
 
   /* Heading styles */
   h1,
@@ -163,7 +161,6 @@ textarea::placeholder {
     line-height: 1.1;
     margin-top: 2.5rem;
     text-wrap: pretty;
-    ;
   }
 
   h1,
