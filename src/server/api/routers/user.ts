@@ -925,4 +925,30 @@ export const userRouter = createTRPCRouter({
       });
       return user;
     }),
+  
+  
+  getUserMetadata: publicProcedure
+    .input(
+      z.object({
+        username: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findFirst({
+        where: {
+          username: {
+            equals: input.username,
+            mode: "insensitive",
+          },
+        },
+        select: {
+          name: true,
+          image: true,
+          headline: true,
+          location: true,
+          bio: true,
+        },
+      });
+      return user;
+    }),
 });

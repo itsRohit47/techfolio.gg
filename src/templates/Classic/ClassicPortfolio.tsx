@@ -8,6 +8,7 @@ import BlurFade from "@/components/ui/blur-fade";
 import PreviewSkeleton from "@/components/skeletons/preview";
 import Link from "next/link";
 
+
 interface BasicCardProps {
     username: string;
     image: string;
@@ -65,7 +66,7 @@ export default function ClassicPortfolio({ username }: { username: string }) {
         );
     }
     return (
-        <section className="max-w-lg mx-auto flex justify-center items-center p-4 pt-20 w-full flex-col gap-3 h-full min-h-screen">
+        <section className="max-w-lg mx-auto flex justify-center items-center p-4 pt-20 w-full flex-col gap-5 h-full min-h-screen">
             <BasicCard data={{
                 username,
                 image: data?.image ?? '',
@@ -75,7 +76,7 @@ export default function ClassicPortfolio({ username }: { username: string }) {
                 linkedin: data?.linkedin ?? '',
                 github: data?.github ?? '',
             }} />
-            <Tabs defaultValue="projects" className="w-full flex-grow flex flex-col gap-2">
+            {/* <Tabs defaultValue="projects" className="w-full flex-grow flex flex-col gap-2">
                 <TabsList className="transition-all ease-in-out duration-300 flex gap-2">
                     <TabsTrigger value="projects" defaultChecked>Projects</TabsTrigger>
                     <TabsTrigger value="experience">Experience</TabsTrigger>
@@ -100,36 +101,40 @@ export default function ClassicPortfolio({ username }: { username: string }) {
                         ...education,
                     })) ?? []} />
                 </TabsContent>
-            </Tabs>
+            </Tabs> */}
             {/* <div className="flex gap-2 mb-4 flex-wrap items-center justify-center">
                 {skills?.map((skill) => (
                     <span key={skill.skill.name} className="text-xs bg-gray-100 text-nowrap border text-gray-600 px-1 rounded-md">{skill.skill.name}</span>
                 ))}
             </div> */}
-            <button className="  bg-black/80 fixed h-max top-4 md:hidden right-4  flex items-center text-white gap-2 px-3 py-2 text-xs rounded-full hover:bg-black/80" onClick={() => window.location.href = 'https://mytechportfolio.vercel.app/'}>
+            <ProjectCard projects={data?.Projects.map(project => ({
+                ...project,
+                skills: project.skills.map(skill => ({
+                    id: skill.skill.id,
+                    name: skill.skill.name
+                }))
+            })) ?? []} />
+            <button className=" bg-gray-950 fixed h-max bottom-4 right-4 z-20 flex items-center text-white gap-2 px-3 py-2 text-xs rounded-full hover:bg-gray-900" onClick={() => window.location.href = 'https://mytechportfolio.vercel.app/'}>
                 <span className="w-4 h-4 bg-gradient-to-br from-red-500 to-green-500 rounded-md inline-block"></span>
                 Build your tech portfolio
             </button>
-            <button className="  bg-black/80 fixed h-max bottom-4 hidden right-4  md:flex items-center text-white gap-2 px-3 py-2 text-xs rounded-full hover:bg-black/80" onClick={() => window.location.href = 'https://mytechportfolio.vercel.app/'}>
-                <span className="w-4 h-4 bg-gradient-to-br from-red-500 to-green-500 rounded-md inline-block"></span>
-                Build your tech portfolio
-            </button>
-            <div className="flex gap-2 text-center text-xs text-gray-500 md:items-center justify-center">
-                <Link href={''}>
-                    Privacy Policy
-                </Link>
-                <div className="text-gray-500">•</div>
-                <Link href={''}>
-                    Terms of Service
-                </Link>
-            </div>
-            <div className="flex gap-1 text-center text-xs text-gray-500 items-center justify-center">
-                A product by <a href="https://www.linkedin.com/in/itsrohitbajaj/" target="_blank">Rohit Bajaj</a>
+            <div className="flex flex-col gap-2 text-center text-xs text-gray-500 md:items-center justify-center">
+                <div className="flex gap-2 text-center text-xs text-gray-500 md:items-center justify-center">
+                    <Link href={'/pp'}>
+                        Privacy Policy
+                    </Link>
+                    <div className="text-gray-500">•</div>
+                    <Link href={''}>
+                        Terms of Service
+                    </Link>
+                </div>
+                <div className="flex gap-1 -translate-y-1 text-center text-xs text-gray-500 items-center justify-center">
+                    A product by <a href="https://www.linkedin.com/in/itsrohitbajaj/" target="_blank">Rohit Bajaj</a>
+                </div>
             </div>
         </section>
     );
 }
-
 
 function BasicCard({ data }: { data: BasicCardProps }) {
     return (
@@ -143,7 +148,7 @@ function BasicCard({ data }: { data: BasicCardProps }) {
                     />
                 </div>
                 <div className="">
-                    <h1 className="text-3xl font-bold">{data.name}</h1>
+                    <h1 className="text-3xl font-semibold">{data.name}</h1>
                     <p className="text-gray-500 text-sm">{data.headline}</p>
                 </div>
             </div>
@@ -157,7 +162,7 @@ function BasicCard({ data }: { data: BasicCardProps }) {
 function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
     console.log(projects);
     return (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full flex-grow">
             {projects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((project) => (
                 <BlurFade key={project.id} className="w-full" delay={0.1 * (project.order ?? 0)}>
                     <Drawer key={project.id}>
@@ -178,7 +183,7 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
                             <DrawerHeader className="">
                                 <DrawerTitle className="flex gap-4 items-center px-4 py-2">
                                     <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
-                                    <div className="flex flex-col gap-1 text-left items-start">
+                                    <div className="flex flex-col gap-1 text-left items-start ">
                                         {project.title}
                                         <span className="text-gray-500 font-normal text-sm ">{project.description}</span>
                                         <div className="flex gap-2">
