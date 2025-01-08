@@ -114,7 +114,7 @@ export default function ClassicPortfolio({ username }: { username: string }) {
                     name: skill.skill.name
                 }))
             })) ?? []} />
-            <button className=" bg-gray-950 fixed h-max bottom-4 right-4 z-20 flex items-center text-white gap-2 px-3 py-2 text-xs rounded-full hover:bg-gray-900" onClick={() => window.location.href = 'https://mytechportfolio.vercel.app/'}>
+            <button className=" bg-gray-950 fixed h-max bottom-4 right-4 z-20 flex items-center text-white gap-2 px-3 py-2 text-xs rounded-full hover:bg-gray-900" onClick={() => window.location.href = 'https://techfolio.gg/'}>
                 <span className="w-4 h-4 bg-gradient-to-br from-red-500 to-green-500 rounded-md inline-block"></span>
                 Build your tech portfolio
             </button>

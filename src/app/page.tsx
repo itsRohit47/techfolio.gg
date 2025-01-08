@@ -17,16 +17,13 @@ export default function Home() {
   if (!data) {
     return (
       <main className="p-4 flex flex-col items-center justify-center h-screen max-w-xl mx-auto text-center">
-        <h1 className="text-2xl">Welcome to My Tech Portfolio</h1>
-        <p className="text-gray-700">This project is a work in progress, the goal is to help you build your tech portfolio, it offers a dynamic way to showcase your projects and skills.</p>
-        {/* <button onClick={() => signIn()} className="bg-black mt-4 px-3 py-1 rounded-full text-white disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-          Get Started
-        </button> */}
+        <h1 className="text-2xl">Welcome to techfolio.gg</h1>
+        <p className="text-gray-600">Techfolio.gg is a platform for tech professionals to showcase their projects, skills, and experiences.</p>
         <div className="flex gap-2 items-center text-center">
-          <Link href="https://www.linkedin.com/in/itsrohitbajaj/" target='_blank' rel='noopener noreferrer' className=" mt-4 text-xs bg-gradient-to-r w-max bg-blue-500 hover:bg-blue-600  text-white font-bold py-2 mx-auto px-4 rounded-full shadow-lg transform transition-all duration-300  flex items-center gap-2 hover:text-white">
-            Connect with me
+          <Link href="https://www.linkedin.com/in/itsrohitbajaj/" target='_blank' rel='noopener noreferrer' className=" mt-4 text-xs bg-gradient-to-r w-max bg-blue-500 hover:bg-blue-600  text-white font-semibold py-2 mx-auto px-4 rounded-full shadow-lg transform transition-all duration-300  flex items-center gap-2 hover:text-white">
+            Thoughts?
           </Link>
-          <Link href="https://mytechportfolio.vercel.app/rohit" target='_blank' rel='noopener noreferrer' className=" mt-4 text-xs bg-gradient-to-r w-max bg-gray-900 hover:bg-gray-800  text-white font-bold py-2 mx-auto px-4 rounded-full shadow-lg transform transition-all duration-300  flex items-center gap-2 hover:text-white">
+          <Link href="https://techfolio.gg/rohit" target='_blank' rel='noopener noreferrer' className=" mt-4 text-xs bg-gradient-to-r w-max bg-gray-900 hover:bg-gray-800  text-white font-semibold py-2 mx-auto px-4 rounded-full shadow-lg transform transition-all duration-300  flex items-center gap-2 hover:text-white">
             View example
           </Link>
         </div>

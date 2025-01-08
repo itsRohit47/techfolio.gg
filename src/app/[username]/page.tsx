@@ -24,7 +24,7 @@ export async function generateMetadata(
             images: m ? [m.image].filter((image): image is string => image !== null) : [],
         },
         icons: m ? [m.image].filter((image): image is string => image !== null) : [],
-        description: m?.bio,
+        description: m?.bio?.replace(/<\/?[^>]+(>|$)/g, ""), // Remove HTML tags from bio
     }
 }
 

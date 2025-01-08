@@ -10,12 +10,11 @@ import { GeistSans } from "geist/font/sans";
 import { Metadata } from 'next';
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: 'Tech Portfolio',
-    description: 'Build your tech portfolio',
+    title: 'TechFolio.gg - Build your tech portfolio',
+    description: 'TechFolio.gg is a platform for tech professionals to showcase their projects, skills, and experiences.',
     icons: [{ rel: "icon", url: "/favicon.ico" }],
   };
 }
-
 
 
 export default function RootLayout({
