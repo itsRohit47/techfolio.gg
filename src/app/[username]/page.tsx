@@ -3,30 +3,33 @@ import ClassicPortfolio from "@/templates/Classic/ClassicPortfolio";
 import { api } from '@/trpc/server';
 type Props = {
     params: Promise<{ username: string }>
+    searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
 export async function generateMetadata(
-    { params }: Props,
+    { params, searchParams }: Props,
     parent: ResolvingMetadata
 ): Promise<Metadata> {
     // read route params
-    const id = (await params).username
+    const uname = (await params).username
 
-    const p = await params;
-
-    const m = await api.user.getUserMetadata({ username: p.username });
+    // fetch data
+    const data = await api.user.getUserMetadata({ username: uname })
 
     // optionally access and extend (rather than replace) parent metadata
+    const previousImages = (await parent).openGraph?.images || []
 
     return {
-        title: m?.name,
-        description: m?.bio?.replace(/<\/?[^>]+(>|$)/g, ""), // Remove HTML tags from bio
+        title: `${data?.name}` || 'User Portfolio',
+        description: `${data?.bio}`,
+        openGraph: {
+            images: [`${data?.image}`, ...previousImages],
+        },
     }
 }
 
-export default async function UserPortfolio({ params }: { params: Promise<{ username: string }> }) {
-    const p = await params;
+export default async function UserPortfolio({ params, searchParams }: Props) {
     return (
-        <ClassicPortfolio username={p.username} />
+        <ClassicPortfolio username={(await params).username} />
     );
 }
