@@ -203,7 +203,7 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
                                     <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">{skill.name}</span>
                                 ))}
                             </div>
-                            <div className="h-full px-4 overflow-y-auto tiptap relative mt-2 w-full p-2 border-gray-200 rounded-md max-h-[70vh] sm:text-sm overflow-auto prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none">
+                            <div className="h-full px-4 overflow-y-auto tiptap relative mt-2 w-full p-2 border-gray-200 rounded-md max-h-[50vh] md:max-h-[70vh] sm:text-sm overflow-auto prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none">
                                 <div dangerouslySetInnerHTML={{ __html: project.body && project.body.trim() !== '<p></p>' ? project.body : 'Work in progress...' }}>
                                 </div>
                             </div>
