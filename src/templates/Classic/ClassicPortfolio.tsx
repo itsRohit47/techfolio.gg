@@ -116,7 +116,7 @@ export default function ClassicPortfolio({ username }: { username: string }) {
                     name: skill.skill.name
                 }))
             })) ?? []} />
-            <button className=" bg-gray-950 fixed h-max bottom-4 right-4 z-20 flex items-center text-white gap-2 px-3 py-2 text-xs rounded-full hover:bg-gray-900" onClick={() => window.location.href = 'https://techfolio.gg/'}>
+            <button className="bg-gray-950 fixed bottom-4 right-4 z-20 flex items-center text-white gap-2 px-3 py-2 text-xs rounded-full hover:bg-gray-900" onClick={() => window.location.href = 'https://techfolio.gg/'}>
                 <span className="w-4 h-4 bg-gradient-to-br from-red-500 to-green-500 rounded-md inline-block"></span>
                 Build your tech portfolio
             </button>
@@ -171,7 +171,7 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
                     <Drawer key={project.id}>
                         <DrawerTrigger className="border cursor-pointer border-gray-300 w-full rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
                             <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
-                            <div className="flex flex-col gap-1 text-start w-full" key={project.id}>
+                            <div className="flex flex-col gap-px md:gap-1 text-start w-full" key={project.id}>
                                 <div className="font-semibold text-sm flex items-center gap-1 w-full justify-between" key={project.id}>
                                     <span className="text-sm line-clamp-1 font-normal">{project.title}</span>
                                     <div className=" gap-1 hidden md:flex">
