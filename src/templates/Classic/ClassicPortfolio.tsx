@@ -59,7 +59,9 @@ interface EducationCardProps {
 }
 
 export default function ClassicPortfolio({ username }: { username: string }) {
-    const { data, isLoading } = api.user.getUserPortfolio.useQuery({ username });
+    const { data, isLoading } = api.user.getUserPortfolio.useQuery({ username }, {
+        enabled: !!username,
+    });
 
     if (isLoading) {
         return (

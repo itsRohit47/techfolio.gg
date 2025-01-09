@@ -9,7 +9,7 @@ import PreviewSkeleton from "./skeletons/preview";
 function GetTemplate(template: any, username: string) {
     switch (template) {
         case 1:
-            return <ClassicPortfolio username={username} />;
+            return <ClassicPortfolio username={username ?? 'rohit'} />;
         case -1:
             return (
                 <div className="flex justify-center items-center h-screen">

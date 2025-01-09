@@ -8,7 +8,7 @@ import { Loader2, GripVertical } from "lucide-react";
 import { useState } from "react";
 export default function ProjectsOverview() {
     const session = useSession();
-    const { data: projs, isLoading } = api.user.getUserProjects.useQuery({ username: session.data?.user?.username ?? "" }, {
+    const { data: projs, isLoading } = api.user.getUserProjects.useQuery({ username: session.data?.user?.username ?? "rohit" }, {
         enabled: !!session.data?.user?.username
     });
     const [isProjectDialogOpen, setProjectDialogOpen] = useState(false);

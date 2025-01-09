@@ -6,7 +6,9 @@ import Image from "next/image";
 export default function BasicInfo() {
     const session = useSession();
     const { data } = api.user.getUserBasicData.useQuery(
-        { username: session.data?.user?.username }
+        { username: session.data?.user?.username }, {
+        enabled: !!session.data?.user?.username
+    }
     );
 
     if (!data) {

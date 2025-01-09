@@ -70,7 +70,9 @@ function ExperienceItem({ exp, isLast }: { exp: Experience, isLast: boolean }) {
 
 const ExperienceOverview = () => {
     const session = useSession();
-    const { data: experiences, isLoading } = api.user.getUserExperiences.useQuery({ uid: session.data?.user?.id ?? "" });
+    const { data: experiences, isLoading } = api.user.getUserExperiences.useQuery({ uid: session.data?.user?.id ?? "" }, {
+        enabled: !!session.data?.user?.id
+    });
 
     const sortedExperiences = useMemo(() => {
         return experiences?.slice().sort((a, b) => {

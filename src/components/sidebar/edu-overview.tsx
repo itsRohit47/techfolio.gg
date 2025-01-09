@@ -71,7 +71,9 @@ function EducationItem({ edu, isLast }: { edu: Education, isLast: boolean }) {
 
 const EducationOverview = () => {
     const session = useSession();
-    const { data: edus, isLoading } = api.user.getUserEducations.useQuery({ uid: session.data?.user?.id ?? "" });
+    const { data: edus, isLoading } = api.user.getUserEducations.useQuery({ uid: session.data?.user?.id ?? "" }, {
+        enabled: !!session.data?.user?.id
+    });
 
     if (isLoading) {
         return (
