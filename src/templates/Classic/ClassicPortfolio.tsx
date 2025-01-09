@@ -172,16 +172,16 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
                         <DrawerTrigger className="border cursor-pointer border-gray-300 w-full rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
                             <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
                             <div className="flex flex-col gap-1 text-start w-full" key={project.id}>
-                                <div className="font-semibold text-sm flex items-center gap-1 w-full" key={project.id}>
-                                    <span className="text-sm line-clamp-1">{project.title}</span>
-                                    <div className="flex gap-1">
+                                <div className="font-semibold text-sm flex items-center gap-1 w-full justify-between" key={project.id}>
+                                    <span className="text-sm line-clamp-1 font-normal">{project.title}</span>
+                                    <div className=" gap-1 hidden md:flex">
                                         {project.skills.slice(0, 2).map((skill) => (
                                             <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-1 ml-1 py-[1px] rounded-md">{skill.name.slice(0, 12)}{skill.name.length > 12 && '...'}</span>
                                         ))}
                                         {project.skills.length > 2 && <span className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">...</span>}
                                     </div>
                                 </div>
-                                <p className="text-gray-500 line-clamp-2 text-sm">{project.description}</p>
+                                <p className="text-gray-600 line-clamp-1 text-xs font-extralight">{project.description}</p>
                             </div>
                         </DrawerTrigger>
                         <DrawerContent className="max-w-xl mx-auto max-h-[90vh]">
@@ -189,8 +189,8 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
                                 <DrawerTitle className="flex gap-4 items-center px-4 py-2">
                                     <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
                                     <div className="flex flex-col gap-1 text-left items-start ">
-                                        {project.title}
-                                        <span className="text-gray-500 font-normal text-sm ">{project.description}</span>
+                                        <span className="text-sm font-normal">{project.title}</span>
+                                        <p className="text-gray-500 text-xs font-light">{project.description}</p>
                                     </div>
                                 </DrawerTitle>
                             </DrawerHeader>
@@ -200,7 +200,7 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
                                 ))}
                             </div>
                             <div className="h-full px-4 overflow-y-auto tiptap relative">
-                                <div dangerouslySetInnerHTML={{ __html: project.body ?? '' }}>
+                                <div dangerouslySetInnerHTML={{ __html: project.body && project.body.trim() !== '<p></p>' ? project.body : 'Work in progress...' }}>
                                 </div>
                             </div>
                             <div className="absolute bottom-12 h-10 w-full bg-gradient-to-t from-white to-transparent" />
