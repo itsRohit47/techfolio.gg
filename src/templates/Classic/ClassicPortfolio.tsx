@@ -30,6 +30,8 @@ interface ProjectCardProps {
     skills: { id: string; name: string }[];
     order: number | null;
     id: string;
+    customButton: string | null;
+    customButtonLink: string | null;
 }
 
 interface ExperienceCardProps {
@@ -201,22 +203,15 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
                                     <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">{skill.name}</span>
                                 ))}
                             </div>
-                            <div className="h-full px-4 overflow-y-auto tiptap relative">
+                            <div className="h-full px-4 overflow-y-auto tiptap relative mt-2 w-full p-2 border-gray-200 rounded-md max-h-[70vh] sm:text-sm overflow-auto prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none">
                                 <div dangerouslySetInnerHTML={{ __html: project.body && project.body.trim() !== '<p></p>' ? project.body : 'Work in progress...' }}>
                                 </div>
                             </div>
                             <div className="absolute bottom-12 h-10 w-full bg-gradient-to-t from-white to-transparent" />
-                            <DrawerFooter className="px-4 py-2">
-                                <div className="flex gap-2">
-                                    <button disabled={
-                                        !project.github
-                                    } className="bg-black flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-black/80 disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => window.open(project.github ?? '#', '_blank')}>
-                                        <GithubIcon size={12} /> {project.github ? 'Source Code' : 'Work in Progress'}
-                                    </button>
-                                    <button disabled={!project.links} className="bg-blue-600 flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => window.open(project.links ?? '#', '_blank')}>
-                                        Live Demo <ArrowUpRightIcon size={12} />
-                                    </button>
-                                </div>
+                            <DrawerFooter className="px-4 ">
+                                <button className="bg-gray-900 flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => window.open(project.customButtonLink ?? '#', '_blank')}>
+                                    {project.customButton} <ArrowUpRightIcon size={12} />
+                                </button>
                             </DrawerFooter>
                         </DrawerContent>
                     </Drawer>
@@ -226,97 +221,97 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
     );
 }
 
-function ExperienceCard({ experiences }: { experiences: ExperienceCardProps[] }) {
-    return (
-        <div className="flex flex-col gap-3 ">
-            {experiences.map((experience) => (
-                <BlurFade key={experience.id} className="w-full" delay={0.1 * (experience.order ?? 0)}>
-                    <Drawer key={experience.id}>
-                        <DrawerTrigger className="border w-full cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
-                            <img src={`${experience.companyLogo}`} alt={experience.title} className="w-12 h-12 object-cover rounded-full p-px bg-gray-100" />
-                            <div className="flex flex-col gap-1 text-start w-full" key={experience.id}>
-                                <div className=" text-sm flex items-center gap-1 justify-between" key={experience.id}>
-                                    <span className="text-sm font-semibold line-clamp-1">{experience.title}</span>
-                                    <span className="text-sm text-gray-500">{experience.endYear === -1 ? 'Present' : experience.endYear}</span>
-                                </div>
-                                <p className="text-gray-500 line-clamp-1 text-sm">{experience.company}</p>
-                            </div>
-                        </DrawerTrigger>
-                        <DrawerContent className="max-w-xl mx-auto max-h-[90vh]">
-                            <DrawerHeader className="">
-                                <DrawerTitle className="flex gap-4 items-center px-4 py-2">
-                                    <img src={`${experience.companyLogo}`} alt={experience.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
-                                    <div className="flex flex-col gap-1 text-left">
-                                        {experience.title}
-                                        <div className="text-gray-500 font-normal text-sm flex flex-col">
-                                            {experience.company}
-                                            <span className="text-sm">{experience.startYear} - {experience.endYear === -1 ? 'Present' : experience.endYear}</span>
-                                        </div>
-                                    </div>
-                                </DrawerTitle>
-                                <div className="flex gap-2 flex-grow flex-col text-left px-4">
-                                    <span className="text-sm">{experience.description}</span>
-                                </div>
-                                <DrawerFooter className="px-4 py-2">
-                                    <div className="flex gap-2">
-                                        <a className="bg-black flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-black/80" href={`${experience.companyUrl}`} target="_blank" rel="noreferrer">
-                                            Company Website
-                                        </a>
-                                    </div>
-                                </DrawerFooter>
-                            </DrawerHeader>
-                        </DrawerContent>
-                    </Drawer>
-                </BlurFade>
-            ))}
-        </div >
-    );
-}
+// function ExperienceCard({ experiences }: { experiences: ExperienceCardProps[] }) {
+//     return (
+//         <div className="flex flex-col gap-3 ">
+//             {experiences.map((experience) => (
+//                 <BlurFade key={experience.id} className="w-full" delay={0.1 * (experience.order ?? 0)}>
+//                     <Drawer key={experience.id}>
+//                         <DrawerTrigger className="border w-full cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
+//                             <img src={`${experience.companyLogo}`} alt={experience.title} className="w-12 h-12 object-cover rounded-full p-px bg-gray-100" />
+//                             <div className="flex flex-col gap-1 text-start w-full" key={experience.id}>
+//                                 <div className=" text-sm flex items-center gap-1 justify-between" key={experience.id}>
+//                                     <span className="text-sm font-semibold line-clamp-1">{experience.title}</span>
+//                                     <span className="text-sm text-gray-500">{experience.endYear === -1 ? 'Present' : experience.endYear}</span>
+//                                 </div>
+//                                 <p className="text-gray-500 line-clamp-1 text-sm">{experience.company}</p>
+//                             </div>
+//                         </DrawerTrigger>
+//                         <DrawerContent className="max-w-xl mx-auto max-h-[90vh]">
+//                             <DrawerHeader className="">
+//                                 <DrawerTitle className="flex gap-4 items-center px-4 py-2">
+//                                     <img src={`${experience.companyLogo}`} alt={experience.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
+//                                     <div className="flex flex-col gap-1 text-left">
+//                                         {experience.title}
+//                                         <div className="text-gray-500 font-normal text-sm flex flex-col">
+//                                             {experience.company}
+//                                             <span className="text-sm">{experience.startYear} - {experience.endYear === -1 ? 'Present' : experience.endYear}</span>
+//                                         </div>
+//                                     </div>
+//                                 </DrawerTitle>
+//                                 <div className="flex gap-2 flex-grow flex-col text-left px-4">
+//                                     <span className="text-sm">{experience.description}</span>
+//                                 </div>
+//                                 <DrawerFooter className="px-4 py-2">
+//                                     <div className="flex gap-2">
+//                                         <a className="bg-black flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-black/80" href={`${experience.companyUrl}`} target="_blank" rel="noreferrer">
+//                                             Company Website
+//                                         </a>
+//                                     </div>
+//                                 </DrawerFooter>
+//                             </DrawerHeader>
+//                         </DrawerContent>
+//                     </Drawer>
+//                 </BlurFade>
+//             ))}
+//         </div >
+//     );
+// }
 
-function EducationCard({ educations }: { educations: EducationCardProps[] }) {
-    return (
-        <div className="flex flex-col gap-3">
-            {educations.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((education) => (
-                <BlurFade key={education.id} className="w-full" delay={0.1 * (education.order ?? 0)}>
-                    <Drawer key={education.id}>
-                        <DrawerTrigger className="border w-full cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
-                            <img src={`${education.uniLogo}`} alt={`education.universityName`} className="w-12 h-12 object-cover rounded-full p-px bg-gray-100" />
-                            <div className="flex flex-col gap-1 text-start w-full" key={education.id}>
-                                <div className="text-sm flex items-center gap-1 justify-between w-full" key={education.id}>
-                                    <span className="text-sm font-semibold line-clamp-1">{education.courseName}</span>
-                                    <span className="text-sm line-clamp-1 text-gray-500">{education.endYear === -1 ? 'Present' : education.endYear}</span>
-                                </div>
-                                <p className="text-gray-500 line-clamp-1 text-sm">{education.fieldOfStudy}</p>
-                            </div>
-                        </DrawerTrigger>
-                        <DrawerContent className="max-w-xl mx-auto max-h-[90vh]">
-                            <DrawerHeader className="w-full">
-                                <DrawerTitle className="flex gap-4 items-center px-4 py-2 w-full">
-                                    <img src={`${education.uniLogo}`} alt={`education.courseName`} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
-                                    <div className="flex flex-col gap-1 text-left w-full">
-                                        <div className="flex items-center gap-1 justify-between" key={education.id}>
-                                            {education.courseName}
-                                            <span className="text-sm font-normal text-gray-500">{education.startYear} - {education.endYear === -1 ? 'Present' : education.endYear}</span>
-                                        </div>
-                                        <span className="text-sm font-normal text-gray-500">{education.universityName}</span>
-                                        <span className="text-sm font-normal text-gray-500">{education.fieldOfStudy}</span>
-                                    </div>
-                                </DrawerTitle>
-                                <div className="flex gap-2 flex-grow flex-col text-left px-4">
-                                    <span className="text-sm">{education.description}</span>
-                                </div>
-                                <DrawerFooter className="px-4 py-2">
-                                    <div className="flex gap-2">
-                                        <a className="bg-black flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-black/80" href={`${education.academicTranscript}`} target="_blank" rel="noreferrer">
-                                            Academic Transcript <DownloadIcon size={12} />
-                                        </a>
-                                    </div>
-                                </DrawerFooter>
-                            </DrawerHeader>
-                        </DrawerContent>
-                    </Drawer>
-                </BlurFade>
-            ))}
-        </div >
-    );
-}
+// function EducationCard({ educations }: { educations: EducationCardProps[] }) {
+//     return (
+//         <div className="flex flex-col gap-3">
+//             {educations.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((education) => (
+//                 <BlurFade key={education.id} className="w-full" delay={0.1 * (education.order ?? 0)}>
+//                     <Drawer key={education.id}>
+//                         <DrawerTrigger className="border w-full cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
+//                             <img src={`${education.uniLogo}`} alt={`education.universityName`} className="w-12 h-12 object-cover rounded-full p-px bg-gray-100" />
+//                             <div className="flex flex-col gap-1 text-start w-full" key={education.id}>
+//                                 <div className="text-sm flex items-center gap-1 justify-between w-full" key={education.id}>
+//                                     <span className="text-sm font-semibold line-clamp-1">{education.courseName}</span>
+//                                     <span className="text-sm line-clamp-1 text-gray-500">{education.endYear === -1 ? 'Present' : education.endYear}</span>
+//                                 </div>
+//                                 <p className="text-gray-500 line-clamp-1 text-sm">{education.fieldOfStudy}</p>
+//                             </div>
+//                         </DrawerTrigger>
+//                         <DrawerContent className="max-w-xl mx-auto max-h-[90vh]">
+//                             <DrawerHeader className="w-full">
+//                                 <DrawerTitle className="flex gap-4 items-center px-4 py-2 w-full">
+//                                     <img src={`${education.uniLogo}`} alt={`education.courseName`} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
+//                                     <div className="flex flex-col gap-1 text-left w-full">
+//                                         <div className="flex items-center gap-1 justify-between" key={education.id}>
+//                                             {education.courseName}
+//                                             <span className="text-sm font-normal text-gray-500">{education.startYear} - {education.endYear === -1 ? 'Present' : education.endYear}</span>
+//                                         </div>
+//                                         <span className="text-sm font-normal text-gray-500">{education.universityName}</span>
+//                                         <span className="text-sm font-normal text-gray-500">{education.fieldOfStudy}</span>
+//                                     </div>
+//                                 </DrawerTitle>
+//                                 <div className="flex gap-2 flex-grow flex-col text-left px-4">
+//                                     <span className="text-sm">{education.description}</span>
+//                                 </div>
+//                                 <DrawerFooter className="px-4 py-2">
+//                                     <div className="flex gap-2">
+//                                         <a className="bg-black flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-black/80" href={`${education.academicTranscript}`} target="_blank" rel="noreferrer">
+//                                             Academic Transcript <DownloadIcon size={12} />
+//                                         </a>
+//                                     </div>
+//                                 </DrawerFooter>
+//                             </DrawerHeader>
+//                         </DrawerContent>
+//                     </Drawer>
+//                 </BlurFade>
+//             ))}
+//         </div >
+//     );
+// }

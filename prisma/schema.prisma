@@ -113,19 +113,21 @@ model schedulingLink {
 }
 
 model Projects {
-    id          String             @id @default(cuid())
-    title       String
-    description String?
-    icon        String?
-    body        String?
-    links       String?
-    github      String?
-    order       Int?
-    userId      String
-    skills      SkillsOnProjects[]
-    user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt   DateTime           @default(now())
-    updatedAt   DateTime           @updatedAt
+    id               String             @id @default(cuid())
+    title            String
+    description      String?
+    icon             String?
+    body             String?
+    links            String?
+    github           String?
+    order            Int?
+    userId           String
+    customButton     String?
+    customButtonLink String?
+    skills           SkillsOnProjects[]
+    user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @updatedAt
 }
 
 model CertificationDefinition {

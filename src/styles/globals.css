@@ -149,8 +149,6 @@ textarea::placeholder {
     margin-top: 0;
   }
 
-  @apply mt-3 mb-6 flex flex-col gap-1;
-
   /* Heading styles */
   h1,
   h2,
@@ -197,7 +195,7 @@ textarea::placeholder {
   }
 
   img {
-    @apply h-60 w-full rounded-lg border object-cover;
+    @apply h-full w-full rounded-lg border object-cover;
   }
 
   pre {
@@ -212,7 +210,7 @@ textarea::placeholder {
     cursor: move;
 
     iframe {
-      @apply h-60 w-full rounded-lg border;
+      @apply h-72 w-full rounded-lg border;
     }
 
     &.ProseMirror-selectednode iframe {
@@ -227,9 +225,15 @@ textarea::placeholder {
 
   ul {
     @apply list-disc pl-5;
+    p {
+      @apply mb-1;
+    }
   }
 
   ol {
     @apply list-decimal pl-5;
+    p {
+      @apply mb-1;
+    }
   }
 }

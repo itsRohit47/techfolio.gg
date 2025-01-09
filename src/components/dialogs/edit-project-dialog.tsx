@@ -155,7 +155,7 @@ export default function EditProjectDialog({ project_id, onClose, }: EditProjectD
         editorProps: {
             attributes: {
                 spellcheck: 'true',
-                class: 'mt-2 w-full h-full p-2 border border-gray-200 rounded-md max-h-[70vh] sm:text-sm overflow-auto',
+                class: 'w-full h-full p-2  sm:text-sm overflow-auto prose prose-sm sm:prose lg:prose-lg xl:prose-2xl focus:outline-none',
             },
         },
     })
@@ -246,7 +246,7 @@ export default function EditProjectDialog({ project_id, onClose, }: EditProjectD
                             Rich Text Editor
                         </div>
                     </DrawerTrigger>
-                    <DrawerContent className='max-w-2xl mx-auto px-4'>
+                    <DrawerContent className='max-w-2xl mx-auto px-4 '>
                         <DrawerHeader className='p-0'>
                             <DrawerTitle>Edit project details</DrawerTitle>
                             <DrawerDescription>Use the rich text editor to add detailed description of your project, you can also add images, links and more</DrawerDescription>
@@ -337,7 +337,9 @@ export default function EditProjectDialog({ project_id, onClose, }: EditProjectD
                                 <VideoIcon size={12} />
                             </button>
                         </div>
-                        <EditorContent editor={editor} />
+                        <div className='w-full h-80 border border-gray-200 rounded-md max-h-[70vh] sm:text-sm overflow-auto'>
+                            <EditorContent editor={editor} />
+                        </div>
                         <DrawerFooter className='w-full p-0 my-2'>
                             <DrawerClose className='bg-violet-500 text-white p-2 rounded-md disabled:opacity-50 flex items-center justify-center hover:bg-violet-600'
                                 onClick={() => setBody(editor?.getHTML() || '')}>

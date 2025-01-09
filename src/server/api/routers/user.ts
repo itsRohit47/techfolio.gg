@@ -886,6 +886,8 @@ export const userRouter = createTRPCRouter({
               links: true,
               github: true,
               order: true,
+              customButton: true,
+              customButtonLink: true,
               skills: {
                 select: {
                   skill: true,
@@ -925,8 +927,7 @@ export const userRouter = createTRPCRouter({
       });
       return user;
     }),
-  
-  
+
   getUserMetadata: publicProcedure
     .input(
       z.object({
