@@ -17,6 +17,7 @@ interface BasicCardProps {
     bio: string;
     linkedin: string;
     github: string;
+    location: string;
 }
 
 interface ProjectCardProps {
@@ -66,7 +67,7 @@ export default function ClassicPortfolio({ username }: { username: string }) {
         );
     }
     return (
-        <section className="max-w-lg mx-auto flex justify-center items-center p-4 pt-20 w-full flex-col gap-5 h-full min-h-screen">
+        <section className="max-w-xl mx-auto flex justify-center items-center p-4 pt-20 w-full flex-col gap-5 h-full min-h-screen">
             <BasicCard data={{
                 username,
                 image: data?.image ?? '',
@@ -75,6 +76,7 @@ export default function ClassicPortfolio({ username }: { username: string }) {
                 bio: data?.bio ?? '',
                 linkedin: data?.linkedin ?? '',
                 github: data?.github ?? '',
+                location: data?.location ?? '',
             }} />
             {/* <Tabs defaultValue="projects" className="w-full flex-grow flex flex-col gap-2">
                 <TabsList className="transition-all ease-in-out duration-300 flex gap-2">
@@ -119,12 +121,12 @@ export default function ClassicPortfolio({ username }: { username: string }) {
                 Build your tech portfolio
             </button>
             <div className="flex flex-col gap-2 text-center text-xs text-gray-500 md:items-center justify-center">
-                <div className="flex gap-2 text-center text-xs text-gray-500 md:items-center justify-center">
+                <div className="flex gap-2 text-center text-xs text-gray-500 items-center justify-center">
                     <Link href={'/pp'}>
                         Privacy Policy
                     </Link>
                     <div className="text-gray-500">•</div>
-                    <Link href={''}>
+                    <Link href={'/pp'}>
                         Terms of Service
                     </Link>
                 </div>
@@ -147,9 +149,10 @@ function BasicCard({ data }: { data: BasicCardProps }) {
                         className="rounded-full w-20 h-20 object-cover border border-gray-400 p-px"
                     />
                 </div>
-                <div className="">
+                <div className="flex flex-col gap-1 items-center">
                     <h1 className="text-3xl font-semibold">{data.name}</h1>
-                    <p className="text-gray-500 text-sm">{data.headline}</p>
+                    <p className="text-gray-500 text-xs">Based in {data.location}</p>
+                    {/* <p className="text-gray-500 text-sm">{data.headline}</p> */}
                 </div>
             </div>
             <div className="flex flex-col gap-2 text-center max-w-md mx-auto">
@@ -162,21 +165,23 @@ function BasicCard({ data }: { data: BasicCardProps }) {
 function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
     console.log(projects);
     return (
-        <div className="flex flex-col gap-3 w-full flex-grow">
+        <div className="flex flex-col gap-3 w-full flex-grow mb-4">
             {projects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((project) => (
                 <BlurFade key={project.id} className="w-full" delay={0.1 * (project.order ?? 0)}>
                     <Drawer key={project.id}>
-                        <DrawerTrigger className="border w-full cursor-pointer border-gray-300 rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
-                            <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full p-px border-gray-200 bg-gray-100" />
-                            <div className="flex flex-col gap-1 text-start" key={project.id}>
-                                <div className="font-semibold text-sm flex items-center gap-1" key={project.id}>
+                        <DrawerTrigger className="border cursor-pointer border-gray-300 w-full rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
+                            <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
+                            <div className="flex flex-col gap-1 text-start w-full" key={project.id}>
+                                <div className="font-semibold text-sm flex items-center gap-1 w-full" key={project.id}>
                                     <span className="text-sm line-clamp-1">{project.title}</span>
-                                    {project.skills.slice(0, 2).map((skill) => (
-                                        <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-1 ml-1 py-[1px] rounded-md">{skill.name}</span>
-                                    ))}
-                                    {project.skills.length > 2 && <span className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 ml-1 px-2 py-[1px] rounded-sm">...</span>}
+                                    <div className="flex gap-1">
+                                        {project.skills.slice(0, 2).map((skill) => (
+                                            <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-1 ml-1 py-[1px] rounded-md">{skill.name.slice(0, 12)}{skill.name.length > 12 && '...'}</span>
+                                        ))}
+                                        {project.skills.length > 2 && <span className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">...</span>}
+                                    </div>
                                 </div>
-                                <p className="text-gray-500 line-clamp-1 text-sm">{project.description}</p>
+                                <p className="text-gray-500 line-clamp-2 text-sm">{project.description}</p>
                             </div>
                         </DrawerTrigger>
                         <DrawerContent className="max-w-xl mx-auto max-h-[90vh]">
@@ -186,14 +191,14 @@ function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
                                     <div className="flex flex-col gap-1 text-left items-start ">
                                         {project.title}
                                         <span className="text-gray-500 font-normal text-sm ">{project.description}</span>
-                                        <div className="flex gap-2">
-                                            {project.skills.map((skill) => (
-                                                <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">{skill.name}</span>
-                                            ))}
-                                        </div>
                                     </div>
                                 </DrawerTitle>
                             </DrawerHeader>
+                            <div className="flex gap-2 flex-wrap px-4 py-2">
+                                {project.skills.map((skill) => (
+                                    <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">{skill.name}</span>
+                                ))}
+                            </div>
                             <div className="h-full px-4 overflow-y-auto tiptap relative">
                                 <div dangerouslySetInnerHTML={{ __html: project.body ?? '' }}>
                                 </div>

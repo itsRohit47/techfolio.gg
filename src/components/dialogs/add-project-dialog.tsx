@@ -39,7 +39,7 @@ export default function AddProjectDialog({ onClose }: { onClose: () => void }) {
         <div className="">
             <h2 className="text-sm font-bold">Add Project</h2>
             <div className="mt-4">
-                <div className="relative w-max" onClick={async () => {
+                <div className="relative w-max" onClick={() => {
                     const reader = new FileReader();
                     const input = document.createElement('input');
                     input.type = 'file';
@@ -55,18 +55,6 @@ export default function AddProjectDialog({ onClose }: { onClose: () => void }) {
                         }
                     };
                     input.click();
-                    if (imageFile) {
-                        const formData = new FormData();
-                        formData.append('file', imageFile);
-                        const res = await fetch('/api/image/upload', {
-                            method: 'POST',
-                            body: formData,
-                        });
-                        const data = await res.json();
-                        if (data.url) {
-                            setIcon(data.url);
-                        }
-                    }
                 }}>
                     {icon ?
                         <img src={icon} alt="profile" className="w-16 h-16 rounded-full object-cover opacity-70 bg-black" />
@@ -134,10 +122,23 @@ export default function AddProjectDialog({ onClose }: { onClose: () => void }) {
                 }
                 <textarea rows={6} placeholder="Project Body" className="mt-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" onChange={(e) => setBody(e.target.value)} />
                 <div className="flex justify-end mt-4">
-                    <button className="bg-violet-500 text-white p-2 rounded-md flex items-center disabled:opacity-50" onClick={() => {
+                    <button className="bg-violet-500 text-white p-2 rounded-md flex items-center disabled:opacity-50" onClick={async () => {
                         setIsLoading(true);
+                        let finalIcon = icon || '/avatar.png';
+                        if (imageFile) {
+                            const formData = new FormData();
+                            formData.append('file', imageFile);
+                            const res = await fetch('/api/image/upload', {
+                                method: 'POST',
+                                body: formData,
+                            });
+                            const data = await res.json();
+                            if (data.url) {
+                                finalIcon = data.url;
+                            }
+                        }
                         addProject({
-                            icon: icon || '/avatar.png',
+                            icon: finalIcon,
                             title,
                             description,
                             body,
