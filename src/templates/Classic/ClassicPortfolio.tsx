@@ -7,6 +7,7 @@ import { Drawer, DrawerContent, DrawerFooter, DrawerHeader, DrawerTitle, DrawerT
 import BlurFade from "@/components/ui/blur-fade";
 import PreviewSkeleton from "@/components/skeletons/preview";
 import Link from "next/link";
+import React, { useState } from 'react';
 
 
 interface BasicCardProps {
@@ -167,56 +168,74 @@ function BasicCard({ data }: { data: BasicCardProps }) {
 }
 
 function ProjectCard({ projects }: { projects: ProjectCardProps[] }) {
-    console.log(projects);
+    const [expandedProjects, setExpandedProjects] = useState<string[]>([]);
+
     return (
         <div className="flex flex-col gap-3 w-full flex-grow mb-4">
-            {projects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((project) => (
-                <BlurFade key={project.id} className="w-full" delay={0.1 * (project.order ?? 0)}>
-                    <Drawer key={project.id}>
-                        <DrawerTrigger className="border cursor-pointer border-gray-300 w-full rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
-                            <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
-                            <div className="flex flex-col gap-px md:gap-1 text-start w-full" key={project.id}>
-                                <div className="font-semibold text-sm flex items-center gap-1 w-full justify-between" key={project.id}>
-                                    <span className="text-sm line-clamp-1 font-normal">{project.title}</span>
-                                    <div className=" gap-1 hidden md:flex">
-                                        {project.skills.slice(0, 2).map((skill) => (
-                                            <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-1 ml-1 py-[1px] rounded-md">{skill.name.slice(0, 12)}{skill.name.length > 12 && '...'}</span>
-                                        ))}
-                                        {project.skills.length > 2 && <span className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">...</span>}
+            {projects.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)).map((project) => {
+                const isExpanded = expandedProjects.includes(project.id);
+                const toggleExpanded = () => {
+                    setExpandedProjects(prev =>
+                        isExpanded
+                            ? prev.filter(id => id !== project.id)
+                            : [...prev, project.id]
+                    );
+                };
+                return (
+                    <BlurFade key={project.id} className="w-full" delay={0.1 * (project.order ?? 0)}>
+                        <Drawer key={project.id}>
+                            <DrawerTrigger className="border cursor-pointer border-gray-300 w-full rounded-xl p-3 flex gap-3 items-center transition-all duration-500 hover:shadow-sm hover:scale-[1.02] hover:-translate-y-[2px] ease-in-out bg-white/20 backdrop-blur-md hover:border-violet-300">
+                                <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
+                                <div className="flex flex-col gap-px md:gap-1 text-start w-full" key={project.id}>
+                                    <div className="font-semibold text-sm flex items-center gap-1 w-full justify-between" key={project.id}>
+                                        <span className="text-sm line-clamp-1 font-normal">{project.title}</span>
+                                        <div className=" gap-1 hidden md:flex">
+                                            {project.skills.slice(0, 2).map((skill) => (
+                                                <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-1 ml-1 py-[1px] rounded-md">{skill.name.slice(0, 12)}{skill.name.length > 12 && '...'}</span>
+                                            ))}
+                                            {project.skills.length > 2 && <span className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">...</span>}
+                                        </div>
+                                    </div>
+                                    <p className="text-gray-600 line-clamp-1 text-xs font-extralight">{project.description}</p>
+                                </div>
+                            </DrawerTrigger>
+                            <DrawerContent className="max-w-xl mx-auto max-h-[90vh]">
+                                <DrawerHeader className="">
+                                    <DrawerTitle className="flex gap-4 items-center px-4 py-2">
+                                        <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
+                                        <div className="flex flex-col gap-1 text-left items-start ">
+                                            <span className="text-sm font-normal">{project.title}</span>
+                                            <p className="text-gray-500 text-xs font-light">{project.description}</p>
+                                        </div>
+                                    </DrawerTitle>
+                                </DrawerHeader>
+                                <div className="flex gap-2 flex-wrap px-4 py-2">
+                                    {(isExpanded ? project.skills : project.skills.slice(0, 3)).map(skill => (
+                                        <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">
+                                            {skill.name}
+                                        </span>
+                                    ))}
+                                    {project.skills.length > 3 && (
+                                        <button onClick={toggleExpanded} className="text-xs text-blue-500">
+                                            {isExpanded ? 'Show less' : 'Show more'}
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="h-full px-4 overflow-y-auto tiptap relative mt-2 w-full p-2 border-gray-200 rounded-md max-h-[40vh] md:max-h-[70vh] sm:text-sm overflow-auto prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none">
+                                    <div dangerouslySetInnerHTML={{ __html: project.body && project.body.trim() !== '<p></p>' ? project.body : 'Work in progress...' }}>
                                     </div>
                                 </div>
-                                <p className="text-gray-600 line-clamp-1 text-xs font-extralight">{project.description}</p>
-                            </div>
-                        </DrawerTrigger>
-                        <DrawerContent className="max-w-xl mx-auto max-h-[90vh]">
-                            <DrawerHeader className="">
-                                <DrawerTitle className="flex gap-4 items-center px-4 py-2">
-                                    <img src={`${project.icon}`} alt={project.title} className="w-12 h-12 object-cover rounded-full border p-px border-gray-200 bg-gray-100" />
-                                    <div className="flex flex-col gap-1 text-left items-start ">
-                                        <span className="text-sm font-normal">{project.title}</span>
-                                        <p className="text-gray-500 text-xs font-light">{project.description}</p>
-                                    </div>
-                                </DrawerTitle>
-                            </DrawerHeader>
-                            <div className="flex gap-2 flex-wrap px-4 py-2">
-                                {project.skills.map((skill) => (
-                                    <span key={skill.id} className="text-xs bg-gray-100 text-nowrap border font-normal text-gray-700 px-2 py-[1px] rounded-sm">{skill.name}</span>
-                                ))}
-                            </div>
-                            <div className="h-full px-4 overflow-y-auto tiptap relative mt-2 w-full p-2 border-gray-200 rounded-md max-h-[40vh] md:max-h-[70vh] sm:text-sm overflow-auto prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none">
-                                <div dangerouslySetInnerHTML={{ __html: project.body && project.body.trim() !== '<p></p>' ? project.body : 'Work in progress...' }}>
-                                </div>
-                            </div>
-                            <div className="absolute bottom-12 h-10 w-full bg-gradient-to-t from-white to-transparent" />
-                            <DrawerFooter className="px-4 ">
-                                <button className="bg-gray-900 flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => window.open(project.customButtonLink ?? '#', '_blank')}>
-                                    {project.customButton} <ArrowUpRightIcon size={12} />
-                                </button>
-                            </DrawerFooter>
-                        </DrawerContent>
-                    </Drawer>
-                </BlurFade>
-            ))}
+                                <div className="absolute bottom-12 h-10 w-full bg-gradient-to-t from-white to-transparent" />
+                                <DrawerFooter className="px-4 ">
+                                    <button className="bg-gray-900 flex items-center justify-center gap-2 text-white hover:text-white p-2 rounded-md text-xs text-center w-full hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => window.open(project.customButtonLink ?? '#', '_blank')}>
+                                        {project.customButton} <ArrowUpRightIcon size={12} />
+                                    </button>
+                                </DrawerFooter>
+                            </DrawerContent>
+                        </Drawer>
+                    </BlurFade>
+                );
+            })}
         </div >
     );
 }

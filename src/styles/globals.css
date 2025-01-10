@@ -210,7 +210,7 @@ textarea::placeholder {
     cursor: move;
 
     iframe {
-      @apply h-72 w-full rounded-lg border;
+      @apply h-60 md:h-72 w-full rounded-lg border;
     }
 
     &.ProseMirror-selectednode iframe {
