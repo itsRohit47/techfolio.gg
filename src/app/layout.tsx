@@ -4,6 +4,7 @@ import { TRPCReactProvider } from "@/trpc/react";
 import SessionProviderClientComponent from "@/components/SessionProviderClientComponent";
 import NextTopLoader from 'nextjs-toploader';
 import { GeistSans } from "geist/font/sans";
+import { Analytics } from "@vercel/analytics/react"
 
 
 //metadata
@@ -26,6 +27,7 @@ export default function RootLayout({
           <TRPCReactProvider>
             <AppContextProvider>
               <NextTopLoader showSpinner={false} color="gray" />
+              <Analytics />
               {children}
             </AppContextProvider>
           </TRPCReactProvider>
