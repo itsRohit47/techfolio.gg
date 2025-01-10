@@ -202,33 +202,25 @@ export default function EditProjectDialog({ project_id, onClose, }: EditProjectD
 
 
     const addImage = async () => {
-        const reader = new FileReader();
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = 'image/jpeg, image/png, image/jpg, image/gif';
-        input.onchange = () => {
+        input.onchange = async () => {
             const file = input.files?.[0];
             if (file) {
-                setImageFile(file);
-                reader.readAsDataURL(file);
-                reader.onload = () => {
-                    setIcon(reader.result as string);
-                };
+                const formData = new FormData();
+                formData.append('file', file);
+                const res = await fetch('/api/image/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await res.json();
+                if (data.url) {
+                    editor?.chain().focus().setImage({ src: data.url }).run();
+                }
             }
         };
         input.click();
-        if (imageFile) {
-            const formData = new FormData();
-            formData.append('file', imageFile);
-            const res = await fetch('/api/image/upload', {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await res.json();
-            if (data.url) {
-                editor?.chain().focus().setImage({ src: data.url }).run()
-            }
-        }
     }
 
     const trigger = useRef<HTMLButtonElement>(null);
