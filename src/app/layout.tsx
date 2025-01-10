@@ -13,6 +13,9 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'TechFolio.gg - Build your tech portfolio',
     description: 'TechFolio.gg is a platform for tech professionals to showcase their projects, skills, and experiences.',
+    icons: {
+      icon: '/favicon.ico',
+    }
   };
 }
 
