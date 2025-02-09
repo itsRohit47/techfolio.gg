@@ -3,32 +3,20 @@ import { fontFamily } from "tailwindcss/defaultTheme";
 
 export default {
   content: ["./src/**/*.tsx"],
-  darkMode: "class",
+  darkMode: ["class", "class"],
   theme: {
     extend: {
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
-        row: ['"row"', "sans-serif"],
+        row: ["row", "sans-serif"],
       },
       backgroundColor: {
-        primary: "#121212",
-        secondary: "#1F1F1F",
-        tertiary: "#3F3F3F",
-        primaryLight: "#2B2B2B",
-        secondaryLight: "#333333",
-        tertiaryLight: "#3F3F3F",
-        zincy: "#3A3A3A",
+        primary: "#08090A",
+        secondary: "#090A0A",
       },
       textColor: {
-        primary: "#F0F0F0",
-        secondary: "#B3B3B3",
-        tertiary: "#8C8C8C",
-        zincy: "#D1D1D1",
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        primary: "#D1D1D1",
+        secondary: "#D1D1D1",
       },
       colors: {
         background: "hsl(var(--background))",
@@ -86,6 +74,7 @@ export default {
           "shimmer-slide var(--speed) ease-in-out infinite alternate",
         "spin-around": "spin-around calc(var(--speed) * 2) infinite linear",
         rainbow: "rainbow var(--speed, 2s) infinite linear",
+        meteor: "meteor 5s linear infinite",
       },
       keyframes: {
         "shimmer-slide": {
@@ -113,6 +102,19 @@ export default {
           },
           "100%": {
             "background-position": "200%",
+          },
+        },
+        meteor: {
+          "0%": {
+            transform: "rotate(215deg) translateX(0)",
+            opacity: "1",
+          },
+          "70%": {
+            opacity: "1",
+          },
+          "100%": {
+            transform: "rotate(215deg) translateX(-500px)",
+            opacity: "0",
           },
         },
       },

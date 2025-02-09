@@ -44,72 +44,25 @@ model VerificationToken {
 }
 
 model User {
-    id             String              @id @default(cuid())
-    name           String?
-    username       String?             @unique
-    customDomain   String?             @unique
-    email          String?             @unique
-    emailVerified  DateTime?
-    image          String?
-    bio            String?
-    headline       String?
-    location       String?
-    github         String?
-    linkedin       String?
-    template       Int?
-    isPro          Boolean?
-    schedulingLink schedulingLink?
-    iNeedThis      Int?
-    certifications UserCertification[]
-    skills         UserSkill[]
-    accounts       Account[]
-    sessions       Session[]
-    education      Education[]
-    Experience     Experience[]
-    projectsId     String?
-    Projects       Projects[]
-}
-
-model Experience {
-    id          String   @id @default(cuid())
-    userId      String
-    title       String
-    company     String
-    companyLogo String?
-    companyUrl  String?
-    order       Int?
-    location    String
-    startYear   Int
-    endYear     Int?
-    description String?
-    createdAt   DateTime @default(now())
-    updatedAt   DateTime @updatedAt
-    User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model Education {
-    id                 String   @id @default(cuid())
-    userId             String
-    courseName         String?
-    fieldOfStudy       String?
-    startYear          Int?
-    academicTranscript String?
-    description        String?
-    endYear            Int?
-    order              Int?
-    createdAt          DateTime @default(now())
-    updatedAt          DateTime @updatedAt
-    universityName     String?
-    uniLogo            String?
-    user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model schedulingLink {
-    id     String @id @default(cuid())
-    link   String
-    label  String
-    userId String @unique
-    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    id            String      @id @default(cuid())
+    name          String?
+    username      String?     @unique
+    customDomain  String?     @unique
+    email         String?     @unique
+    emailVerified DateTime?
+    image         String?
+    bio           String?
+    headline      String?
+    location      String?
+    github        String?
+    linkedin      String?
+    template      Int?
+    isPro         Boolean?
+    skills        UserSkill[]
+    accounts      Account[]
+    sessions      Session[]
+    projectsId    String?
+    Projects      Projects[]
 }
 
 model Projects {
@@ -128,26 +81,6 @@ model Projects {
     user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
     createdAt        DateTime           @default(now())
     updatedAt        DateTime           @updatedAt
-}
-
-model CertificationDefinition {
-    id                 String              @id @default(cuid())
-    name               String              @unique
-    issuer             String
-    createdAt          DateTime            @default(now())
-    userCertifications UserCertification[]
-}
-
-model UserCertification {
-    id                      String                    @id @default(cuid())
-    name                    String
-    issuer                  String
-    image                   String
-    expiry                  DateTime
-    issued                  DateTime
-    userId                  String
-    user                    User                      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    CertificationDefinition CertificationDefinition[]
 }
 
 model Skills {
