@@ -17,7 +17,7 @@ export default function DashboardLayout({
     return (
         <section className="flex gap-4 h-screen">
             <SideBar />
-            <div className="px-4 py-6 flex-grow overflow-y-auto">
+            <div className="px-4 py-4 flex-grow overflow-y-auto max-w-4xl mx-auto">
                 {children}
             </div>
         </section>
@@ -37,11 +37,10 @@ function SideBar() {
         { name: 'Design', href: '/dashboard/design', icon: PaintBucketIcon, isPro: false },
         { name: 'Integrations', href: '/dashboard/integrations', icon: BlocksIcon, isPro: true },
         { name: 'Settings', href: '/dashboard/settings', icon: CogIcon, isPro: false },
-        { name: 'Resources', href: '/dashboard/resources', icon: DropletIcon, isPro: false },
     ]
     return (
-        <aside className="pt-4 pl-4 flex flex-col gap-2 justify-between h-[calc(100vh-2rem)] sticky top-0">
-            <div className={`text-sm text-gray-500 text-center bg-white p-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 flex items-center justify-center gap-2`}
+        <aside className="pt-4 pl-4 flex flex-col gap-2 justify-between h-[calc(100vh-2rem)] fixed w-64">
+            <div className={`w-64 text-sm text-gray-500 text-center bg-white p-2 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-50 flex items-center justify-center gap-2 `}
                 onClick={() => {
                     setCopied(true)
                     void window.navigator.clipboard.writeText(`https://techfolio.gg/${data?.user.name?.split(' ')[0]?.toLocaleLowerCase()}`)
@@ -65,13 +64,12 @@ function SideBar() {
                 </ul>
 
             </nav>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 w-64">
                 <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
                     Publish
                 </Button>
             </div>
-
-            <div className="flex items-start justify-center gap-4 text-xs text-gray-500">
+            <div className="w-64 flex items-start justify-center gap-4 text-xs text-gray-500">
                 <Link href={'/terms'} className="hover:underline">
                     Terms of Service
                 </Link>
@@ -79,7 +77,6 @@ function SideBar() {
                     Privacy Policy
                 </Link>
             </div>
-
         </aside >
     )
 }

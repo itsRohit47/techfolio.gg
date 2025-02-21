@@ -80,13 +80,8 @@ function NavBar() {
         </Link>
       </div>
       <div className="items-center space-x-4 hidden lg:flex text-black/70 z-50">
-        <Link href="/explore" className={`hover:text-black ${path === "/explore" ? "text-blue-800" : ""}`}>
-          Explore
-        </Link>
         <Link href="/#features" className={`hover:text-black ${path === "#features" ? "text-blue-800" : ""}`}>
           Features</Link>
-        <Link href="/blogs" className={`hover:text-black ${path === "/blogs" ? "text-blue-800" : ""}`}>
-          Blogs</Link>
         <Link href="/#howitworks" className={`hover:text-black ${path === "/howitworks" ? "text-blue-800" : ""}`}>
           How it works</Link>
         <Link href="/#pricing" className={`hover:text-black ${path === "/pricing" ? "text-blue-800" : ""}`}>
@@ -98,8 +93,7 @@ function NavBar() {
           <Button onClick={() => { router.push('/dashboard') }} className="bg-blue-800 text-white hover:bg-blue-800/90">Dashboard</Button>
         ) : (
           <>
-            <Button onClick={() => signIn()} className="border text-gray-600 hover:bg-gray-50">Login</Button>
-            <Button onClick={() => signIn()} className="bg-blue-800 text-white hover:bg-blue-800/90">Sign Up</Button>
+            <Button onClick={() => signIn()} className="bg-blue-800 text-white hover:bg-blue-800/90">Dashboard</Button>
           </>
         )}
       </div>

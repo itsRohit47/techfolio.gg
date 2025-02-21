@@ -9,18 +9,23 @@ import { Meteors } from "@/components/ui/meteors";
 import { ArrowUpRightIcon } from "lucide-react";
 import Button from "@/components/button";
 import { title } from "process";
+import toast from "react-hot-toast";
 export default function Home() {
   const { data } = useSession();
   const router = useRouter();
+
+  if (data) {
+    router.push("/dashboard");
+  }
 
 
 
   return (
     <main className="max-w-7xl mx-auto">
       <HeroSection />
-      <Comparison />
-      <Features />
-      <Pricing />
+      {/* <Comparison /> */}
+      {/* <Features /> */}
+      {/* <Pricing /> */}
       {/* <CTA></CTA> */}
     </main>
   )
@@ -28,16 +33,24 @@ export default function Home() {
 
 function HeroSection() {
   return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-1 min-h-[70vh] h-full px-4 relative py-32 group items-center justify-center">
-      <div className="w-full h-full bg-white/40 rounded-lg absolute -left-[1000px] -bottom-14 rotate-45  blur-sm -z-10"></div>
-      <div className="w-full h-full bg-white/40 rounded-lg absolute -right-[700px] top-20 rotate-45 -z-10 blur-sm"></div>
+    <div className="flex min-h-[70vh] h-full px-4 relative group items-center justify-center">
+      <div className="w-full h-full bg-white/40 rounded-lg fixed -left-[1000px] -bottom-14 rotate-45  blur-sm -z-10"></div>
+      <div className="w-full h-full bg-white/40 rounded-lg fixed -right-[700px] top-20 rotate-45 -z-10 blur-sm"></div>
       <div className="flex flex-col justify-center relative text-gray-800 items-center text-center">
-        <span className="text-blue-500 font-medium text-sm tracking-wider">BUILT FOR TECH PROFESSIONALS</span>
-        <h1 className="text-6xl font-semibold font-row">Get hired faster with <span className="text-blue-800">techfolio</span></h1>
-        <p className="pg">Techfolio is an all in one platform for tech professionals, to showcase their work, and get hired faster.</p>
+        <div
+          className="text-blue-500 font-extralight text-sm tracking-wider cursor-pointer"
+          onClick={() => {
+            void navigator.clipboard.writeText('47AI');
+            toast.success("Copied to clipboard");
+          }}
+        >
+          Use code <span className="text-base font-bold text-gray-600">#47AI</span> for 20% off 🎉
+        </div>
+        <h1 className="text-6xl font-semibold font-row">Build & share your tech portfolio</h1>
+        <p className="pg">Techfolio is an all in one platform for tech professionals, to build a professional technical portfolio, and showcase their work to the world.</p>
         <div className="flex items-center border mt-4 pl-3 p-2 rounded-lg w-max bg-white/20 border-gray-300">
-          <span className="font-medium">techfolio.gg/</span>
-          <input type="text" placeholder="username" className=" outline-none bg-transparent w-40 px-[2px]" />
+          <span className="font-medium text-gray-500">techfolio.gg/</span>
+          <input type="text" placeholder="username" className=" outline-none bg-transparent w-40 px-[2px] border-none focus:border-none focus:ring-0" />
           <Button onClick={() => signIn("github")} className="bg-blue-800 hover:bg-blue-800/90 text-white">Claim</Button>
         </div>
       </div>
@@ -45,62 +58,6 @@ function HeroSection() {
   )
 }
 
-
-
-function Features() {
-  const features = [
-    {
-      title: "Asset management",
-      description: "Recruiters love seeing your work, and Techfolio.gg makes it easy for them to find you and grow together in our thriving community",
-      rightText: "Your work deserves a beautiful presentation. We ensure your projects look their absolute best."
-    },
-    {
-      title: "Personalise",
-      description: "Recruiters love seeing your work, and Techfolio.gg makes it easy for them to find you and grow together in our thriving community",
-      rightText: "Optimized for what recruiters want to see. Make your first impression count "
-    },
-    {
-      title: "Community driven",
-      description: "Join a community of tech professionals, and share your work with the world or take inspiration from others.",
-      rightText: "Connect with like-minded professionals and grow together in our thriving community."
-    }
-  ];
-
-  const [currentFeature, setCurrentFeature] = useState(0);
-
-  return (
-    <div >
-      <div className="py-32 px-4 h-max relative flex items-center justify-center flex-col gap-5" id="features">
-        <div className=" h-max">
-          <div className="flex flex-col  justify-center items-center max-w-5xl text-center mx-auto">
-            <span className="text-blue-500 font-medium text-sm tracking-wider">FEATURES</span>
-            <h1 className="text-4xl font-semibold font-row">Purpose built for tech professionals of all sorts</h1>
-            <p className="text-base max-w-2xl text-gray-600 mt-2">Whether you are interested in dev stuff, data science, cyber security, or anything in between, Techfolio.gg is the perfect place to showcase your work.</p>
-          </div>
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 mt-20 ">
-            <div className="flex flex-col gap-4 justify-center items-start text-left">
-              {features.map((feature, index) => (
-                <div key={feature.title} className="flex flex-col relative cursor-pointer" onClick={() => {
-                  setCurrentFeature(index)
-                }}>
-                  <div className={`text-base px-4 py-3 hover:bg-white/40 rounded-lg ${currentFeature === index ? 'text-blue-600 bg-white/80 hover:bg-white' : ''}`}>
-                    <h2 className="font-row">{feature.title}</h2>
-                    <p className="text-sm text-gray-500">{feature.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex flex-col gap-4 justify-center items-center">
-              <div className="text-lg text-gray-700 transition-all duration-300">
-                {features?.[currentFeature]?.rightText ?? ''}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 const PricingPlans = [
   {

@@ -22,7 +22,8 @@ function UserAssets() {
     const [searchQuery, setSearchQuery] = useState('');
 
     return (
-        <div className="space-y-4 max-w-3xl">
+        <div className="space-y-4">
+            <h2 className="font-semibold">Build</h2>
             <div className="flex gap-4 items-center w-full">
                 <input
                     type="text"
