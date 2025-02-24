@@ -44,11 +44,11 @@ model VerificationToken {
 }
 
 model User {
-    id            String      @id @default(cuid())
+    id            String    @id @default(cuid())
     name          String?
-    username      String?     @unique
-    customDomain  String?     @unique
-    email         String?     @unique
+    username      String?   @unique
+    customDomain  String?   @unique
+    email         String?   @unique
     emailVerified DateTime?
     image         String?
     bio           String?
@@ -58,56 +58,32 @@ model User {
     linkedin      String?
     template      Int?
     isPro         Boolean?
-    skills        UserSkill[]
     accounts      Account[]
     sessions      Session[]
     projectsId    String?
-    Projects      Projects[]
+    assets        Asset[]
+    createdAt     DateTime  @default(now())
+    updatedAt     DateTime  @updatedAt
 }
 
-model Projects {
-    id               String             @id @default(cuid())
-    title            String
-    description      String?
-    icon             String?
-    body             String?
-    links            String?
-    github           String?
-    order            Int?
-    userId           String
-    customButton     String?
-    customButtonLink String?
-    skills           SkillsOnProjects[]
-    user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-    createdAt        DateTime           @default(now())
-    updatedAt        DateTime           @updatedAt
+enum Status {
+    PUBLISHED
+    DRAFT
+    ARCHIVED
 }
 
-model Skills {
-    id         String             @id @default(cuid())
-    name       String             @unique
-    createdAt  DateTime           @default(now())
-    userSkills UserSkill[]
-    projects   SkillsOnProjects[]
-}
-
-model SkillsOnProjects {
-    skill      Skills   @relation(fields: [skillId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    skillId    String
-    project    Projects @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-    projectId  String
-    assignedAt DateTime @default(now())
-
-    @@id([skillId, projectId])
-}
-
-model UserSkill {
-    id        String   @id @default(cuid())
-    userId    String
-    skillId   String
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    skill     Skills   @relation(fields: [skillId], references: [id], onDelete: Cascade)
-    createdAt DateTime @default(now())
-
-    @@unique([userId, skillId])
+model Asset {
+    id          String   @id @default(cuid())
+    title       String
+    description String?
+    icon        String?
+    media       String[]
+    body        String?
+    type        String
+    status      Status   @default(DRAFT)
+    userId      String
+    tags        String[]
+    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
 }

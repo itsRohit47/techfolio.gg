@@ -6,7 +6,7 @@ export default function Button({
 }: Readonly<{
     children: React.ReactNode;
     className?: string;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement> | React.FormEvent) => void | Promise<void>;
     disabled?: boolean;
     type?: "button" | "submit" | "reset";
 }>) {
@@ -14,7 +14,17 @@ export default function Button({
         <button
             {...props}
             disabled={disabled}
-            className={` px-4 py-2 rounded-lg text-nowrap text-sm ${className}`}
+            className={`
+                px-4 py-2 
+                rounded-lg 
+                text-nowrap 
+                text-sm 
+                transition-colors
+                duration-200
+                focus:outline-none 
+                disabled:opacity-50 
+                disabled:cursor-not-allowed
+                ${className}`}
         >
             {children}
         </button>

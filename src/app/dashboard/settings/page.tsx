@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 
 
 function ProfileContent() {
-    const fields = ['Image', 'Display Name', 'Username', 'Bio', 'Skills', 'LinkedIn', 'GitHub', 'Twitter', 'Website', 'Public'];
+    const fields = ['Image', 'Display Name', 'Username', 'Bio', 'Skills', 'LinkedIn', 'GitHub', 'Website', 'Public'];
     const inputFields = ['Display Name', 'Username', 'Bio', 'Skills', 'LinkedIn', 'GitHub', 'Twitter', 'Website'];
     const toggleFields = ['Public'];
     const imageField = ['Image'];
@@ -16,7 +16,7 @@ function ProfileContent() {
     const { data } = useSession();
 
     return <div>
-        <div className="grid grid-cols-1 gap-y-6 w-full max-w-5xl">
+        <div className="grid grid-cols-1 gap-y-6 w-full">
             {fields.map((field) => {
                 return (
                     <div key={field} className='flex gap-y-6 w-full items-start'>
