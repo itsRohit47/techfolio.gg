@@ -75,15 +75,21 @@ function UserAssets() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
     const [deleteAssetId, setDeleteAssetId] = useState<string | null>(null);
-    const [showArchived, setShowArchived] = useState(() => {
-        // Initialize from localStorage
-        const saved = localStorage.getItem('showArchived');
-        return saved ? JSON.parse(saved) : false;
-    });
+    const [showArchived, setShowArchived] = useState(false);
+
+    // Load showArchived state from localStorage on mount
+    useEffect(() => {
+        const saved = typeof window !== 'undefined' ? localStorage.getItem('showArchived') : null;
+        if (saved !== null) {
+            setShowArchived(JSON.parse(saved));
+        }
+    }, []);
 
     // Persist showArchived state
     useEffect(() => {
-        localStorage.setItem('showArchived', JSON.stringify(showArchived));
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('showArchived', JSON.stringify(showArchived));
+        }
     }, [showArchived]);
 
     const { data: assets, isLoading } = api.asset.getAssets.useQuery();
@@ -163,7 +169,7 @@ function UserAssets() {
                     <div className="flex items-center gap-4 text-nowrap">
                         Show archived
                         <Toggle onToggle={() => setShowArchived(!showArchived)} initialValue={showArchived} />
-                    
+
                         <Button className={`bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-4 py-2 ${isAddPending ? 'opacity-50' : ''}`}
                             disabled={isAddPending}
                             onClick={() => {
