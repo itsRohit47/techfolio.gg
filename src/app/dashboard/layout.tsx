@@ -1,7 +1,7 @@
 'use client';
 import Link from "next/link"
 import {
-    CogIcon, PaintBucketIcon, HammerIcon, ChevronLeft, ChevronRight
+    CogIcon, PaintBucketIcon, HammerIcon, ArrowUpRightIcon, ChevronRight
 } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { useState } from "react";
@@ -11,42 +11,24 @@ export default function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-    const [isCollapsed, setIsCollapsed] = useState(true);
-
-    return (
-        <section className="flex h-screen pr-4">
-            <SideBar isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
-            <div className={`px-4 py-4 flex-grow overflow-y-auto mx-auto border border-gray-200 bg-white/80 h-[calc(100vh-2rem)] m-4 rounded-lg shadow-xl`}>
-                {children}
-            </div>
-        </section>
-    )
-}
-
-function SideBar({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) {
-    const path = usePathname();
-    const [copied, setCopied] = useState(false)
-
-    const navItems = [
-        { name: 'Build', href: '/dashboard/build', icon: HammerIcon, isPro: false },
-        { name: 'Design', href: '/dashboard/design', icon: PaintBucketIcon, isPro: false },
-        { name: 'Settings', href: '/dashboard/settings', icon: CogIcon, isPro: false },
+    const pathname = usePathname()
+    const links = [
+        { name: "Build", href: "/dashboard/build", icon: HammerIcon },
+        { name: "Design", href: "/dashboard/design", icon: PaintBucketIcon },
+        { name: "Preview", href: "/rohit", icon: ArrowUpRightIcon },
+        { name: "Settings", href: "/dashboard/settings", icon: CogIcon },
     ]
     return (
-        <aside className=" flex flex-col gap-2 justify-between pt-2 pb-4">
-            <nav className="w-max h-full  p-2 flex flex-col gap-2 justify-between">
-                <ul className="space-y-1 relative">
-                    {navItems.map((item) => (
-                        <Link href={item.href} key={item.href} className={`px-4 py-3  rounded-lg flex items-center gap-2 ${path === item.href ? 'bg-blue-100 text-blue-500 hover:bg-blue-200/70' : ' text-gray-700 hover:bg-violet-200/30'}`}>
-                            <item.icon size="14" />
-                            {isCollapsed ? null : item.name}
-                        </Link>
-                    ))}
-                </ul>
-                <button onClick={onToggle} className="fixed bottom-4 left-4 p-2 bg-white rounded-full shadow-lg">
-                    {isCollapsed ? <ChevronRight size="24" /> : <ChevronLeft size="24" />}
-                </button>
-            </nav>
-        </aside >
+        <section className="h-screen max-w-5xl mx-auto w-full">
+            <header className="flex flex-col fixed top-1/2 -translate-y-1/2 left-4  py-3 px-2 items-center justify-between w-max mx-auto gap-y-2 bg-white rounded-full transition-all duration-200 shadow-xl border border-gray-200">
+                {links.map((link, index) => (
+                    <Link key={index} href={link.href} className={` hover:py-4 relative group p-2 rounded-full flex flex-col items-center gap-x-2 transition-all duration-200 ${pathname === link.href ? ' bg-blue-500 text-white hover:bg-blue-600' : 'hover:bg-gray-100'}`}>
+                        <link.icon size={14} />
+                        <div className="hidden group-hover:flex bg-white p-2 absolute inset-0 translate-y-1 translate-x-12 w-max h-max rounded-lg text-black text-xs">{link.name}</div>
+                    </Link>
+                ))}
+            </header>
+            {children}
+        </section>
     )
 }

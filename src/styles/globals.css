@@ -31,7 +31,7 @@ h1 {
 }
 
 input, textarea {
-  @apply w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200 bg-white hover:shadow-md focus:shadow-sm focus:bg-white;
+  @apply w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200 bg-white hover:shadow-sm focus:shadow-sm focus:bg-white;
 }
 
 

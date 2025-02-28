@@ -44,26 +44,27 @@ model VerificationToken {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    username      String?   @unique
-    customDomain  String?   @unique
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    bio           String?
-    headline      String?
-    location      String?
-    github        String?
-    linkedin      String?
-    template      Int?
-    isPro         Boolean?
-    accounts      Account[]
-    sessions      Session[]
-    projectsId    String?
-    assets        Asset[]
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+    id             String          @id @default(cuid())
+    name           String?
+    username       String?         @unique @default(cuid())
+    customDomain   String?         @unique
+    email          String?         @unique
+    emailVerified  DateTime?
+    image          String?
+    bio            String?         @default("I'm a developer!")
+    location       String?         @default("Earth")
+    github         String?         @default("github.com/itsrohit47")
+    linkedin       String?         @default("linkedin.com/in/itsrohitbajaj")
+    isPro          Boolean?
+    accounts       Account[]
+    sessions       Session[]
+    projectsId     String?
+    assets         Asset[]
+    createdAt      DateTime        @default(now())
+    updatedAt      DateTime        @updatedAt
+    portfolioStyle PortfolioStyle?
+    links          UserLink[]
+    stylePresets   StylePreset[]
 }
 
 enum Status {
@@ -86,4 +87,110 @@ model Asset {
     user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
+}
+
+model PortfolioStyle {
+    id                        String   @id @default(cuid())
+    background                String   @default("#2d2d2d")
+    backgroundImage           String   @default("https://images.unsplash.com/photo-1623654667000-bb54577193a7?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")
+    backgroundOverlay         String   @default("bg-black/10")
+    nameColor                 String   @default("#000000")
+    descriptionColor          String   @default("#000000")
+    locationColor             String   @default("#000000")
+    linkColor                 String   @default("#f5f8ff")
+    layoutSize                String   @default("md")
+    elementSpacing            String   @default("compact")
+    headerAlignment           String   @default("center")
+    showDescription           Boolean  @default(true)
+    showLinks                 Boolean  @default(true)
+    showLocation              Boolean  @default(true)
+    themeId                   String?
+    userId                    String   @unique
+    user                      User     @relation(fields: [userId], references: [id])
+    createdAt                 DateTime @default(now())
+    updatedAt                 DateTime @updatedAt
+    headerStyle               String   @default("default")
+    assetCardStyle            String   @default("default")
+    assetCardBackground       String   @default("#cbcbcb")
+    assetCardTextColor        String   @default("#120202")
+    assetCardDescriptionColor String   @default("#322a2a")
+    assetCardBorder           Boolean  @default(true)
+    assetCardBorderColor      String   @default("#a3a3a3")
+    assetCardBorderWidth      String   @default("1px")
+    assetCardBorderRadius     String   @default("rounded-lg")
+    assetCardShadow           Boolean  @default(true)
+    assetCardHoverShadow      Boolean  @default(true)
+    assetCardHoverScale       Boolean  @default(true)
+    showAssetIcon             Boolean  @default(false)
+    showAssetDescription      Boolean  @default(true)
+    showAssetType             Boolean  @default(true)
+    assetCardHoverBg          String   @default("#F3F4F6")
+
+    // Footer Settings
+    showFooter        Boolean @default(true)
+    footerFixed       Boolean @default(true)
+    footerBackground  String  @default("#2d2d2d")
+    footerBorder      Boolean @default(true)
+    footerBorderColor String  @default("#E5E7EB")
+    footerBorderWidth String  @default("1px")
+    footerShadow      Boolean @default(false)
+    footerPadding     String  @default("py-4")
+
+    // Footer Button Settings
+    footerButtonText        String  @default("Follow me on LinkedIn")
+    footerButtonUrl         String  @default("linkedin.conm/in/itsrohitbajaj")
+    footerButtonType        String  @default("link")
+    footerButtonPhone       String  @default("")
+    footerButtonEmail       String  @default("")
+    footerButtonColor       String  @default("#000000")
+    footerButtonBg          String  @default("#cbcbcb")
+    footerButtonBorder      Boolean @default(false)
+    footerButtonBorderColor String  @default("#2563EB")
+    footerButtonRadius      String  @default("rounded-full")
+    footerButtonShadow      Boolean @default(true)
+    footerButtonHoverScale  Boolean @default(true)
+
+    // Assets Section
+    showAssets Boolean @default(true)
+
+    // Asset Categorization
+    categorizeAssets          Boolean @default(false)
+    assetTabBackground        String  @default("#8f8f8f")
+    assetTabSelectedBg        String  @default("#d6d6d6")
+    assetTabTextColor         String  @default("#6B7280")
+    assetTabSelectedTextColor String  @default("#111827")
+
+    // Asset Tab Navigation
+    assetTabBorder       Boolean @default(true)
+    assetTabBorderColor  String  @default("#bababa")
+    assetTabHoverBg      String  @default("#d6d6d6")
+    assetTabBorderRadius String  @default("rounded-full")
+    assetTabPadding      String  @default("px-4 py-2")
+    assetTabSpacing      String  @default("gap-2")
+    assetTabShadow       Boolean @default(false)
+
+    showEmail Boolean @default(true)
+}
+
+model UserLink {
+    id        String   @id @default(cuid())
+    label     String
+    url       String
+    icon      String?
+    order     Int      @default(0)
+    userId    String
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model StylePreset {
+    id        String   @id @default(cuid())
+    name      String
+    style     Json // Stores the style object
+    userId    String // Creator of the preset
+    isPublic  Boolean  @default(false)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now())
+    user      User     @relation(fields: [userId], references: [id])
 }

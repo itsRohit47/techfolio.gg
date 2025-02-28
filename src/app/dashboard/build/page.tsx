@@ -1,14 +1,56 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import Button from "@/components/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { api } from "@/trpc/react";
 import Loader from "@/components/loader";
 import { useRouter } from "next/navigation";
 import Modal from "@/components/modal";
-import { Trash2Icon } from "lucide-react";
+import { Loader2Icon, LoaderPinwheel, Trash2Icon, CheckCircle2Icon, EditIcon, ArchiveIcon } from "lucide-react";
 import toast from "react-hot-toast";
+import Toggle from "@/components/toogle";
 
+const STATUS_COLORS = {
+    PUBLISHED: {
+        bg: 'bg-emerald-100',
+        border: 'border-emerald-500',
+        hover: 'hover:scale-[1.01] hover:border-emerald-600',
+        text: 'text-emerald-700',
+        label: 'Published',
+        icon: <CheckCircle2Icon size={14} className="text-emerald-600" />
+    },
+    DRAFT: {
+        bg: 'bg-red-100',
+        border: 'border-red-500',
+        hover: 'hover:scale-[1.01] hover:border-red-600',
+        text: 'text-red-700',
+        label: 'Draft',
+        icon: <EditIcon size={14} className="text-red-600" />
+    },
+    ARCHIVED: {
+        bg: 'bg-neutral-200',
+        border: 'border-neutral-500 hover:border-neutral-600',
+        hover: 'hover:scale-[1.01]',
+        text: 'text-neutral-700',
+        label: 'Archived',
+        icon: <ArchiveIcon size={14} className="text-neutral-600" />
+    }
+} as const;
+
+function StatusLegend() {
+    return (
+        <div className="flex gap-4 items-center text-sm">
+            {Object.entries(STATUS_COLORS).map(([status, colors]) => (
+                <div key={status} className="flex items-center gap-2">
+                    <div className={`flex items-center gap-1.5 px-2  border py-1 rounded-md ${colors.bg} ${colors.border}`}>
+                        {colors.icon}
+                        <span className={colors.text}>{colors.label}</span>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
 
 export default function BuildPage() {
     return (
@@ -19,11 +61,11 @@ export default function BuildPage() {
 }
 
 const ADD_OPTIONS = [
-    { label: 'Project', value: 'project' },
-    { label: 'Lab', value: 'lab' },
-    { label: 'Assignment/Coursework', value: 'assignment' },
-    { label: 'Article/Blog', value: 'article' },
-    { label: 'Certification', value: 'certification' }
+    { label: 'Project', value: 'Project' },
+    { label: 'Lab', value: 'Lab' },
+    { label: 'Assignment/Coursework', value: 'Assignment' },
+    { label: 'Article/Blog', value: 'Article' },
+    { label: 'Certification', value: 'Certification' }
 ];
 
 function UserAssets() {
@@ -33,7 +75,16 @@ function UserAssets() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
     const [deleteAssetId, setDeleteAssetId] = useState<string | null>(null);
-    const [showArchived, setShowArchived] = useState(false);
+    const [showArchived, setShowArchived] = useState(() => {
+        // Initialize from localStorage
+        const saved = localStorage.getItem('showArchived');
+        return saved ? JSON.parse(saved) : false;
+    });
+
+    // Persist showArchived state
+    useEffect(() => {
+        localStorage.setItem('showArchived', JSON.stringify(showArchived));
+    }, [showArchived]);
 
     const { data: assets, isLoading } = api.asset.getAssets.useQuery();
     const { mutate: addAsset, isPending: isAddPending } = api.asset.addAsset.useMutation({
@@ -72,7 +123,7 @@ function UserAssets() {
     });
 
     const filteredAssets = assets?.filter(asset =>
-        (showArchived ? asset.status === 'ARCHIVED' : asset.status !== 'ARCHIVED') &&
+        (!showArchived && asset.status === 'ARCHIVED' ? false : true) &&
         (asset.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             asset?.description?.toLowerCase().includes(searchQuery.toLowerCase()))
     );
@@ -86,31 +137,48 @@ function UserAssets() {
         return acc;
     }, {} as Record<string, typeof filteredAssets>);
 
+    if (isLoading) {
+        return (
+            <div className="h-full flex items-center justify-center w-full gap-x-2 flex-col">
+                <Loader2Icon className="animate-spin h-6 w-6" />
+                <span>Loading assets...</span>
+            </div>
+        );
+    }
+
     return (
-        <div className="h-full ">
-            <div className="flex gap-4 items-center w-full mb-4">
-                <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search assets"
-                    className="flex-1 p-2 border border-gray-200 rounded-lg outline-none"
-                />
+        <div className="h-full w-full py-4">
+            <div className="flex gap-4 justify-between items-center mb-4">
+                <div className="flex items-center gap-4 w-full">
+                    <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search assets"
+                        className="w-full"
+                    />
+                </div>
+
                 <div className="relative">
-                    <Button className={`bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-4 py-2 ${isAddPending ? 'opacity-50' : ''}`}
-                        disabled={isAddPending}
-                        onClick={() => {
-                            setShowAddOptions(!showAddOptions)
-                            setSelectedOption('')
-                        }}>
-                        {isAddPending ? "Adding..." : "Add asset"}
-                    </Button>
+                    <div className="flex items-center gap-4 text-nowrap">
+                        Show archived
+                        <Toggle onToggle={() => setShowArchived(!showArchived)} initialValue={showArchived} />
+                    
+                        <Button className={`bg-blue-800 hover:bg-blue-900 text-white rounded-lg px-4 py-2 ${isAddPending ? 'opacity-50' : ''}`}
+                            disabled={isAddPending}
+                            onClick={() => {
+                                setShowAddOptions(!showAddOptions)
+                                setSelectedOption('')
+                            }}>
+                            {isAddPending ? "Adding..." : "Add asset"}
+                        </Button>
+                    </div>
                     {showAddOptions && (
                         <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-200 rounded-lg shadow-lg p-2">
                             {ADD_OPTIONS.map((option) => (
                                 <button
                                     key={option.value}
-                                    className={`w-full text-left px-4 py-2  rounded-lg ${selectedOption === option.value ? 'bg-blue-100 hover:bg-blue-200/50' : 'hover:bg-gray-100'}`}
+                                    className={`w-full text-left px-4 py-2 rounded-lg ${selectedOption === option.value ? 'bg-blue-100 hover:bg-blue-200/50' : 'hover:bg-gray-100'}`}
                                     onClick={() => {
                                         setSelectedOption(option.value);
                                     }}
@@ -135,14 +203,10 @@ function UserAssets() {
                         </div>
                     )}
                 </div>
-                <Button
-                    className="px-4 py-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-100"
-                    onClick={() => setShowArchived(!showArchived)}
-                >
-                    {showArchived ? "Show Active" : "Show Archived"}
-                </Button>
             </div>
-            {isLoading && <Loader />}
+            <div className="mb-4">
+                <StatusLegend />
+            </div>
             {assets ? (
                 <div className="pb-4 space-y-6">
                     {groupedAssets && Object.entries(groupedAssets).map(([type, assets]) => (
@@ -153,7 +217,7 @@ function UserAssets() {
                                     <div
                                         key={asset.id}
                                         onClick={() => router.push(`/asset/${asset.id}`)}
-                                        className="bg-white rounded-lg shadow-sm p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 flex gap-4 items-center cursor-pointer"
+                                        className={`rounded-lg transition duration-300 shadow-sm p-4 border ${STATUS_COLORS[asset.status].bg} ${STATUS_COLORS[asset.status].border} ${STATUS_COLORS[asset.status].hover} flex gap-4 items-center cursor-pointer`}
                                     >
                                         <div className="flex items-center gap-2">
                                             <img
@@ -165,47 +229,51 @@ function UserAssets() {
                                         <div className="flex-1 " >
                                             <div className="flex items-center gap-2">
                                                 <h3 className="font-semibold">{asset.title}</h3>
-                                                <span className={`px-2 py-0.5 text-xs rounded-full ${asset.status === 'PUBLISHED' ? 'bg-green-100 text-green-800' :
-                                                    asset.status === 'DRAFT' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
-                                                        'bg-gray-100 text-gray-800'
+                                                {/* <span className={`px-2 py-0.5 text-xs rounded-full flex items-center gap-1.5 ${asset.status === 'PUBLISHED' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' :
+                                                        asset.status === 'DRAFT' ? 'bg-red-50 text-red-700 border border-red-200' :
+                                                            'bg-neutral-100 text-neutral-700 border border-neutral-200'
                                                     }`}>
+                                                    {STATUS_COLORS[asset.status].icon}
                                                     {asset.status.charAt(0).toUpperCase() + asset.status.slice(1)}
-                                                </span>
+                                                </span> */}
                                             </div>
                                             <p className="text-gray-500">{asset.description}</p>
                                         </div>
                                         <div className="flex items-center gap-2">
                                             {asset.status === 'DRAFT' && (
                                                 <Button
-                                                    className="text-white bg-green-600 hover:bg-green-700 px-3 py-1 text-sm rounded-md"
+                                                    className="text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1 text-sm rounded-md flex items-center gap-1.5"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         updateAssetStatus({ id: asset.id, status: 'PUBLISHED' });
                                                     }}
                                                 >
+                                                    <CheckCircle2Icon size={16} />
                                                     Publish
                                                 </Button>
                                             )}
                                             {asset.status === 'ARCHIVED' &&
                                                 (
                                                     <Button
-                                                        className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 text-sm rounded-md"
+                                                        className="text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 text-sm rounded-md flex items-center gap-1.5"
                                                         onClick={(e: React.MouseEvent<HTMLButtonElement> | React.FormEvent<Element>) => {
                                                             if ('stopPropagation' in e) e.stopPropagation();
                                                             updateAssetStatus({ id: asset.id, status: 'DRAFT' });
                                                         }}
                                                     >
+                                                        <EditIcon size={16} />
                                                         Unarchive
                                                     </Button>
                                                 )}
                                             {asset.status === 'PUBLISHED' && (
                                                 <Button
-                                                    className="text-white bg-gray-600 hover:bg-gray-700 px-3 py-1 text-sm rounded-md"
+                                                    className="text-white bg-neutral-600 hover:bg-neutral-700 px-3 py-1 text-sm rounded-md flex items-center gap-1.5"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         updateAssetStatus({ id: asset.id, status: 'ARCHIVED' });
                                                     }}
                                                 >
+                                                    <ArchiveIcon size={16} />
                                                     Archive
                                                 </Button>
                                             )}
@@ -214,7 +282,7 @@ function UserAssets() {
                                                     e.stopPropagation();
                                                     setDeleteAssetId(asset.id);
                                                 }}
-                                                className="text-red-500 p-2 bg-red-100 rounded-md hover:bg-red-200 h-full"
+                                                className="text-red-500 p-2 border border-red-500 bg-red-100 rounded-md hover:bg-red-200 h-full"
                                             >
                                                 <Trash2Icon className="h-full" size={18} />
                                             </button>
@@ -225,7 +293,7 @@ function UserAssets() {
                         </div>
                     ))}
                     {assets.length > 0 && filteredAssets?.length === 0 && (
-                        <div className="bg-gray-100 rounded-lg p-4 h-96 flex items-center justify-center flex-col">
+                        <div className="w-full flex items-center justify-center flex-col h-96">
                             <p className="text-2xl">😓</p>
                             {searchQuery ? (
                                 <p className="text-center text-gray-500">
@@ -239,7 +307,7 @@ function UserAssets() {
                         </div>
                     )}
                     {assets.length === 0 && (
-                        <div className="bg-gray-100 rounded-lg p-4 h-96 flex items-center justify-center flex-col">
+                        <div className="h-96 flex items-center justify-center flex-col">
                             <p className="text-2xl">😓</p>
                             <p className="text-center">
                                 You have not added any assets.
@@ -251,8 +319,8 @@ function UserAssets() {
                     )}
                 </div>
             ) : (
-                <div className="h-96">
-                    <div className="bg-gray-100 rounded-lg flex items-center justify-center flex-col h-full">
+                <div className="">
+                    <div className="flex items-center justify-center flex-col h-96">
                         <p className="text-2xl ">
                             😓
                         </p>
@@ -279,7 +347,8 @@ function UserAssets() {
                                 deleteAsset({ id: deleteAssetId });
                             }
                         }}
-                        confirmText={isDeletePending ? "Deleting..." : "Delete"}
+                        confirmText={isDeletePending ? "Deleting..." : "Delete"
+                        }
                         confirmButtonClass="bg-red-500 text-white hover:bg-red-600"
                     />
                 )
