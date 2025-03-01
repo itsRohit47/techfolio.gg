@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { useSession } from 'next-auth/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { AlertCircleIcon, Plus, Router, Trash2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { api } from '@/trpc/react';
@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import Loader from '@/components/loader';
 
-export default function ProfilePage() {
+const ProfileContent = () => {
     const fields = ['Image', 'Display Name', 'Username', 'Bio', 'Location', 'LinkedIn', 'GitHub'];
     const inputFields = ['Display Name', 'Username', 'Bio', 'Location', 'LinkedIn', 'GitHub'];
     const imageField = ['Image'];
@@ -467,5 +467,15 @@ export default function ProfilePage() {
                 </div>
             </form>
         </div>
+    );
+};
+
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center h-full w-full">
+            <Loader />
+        </div>}>
+            <ProfileContent />
+        </Suspense>
     );
 }
