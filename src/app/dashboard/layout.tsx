@@ -3,6 +3,7 @@ import NavBar from "@/components/NavBar"
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 import Breadcrumb from '@/components/breadcrumb';
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
     children,
@@ -10,13 +11,20 @@ export default function DashboardLayout({
     children: React.ReactNode
 }) {
     const session = useSession()
+    const router = useRouter()
+
+    useEffect(() => {
+        if (session.status === "unauthenticated") {
+            router.push("/api/auth/signin")
+        }
+    }, [session])
 
     const links = [
         { name: 'Home', href: '/dashboard', iconName: 'Home' },
         { name: "Build", href: "/dashboard/build", iconName: "Hammer" },
         { name: "Design", href: "/dashboard/design", iconName: "PaintBucket" },
         { name: "Profile", href: "/dashboard/profile", iconName: "User" },
-        { name: "Settings", href: "/dashboard/settings", iconName: "Cog" },
+        // { name: "Settings", href: "/dashboard/settings", iconName: "Cog" },
         { name: "Preview", href: `/${session.data?.user.username}`, iconName: "ArrowUpRight" },
         { name: "Sign out", href: "/api/auth/signout", iconName: "Power" },
     ]

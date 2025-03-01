@@ -4,9 +4,7 @@ import ComingSoon from "@/components/coming-soon";
 export default function DashboardPage() {
     return (
         <div className="w-full h-full py-6 px-4">
-            <div className="flex items-center justify-center h-full">
-                <ComingSoon />
-            </div>
+            <ComingSoon />
         </div>
     );
 }

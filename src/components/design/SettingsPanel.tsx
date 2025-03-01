@@ -962,7 +962,7 @@ export default function SettingsPanel({ style }: SettingsPanelProps) {
     return (
         <div className="h-full flex flex-col">
             <div className="flex items-center justify-between gap-x-4 py-2">
-                <div className="flex gap-x-4">
+                <div className="flex gap-x-4 px-2">
                     <button
                         className={`px-1 py-2 ${activeTab === 'presets' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-600'}`}
                         onClick={() => setActiveTab('presets')}

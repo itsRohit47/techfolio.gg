@@ -15,7 +15,7 @@ export default function Loader() {
                 return (
                     <div
                         key={index}
-                        className={`w-1 h-1 rounded-full transition-all duration-300 ${isActive ? 'bg-blue-900 scale-110 ' : 'bg-gray-300'
+                        className={`w-1 h-1 rounded-full transition-all duration-300 ${isActive ? 'bg-blue-500 scale-110 ' : 'bg-gray-300'
                             }`}
                     ></div>
                 );

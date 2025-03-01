@@ -15,10 +15,10 @@ export default function Button({
             {...props}
             disabled={disabled}
             className={`
-                px-4 py-2 
+                px-3 py-2
                 rounded-lg 
                 text-nowrap 
-                text-sm 
+                text-sxs
                 transition-colors
                 duration-200
                 focus:outline-none 

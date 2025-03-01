@@ -11,20 +11,19 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    if (data) {
-      router.push("/dashboard/build");
+    if (data?.user) {
+      router.push("/dashboard/profile?onboarding");
     }
   }, [data, router]);
 
 
-
   return (
-    <main className="max-w-7xl mx-auto">
+    <main className="max-w-7xl mx-auto space-y-48 transition-all duration-300 flex flex-col justify-center">
       <NavBar />
       <HeroSection />
-      {/* <Comparison /> */}
+      <Comparison />
       {/* <Features /> */}
-      {/* <Pricing /> */}
+      <Pricing />
       {/* <CTA></CTA> */}
     </main>
   )
@@ -32,7 +31,7 @@ export default function Home() {
 
 function HeroSection() {
   return (
-    <div className="flex min-h-[70vh] h-full px-4 relative group items-center justify-center">
+    <div className="flex  h-full px-4 relative group items-center justify-center">
       <div className="w-full h-full bg-white/40 rounded-lg fixed -left-[1000px] -bottom-14 rotate-45  blur-sm -z-10"></div>
       <div className="w-full h-full bg-white/40 rounded-lg fixed -right-[700px] top-20 rotate-45 -z-10 blur-sm"></div>
       <div className="flex flex-col justify-center relative text-gray-800 items-center text-center">
@@ -47,10 +46,9 @@ function HeroSection() {
         </div>
         <h1 className="text-6xl font-semibold font-row">Build & share your tech portfolio</h1>
         <p className="pg">Techfolio is an all in one platform for tech professionals, to build a professional technical portfolio, and showcase their work to the world.</p>
-        <div className="flex items-center border mt-4 pl-3 p-2 rounded-lg w-max bg-white/20 border-gray-300">
-          <span className="font-medium text-gray-500">techfolio.gg/</span>
-          <input type="text" placeholder="username" className=" outline-none bg-transparent w-40 px-[2px] border-none focus:border-none focus:ring-0" />
-          {/* <Button onClick={() => signIn("github")} className="bg-blue-800 hover:bg-blue-800/90 text-white">Claim</Button> */}
+        <div className="flex gap-2 mt-4">
+          <Link href={'/api/auth/signin'} className="px-4 py-2 bg-gray-900 text-white border shadow-sm text-sm rounded-md hover:bg-gray-800">Add projects</Link>
+          <Link href={'/api/auth/signin'} className="px-4 py-2 bg-white text-black border text-sm shadow-sm rounded-md hover:bg-white/60">Design portfolio</Link>
         </div>
       </div>
     </div >
@@ -106,7 +104,7 @@ interface PricingPlan {
 
 function PricingPlan({ plan, children, className, monthly }: { plan: PricingPlan, children?: React.ReactNode, className?: string, monthly?: boolean }) {
   return (
-    <div className={`p-4 bg-white group rounded-lg shadow-sm group relative min-h-96 border flex flex-col gap-4 hover:border-gray-400   ${className} ${plan.title === 'Emerald' ? 'scale-100 border-violet-300 hover:border-violet-400' : 'scale-90'} transition-all duration-300`}>
+    <div className={`p-4 bg-white group rounded-lg shadow-sm group relative  border flex flex-col gap-4 hover:border-gray-400   ${className} ${plan.title === 'Emerald' ? 'scale-100 border-violet-300 hover:border-violet-400' : 'scale-90'} transition-all duration-300`}>
       {children}
       <div className="text-[80px] px-20 py-32 -rotate-12 transition duration-300 absolute inset-0 w-full opacity-30 grayscale group-hover:grayscale-0 h-full flex items-end justify-end">{plan.title === 'Emerald' ? '🌲' : plan.title === 'Rock' ? '🌿' : plan.title === 'Gold' ? '🪴' : ''}</div>
       <div className="flex flex-col gap-2 h-40 justify-between z-[2]">
@@ -141,7 +139,7 @@ function Pricing() {
   const [monthly, setMonthly] = useState(true);
   return (
     <div>
-      <div className="py-32 px-4 h-max relative flex items-center justify-center flex-col gap-5" id="pricing">
+      <div className="h-max relative flex items-center justify-center flex-col gap-5" id="pricing">
         <div className="flex flex-col justify-center items-center text-center">
           <span className="text-blue-500 font-medium text-sm tracking-wider">PRICING</span>
           <h1 className="text-4xl font-semibold font-row">Pay once, use forever</h1>
@@ -219,21 +217,39 @@ function NavBar() {
     return null;
   }
 
-
   return (
     <div
-      style={{
-        maxWidth: scrolled ? '100%' : '80rem',
-      }}
-      className={`flex items-center  justify-between mx-auto px-4 py-2 w-full transition-all duration-500 text-black z-50 sticky top-0 mt-4 ${scrolled ? "bg-white border border-b shadow-sm" : ""
+      className={`flex items-center justify-between mx-auto py-6 w-full text-black z-50"
         }`}
     >
+      <div className={`bg-neutral-100 -translate-y-full border-b-gray-200 border-b-2 py-4 shadow-2xl fixed top-0 w-full left-0 z-[100] flex items-center justify-end gap-4 px-4 transition-all duration-500 ${scrolled ? "translate-y-0" : ""}`}>
+        <div className="items-center space-x-4 hidden lg:flex text-black/70">
+          <Link href="/#features" className={`hover:text-black ${path === "#features" ? "text-blue-800" : ""}`}>
+            Features</Link>
+          <Link href="/#howitworks" className={`hover:text-black ${path === "/howitworks" ? "text-blue-800" : ""}`}>
+            How it works</Link>
+          <Link href="/#pricing" className={`hover:text-black ${path === "/pricing" ? "text-blue-800" : ""}`}>
+            Pricing
+          </Link>
+          <Link href="/#faqs" className={`hover:text-black ${path === "/pricing" ? "text-blue-800" : ""}`}>
+            FAQs
+          </Link>
+        </div>
+        <div className="hidden lg:flex items-center space-x-2 justify-end text-black/70">
+          {data ? (
+            <Button onClick={() => { router.push('/dashboard') }} className="bg-blue-800 text-white hover:bg-blue-800/90">Dashboard</Button>
+          ) : (
+            <>
+              <Button onClick={() => signIn()} className="bg-gray-900 text-white hover:bg-gray-800">Dashboard</Button>
+            </>
+          )}
+        </div>
+        <div className="lg:hidden">
+          <MenuIcon size={24} />
+        </div>
+      </div>
       <div className="flex items-center space-x-2 w-48 z-50">
         <Link href="/" className="font-medium text-base flex items-center justify-center gap-x-2 font-row">
-          <div className="flex items-center justify-center rounded-md bg-blue-900 w-8 h-8 text-base relative overflow-hidden text-white font-row">
-            <div className="bg-white/20 w-5 h-10 absolute -right-3 -bottom-2 rotate-45 rounded-md"></div>
-            <span>tf</span>
-          </div>
           Techfolio.gg
         </Link>
       </div>
@@ -244,6 +260,9 @@ function NavBar() {
           How it works</Link>
         <Link href="/#pricing" className={`hover:text-black ${path === "/pricing" ? "text-blue-800" : ""}`}>
           Pricing
+        </Link>
+        <Link href="/#faqs" className={`hover:text-black ${path === "/pricing" ? "text-blue-800" : ""}`}>
+          FAQs
         </Link>
       </div>
       <div className="hidden lg:flex items-center space-x-2 w-48 justify-end text-black/70 z-50">

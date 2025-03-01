@@ -1,19 +1,27 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import { useSession } from 'next-auth/react';
 import { useState, useEffect } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { AlertCircleIcon, Plus, Router, Trash2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { api } from '@/trpc/react';
-import Breadcrumb from '@/components/breadcrumb';
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
+import Loader from '@/components/loader';
 
 export default function ProfilePage() {
     const fields = ['Image', 'Display Name', 'Username', 'Bio', 'Location', 'LinkedIn', 'GitHub'];
     const inputFields = ['Display Name', 'Username', 'Bio', 'Location', 'LinkedIn', 'GitHub'];
     const imageField = ['Image'];
     const textAreaFields = ['Bio'];
-    const { data: session } = useSession();
+    const { data: session, update: updateSession } = useSession();
+    const ctx = api.useUtils();
+    const router = useRouter();
+    const params = useSearchParams();
+    const [onboarding, setOnboarding] = useState(false);
 
     const [formData, setFormData] = useState({
+        image: '',
         name: '',
         username: '',
         bio: '',
@@ -26,6 +34,7 @@ export default function ProfilePage() {
     const [hasChanges, setHasChanges] = useState(false);
     const [initialData, setInitialData] = useState({
         formData: {
+            image: '',
             name: '',
             username: '',
             bio: '',
@@ -38,6 +47,8 @@ export default function ProfilePage() {
     const [uploadingImage, setUploadingImage] = useState(false);
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [errors, setErrors] = useState<Record<string, string>>({});
+    const requiredFields = ['name', 'username'];
 
     const { data: userData, isLoading } = api.asset.getProfile.useQuery();
     const utils = api.useUtils();
@@ -80,6 +91,7 @@ export default function ProfilePage() {
     useEffect(() => {
         if (userData?.user) {
             const newFormData = {
+                image: userData.user.image ?? '',
                 name: userData.user.name ?? '',
                 username: userData.user.username ?? '',
                 bio: userData.user.bio ?? '',
@@ -98,11 +110,28 @@ export default function ProfilePage() {
     }, [userData]);
 
     useEffect(() => {
-        const formDataChanged = JSON.stringify(formData) !== JSON.stringify(initialData.formData);
+        const formDataChanged = Object.entries(formData).some(([key, value]) => {
+            if (requiredFields.includes(key) && value === '') return false;
+            return value !== initialData.formData[key as keyof typeof formData];
+        });
+
         const linksChanged = JSON.stringify(links) !== JSON.stringify(initialData.links);
         const imageChanged = selectedImage !== null;
         setHasChanges(formDataChanged || linksChanged || imageChanged);
     }, [formData, links, initialData, selectedImage]);
+
+    useEffect(() => {
+        if (params.has('onboarding')) {
+            setOnboarding(true);
+        }
+    }, [params, router]);
+
+    const { data: isUsernameAvailable, isFetching } = api.asset.isUsernameAvailable.useQuery(
+        { username: formData.username },
+        {
+            enabled: !!formData.username && formData.username !== initialData.formData.username
+        }
+    );
 
     const handleInputChange = (field: string, value: string) => {
         const mapping: Record<string, keyof typeof formData> = {
@@ -160,6 +189,20 @@ export default function ProfilePage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const newErrors: Record<string, string> = {};
+
+        requiredFields.forEach(field => {
+            if (!formData[field as keyof typeof formData]) {
+                newErrors[field] = `${field} is required`;
+            }
+        });
+
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
+            toast.error('Please fill in all required fields');
+            return;
+        }
+
         setIsSaving(true);
 
         try {
@@ -178,12 +221,18 @@ export default function ProfilePage() {
 
             updateProfile.mutate(updateData, {
                 onSuccess: () => {
+                    setOnboarding(false);
                     setSelectedImage(null);
                     setHasChanges(false);
                     setInitialData({
                         formData,
                         links: updateData.links
                     });
+                    if (formData.username !== initialData.formData.username) {
+                        void updateSession();
+                    }
+                    void ctx.asset.getProfile.invalidate();
+                    router.push('/dashboard/design');
                 }
             });
         } catch (error) {
@@ -227,35 +276,87 @@ export default function ProfilePage() {
         setLinks([...links, { label: '', url: '' }]);
     };
 
+    const getIncompleteFields = () => {
+        const incomplete = [];
+        if (!formData.name) incomplete.push('Display Name');
+        if (!formData.username) incomplete.push('Username');
+        return incomplete;
+    };
+
     if (isLoading) {
         return <div className="flex items-center justify-center h-full w-full">
-            Loading...
+            <Loader />
         </div>;
     }
 
+    const incompleteFields = getIncompleteFields();
+
     return (
         <div className="w-full h-full py-6 px-4">
-            <h1 className="text-2xl font-semibold mb-10">Profile Settings</h1>
-            <form onSubmit={handleSubmit} className='max-w-3xl'>
-                <div className="grid grid-cols-1 gap-y-6">
+            {onboarding && (
+                <div className="mb-6 py-4  rounded-lg">
+                    <h3 className="text-lg font-medium text-blue-800">🎉 Welcome!</h3>
+                    <p className="text-sm text-red-700 mt-2 flex items-center gap-1">
+                        <AlertCircleIcon size={14} /> To get started, please update your username
+                    </p>
+                </div>
+            )}
+
+            {!onboarding && <h1 className="text-sm font-semibold mb-10">Profile Settings</h1>}
+            <form onSubmit={handleSubmit} className='flex flex-col h-full w-full r'>
+                <div className="grid grid-cols-1 gap-y-6 ">
                     {fields.map((field) => (
-                        <div key={field} className='flex gap-y-6 w-full items-start'>
-                            <label htmlFor={field} className="block text-sm font-medium text-gray-700 w-1/3">
+                        <div key={field} className='flex gap-y-6 w-full items-center'>
+                            <label htmlFor={field} className={`block text-sm font-medium  w-1/3 ${field === "Username" ? 'text-red-500' : 'text-gray-700'}`}>
                                 {field}
+                                {(field === 'Display Name' || field === 'Username') && (
+                                    <span className="text-red-500 ml-1">*</span>
+                                )}
                             </label>
                             <div className="w-2/3">
-                                {inputFields.includes(field) && !textAreaFields.includes(field) ? (
-                                    <input
-                                        type="text"
-                                        placeholder={field}
-                                        autoComplete="off"
-                                        name={field}
-                                        id={field}
-                                        value={getFormValue(field)}
-                                        onChange={(e) => handleInputChange(field, e.target.value)}
-                                        className="w-full px-3 py-2 border rounded-md"
-                                    />
-                                ) : imageField.includes(field) ? (
+                                {inputFields.includes(field) && !textAreaFields.includes(field) && (
+                                    <div className='relative'>
+                                        <input
+                                            type="text"
+                                            placeholder={field}
+                                            autoFocus
+                                            autoComplete="off"
+                                            name={field}
+                                            id={field}
+                                            value={getFormValue(field)}
+                                            onChange={(e) => {
+                                                handleInputChange(field, e.target.value);
+                                                if (errors[field.toLowerCase()]) {
+                                                    setErrors(prev => ({
+                                                        ...prev,
+                                                        [field.toLowerCase()]: ''
+                                                    }));
+                                                }
+                                            }}
+                                            className={`w-full px-3 py-2 border rounded-md ${errors[field.toLowerCase()] ? 'border-red-500' : ''
+                                                }`}
+                                        />
+                                        {errors[field.toLowerCase()] && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {errors[field.toLowerCase()]}
+                                            </p>
+                                        )}
+                                        {field === 'Username' && (
+                                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                                {formData.username !== initialData.formData.username && formData.username && (
+                                                    isFetching ? (
+                                                        <Loader />
+                                                    ) : isUsernameAvailable ? (
+                                                        <span className="text-green-500">Available</span>
+                                                    ) : (
+                                                        <span className="text-red-500">Not available</span>
+                                                    )
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                {imageField.includes(field) ? (
                                     <div className="mt-1 flex items-center">
                                         <div className="relative flex-shrink-0 h-12 w-12 group">
                                             <img
@@ -263,6 +364,11 @@ export default function ProfilePage() {
                                                 src={imagePreview ?? session?.user.image ?? '/logo2.png'}
                                                 alt=""
                                             />
+                                            {uploadingImage && (
+                                                <div className="absolute inset-0 bg-black bg-opacity-25 rounded-full flex items-center justify-center">
+                                                    <Loader />
+                                                </div>
+                                            )}
                                             {selectedImage && (
                                                 <button
                                                     type="button"
@@ -296,21 +402,24 @@ export default function ProfilePage() {
                                         </div>
                                     </div>
                                 ) : textAreaFields.includes(field) ? (
-                                    <textarea
-                                        id={field}
-                                        name={field}
-                                        placeholder={field}
-                                        rows={3}
-                                        value={getFormValue(field)}
-                                        onChange={(e) => handleInputChange(field, e.target.value)}
-                                        className="w-full px-3 py-2 border rounded-md"
-                                    />
+                                    <div className='w-full'>
+                                        <textarea
+                                            id={field}
+                                            name={field}
+                                            placeholder={field}
+                                            rows={3}
+                                            maxLength={200}
+                                            value={getFormValue(field)}
+                                            onChange={(e) => handleInputChange(field, e.target.value)}
+                                            className="w-full px-3 py-2 border rounded-md resize-none"
+                                        />
+                                        <div className="text-xs text-right w-full text-gray-500">Max 200 characters</div>
+                                    </div>
                                 ) : null}
                             </div>
                         </div>
                     ))}
                 </div>
-
                 <div className="mt-6">
                     <div className="flex justify-between items-center">
                         <h3 className="text-sm font-medium">Other Links</h3>
@@ -322,7 +431,6 @@ export default function ProfilePage() {
                             Add Link
                         </button>
                     </div>
-
                     {links.map((link, index) => (
                         <div key={index} className="flex gap-4 items-center mt-4">
                             <input
@@ -341,23 +449,17 @@ export default function ProfilePage() {
                             />
                             <button
                                 onClick={() => removeLink(index)}
-                                className="p-2 text-red-500 hover:bg-red-50 rounded-md"
+                                className="p-2 text-red-500 hover:bg-red-50 rounded-md border border-red-200"
                             >
                                 <Trash2 size={16} />
                             </button>
                         </div>
                     ))}
                 </div>
-
-                <div className="mt-6 flex justify-end items-center gap-4">
-                    {hasChanges && (
-                        <span className="text-sm text-amber-600">
-                            You have unsaved changes
-                        </span>
-                    )}
+                <div className="mt-6 flex justify-end items-center gap-4 pb-20">
                     <button
                         type="submit"
-                        disabled={isSaving || !hasChanges}
+                        disabled={isSaving || isFetching || !isUsernameAvailable || uploadingImage || formData.username === '' || formData.name === ''}
                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isSaving ? 'Saving...' : 'Save Changes'}

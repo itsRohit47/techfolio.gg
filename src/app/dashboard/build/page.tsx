@@ -147,7 +147,6 @@ function UserAssets() {
     if (isLoading) {
         return (
             <div className="h-full flex items-center justify-center w-full gap-x-2 flex-col">
-                <Loader2Icon className="animate-spin h-6 w-6" />
                 <span>Loading assets...</span>
             </div>
         );

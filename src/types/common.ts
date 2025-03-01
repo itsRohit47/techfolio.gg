@@ -115,7 +115,7 @@ export const defaultStyle: StyleObject = {
   nameColor: "#000000",
   descriptionColor: "#000000",
   locationColor: "#000000",
-  linkColor: "#f5f8ff",
+  linkColor: "#000000",
   backgroundImage:
     "https://images.unsplash.com/photo-1623654667000-bb54577193a7?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   backgroundOverlay: "bg-black/10",

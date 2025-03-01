@@ -46,7 +46,7 @@ model VerificationToken {
 model User {
     id             String          @id @default(cuid())
     name           String?
-    username       String?         @unique @default(cuid())
+    username       String?         @unique
     customDomain   String?         @unique
     email          String?         @unique
     emailVerified  DateTime?
@@ -97,7 +97,7 @@ model PortfolioStyle {
     nameColor                 String   @default("#000000")
     descriptionColor          String   @default("#000000")
     locationColor             String   @default("#000000")
-    linkColor                 String   @default("#f5f8ff")
+    linkColor                 String   @default("#000000")
     layoutSize                String   @default("md")
     elementSpacing            String   @default("compact")
     headerAlignment           String   @default("center")
@@ -106,7 +106,7 @@ model PortfolioStyle {
     showLocation              Boolean  @default(true)
     themeId                   String?
     userId                    String   @unique
-    user                      User     @relation(fields: [userId], references: [id])
+    user                      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     createdAt                 DateTime @default(now())
     updatedAt                 DateTime @updatedAt
     headerStyle               String   @default("default")
@@ -192,5 +192,5 @@ model StylePreset {
     isPublic  Boolean  @default(false)
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now())
-    user      User     @relation(fields: [userId], references: [id])
+    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

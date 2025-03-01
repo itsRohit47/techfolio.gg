@@ -35,8 +35,8 @@ export default function SavePresetModal({ isOpen, onClose, onSave }: SavePresetM
                     className="w-full p-2 border rounded-md mb-4"
                 />
                 <label className="flex items-center gap-2 mb-4 justify-end">
-                    <span className="text-sm text-gray-600">Make preset public</span>
-                    <Toggle onToggle={() => { setIsPublic(true) }} />
+                    <span className="text-sm text-gray-600">Public</span>
+                    <Toggle onToggle={() => { setIsPublic(!isPublic) }} initialValue={isPublic} />
                 </label>
                 <div className="flex justify-end gap-2">
                     <button

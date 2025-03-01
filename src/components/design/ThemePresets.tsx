@@ -20,7 +20,7 @@ function FilterPill({ label, isActive, onClick }: FilterPillProps) {
     return (
         <button
             onClick={onClick}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors border
+            className={`px-3 py-1.5 text-xs rounded-full font-medium transition-colors border
                 ${isActive
                     ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 border-blue-300'
                     : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200 border-neutral-300'
@@ -82,8 +82,11 @@ function PresetPreview({ style }: PreviewProps) {
                 style.headerAlignment === 'right' ? 'items-end text-right' :
                     'items-start text-left'
                 }`}>
-                <div className="h-3 w-24 rounded mb-2" style={{ backgroundColor: style.nameColor }} />
-                <div className="h-2 w-32 rounded" style={{ backgroundColor: style.descriptionColor }} />
+                <div className="h-4 w-4 rounded-full mb-2" style={{ backgroundColor: style.assetCardBackground }} />
+                <div className="h-2 w-24 rounded-sm mb-2" style={{ backgroundColor: style.assetCardBackground }} />
+                <div className="h-2 w-32 rounded-sm" style={{ backgroundColor: style.assetCardBackground }} />
+                <div className="h-2 w-24 mt-auto rounded-full" style={{ backgroundColor: style.footerButtonBg }} />
+
             </div>
         </div>
     );
@@ -176,14 +179,14 @@ export default function ThemePresets({ onSelect, currentThemeId }: ThemePresetPr
 
     if (isLoading) return <div className="h-96 flex items-center justify-center">Loading presets...</div>;
 
-    if (!allPresets.length) return <div className="h-96 flex items-center justify-center">No presets found</div>;
+    if (!allPresets.length) return <div className="h-96 flex text-center px-20 items-center justify-">No presets found, switch to the custom design tab to save your current design as a preset.</div>;
 
 
     return (
         <>
             <div className="space-y-4">
                 {/* Filter Pills */}
-                <div className="flex gap-2 pb-2">
+                <div className="flex gap-2 px-px">
                     <FilterPill
                         label="All Presets"
                         isActive={activeFilter === 'all'}
@@ -207,7 +210,7 @@ export default function ThemePresets({ onSelect, currentThemeId }: ThemePresetPr
                         <div
                             key={preset.id}
                             onClick={() => onSelect(preset.style, preset.id)}
-                            className={`p-2 rounded-lg border border-gray-300 transition-all cursor-pointer ${currentThemeId === preset.id ? 'ring-2 ring-blue-500 ring-offset-2' : 'hover:border-gray-500'
+                            className={`p-1 rounded-lg border border-gray-300 transition-all cursor-pointer ${currentThemeId === preset.id ? 'ring-2 ring-blue-500 ring-offset-2' : 'hover:border-gray-500'
                                 }`}
                         >
                             <PresetPreview style={preset.style} />
@@ -248,8 +251,8 @@ export default function ThemePresets({ onSelect, currentThemeId }: ThemePresetPr
                         {activeFilter === 'user'
                             ? "You haven't created any presets yet"
                             : activeFilter === 'public'
-                                ? "No public presets available"
-                                : "No presets available"}
+                                ? "No public presets available, when you create a preset you can choose to make it public"
+                                : "No presets available, when you create a public preset it will appear here"}
                     </div>
                 )}
             </div>

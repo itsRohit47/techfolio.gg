@@ -7,6 +7,27 @@ import {
 import { Status } from "@prisma/client";
 
 export const userRouter = createTRPCRouter({
+  isUsernameAvailable: publicProcedure
+    .input(
+      z.object({
+        username: z.string().min(1),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const user = await ctx.db.user.findUnique({
+        where: {
+          username: input.username,
+        },
+      });
+
+      if (user) {
+        return false;
+      }
+      else {
+        return true;
+      }
+    }),
+
   getProfile: protectedProcedure.query(async ({ ctx }) => {
     const userData = await ctx.db.user.findUnique({
       where: { id: ctx.session.user.id },
@@ -115,10 +136,10 @@ export const userRouter = createTRPCRouter({
   updateAsset: protectedProcedure
     .input(
       z.object({
-        id: z.string().min(1),
+        id: z.string(),
         icon: z.string().nullish(),
-        title: z.string(),
-        description: z.string().nullish(),
+        title: z.string().optional(),
+        description: z.string().max(200).nullish(),
         tags: z.array(z.string()).optional(),
         media: z.array(z.string()).optional(),
         body: z.string().nullish(),
