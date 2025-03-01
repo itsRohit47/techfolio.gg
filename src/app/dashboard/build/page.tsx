@@ -9,6 +9,7 @@ import Modal from "@/components/modal";
 import { Loader2Icon, LoaderPinwheel, Trash2Icon, CheckCircle2Icon, EditIcon, ArchiveIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import Toggle from "@/components/toogle";
+import Breadcrumb from '@/components/breadcrumb';
 
 const STATUS_COLORS = {
     PUBLISHED: {
@@ -39,10 +40,10 @@ const STATUS_COLORS = {
 
 function StatusLegend() {
     return (
-        <div className="flex gap-4 items-center text-sm">
+        <div className="flex gap-4 items-center text-sm justify-end w-full">
             {Object.entries(STATUS_COLORS).map(([status, colors]) => (
                 <div key={status} className="flex items-center gap-2">
-                    <div className={`flex items-center gap-1.5 px-2  border py-1 rounded-md ${colors.bg} ${colors.border}`}>
+                    <div className={`flex items-center gap-1.5 rounded-md`}>
                         {colors.icon}
                         <span className={colors.text}>{colors.label}</span>
                     </div>
@@ -153,7 +154,7 @@ function UserAssets() {
     }
 
     return (
-        <div className="h-full w-full py-4">
+        <div className="h-full w-full pb-4 pt-6">
             <div className="flex gap-4 justify-between items-center mb-4">
                 <div className="flex items-center gap-4 w-full">
                     <input
@@ -210,7 +211,7 @@ function UserAssets() {
                     )}
                 </div>
             </div>
-            <div className="mb-4">
+            <div className="mt-6 mb-4">
                 <StatusLegend />
             </div>
             {assets ? (

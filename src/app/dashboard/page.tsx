@@ -1,9 +1,12 @@
+import Breadcrumb from '@/components/breadcrumb';
 import ComingSoon from "@/components/coming-soon";
 
 export default function DashboardPage() {
     return (
-        <main className="h-full">
-            <ComingSoon />
-        </main>
+        <div className="w-full h-full py-6 px-4">
+            <div className="flex items-center justify-center h-full">
+                <ComingSoon />
+            </div>
+        </div>
     );
 }

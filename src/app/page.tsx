@@ -1,14 +1,10 @@
 'use client';
-import { signOut, useSession, signIn } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { CheckIcon, MenuIcon } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
-import { Meteors } from "@/components/ui/meteors";
-import { ArrowUpRightIcon } from "lucide-react";
 import Button from "@/components/button";
-import { title } from "process";
 import toast from "react-hot-toast";
 export default function Home() {
   const { data } = useSession();
@@ -18,7 +14,7 @@ export default function Home() {
     if (data) {
       router.push("/dashboard/build");
     }
-  }, [data]);
+  }, [data, router]);
 
 
 
@@ -54,7 +50,7 @@ function HeroSection() {
         <div className="flex items-center border mt-4 pl-3 p-2 rounded-lg w-max bg-white/20 border-gray-300">
           <span className="font-medium text-gray-500">techfolio.gg/</span>
           <input type="text" placeholder="username" className=" outline-none bg-transparent w-40 px-[2px] border-none focus:border-none focus:ring-0" />
-          <Button onClick={() => signIn("github")} className="bg-blue-800 hover:bg-blue-800/90 text-white">Claim</Button>
+          {/* <Button onClick={() => signIn("github")} className="bg-blue-800 hover:bg-blue-800/90 text-white">Claim</Button> */}
         </div>
       </div>
     </div >

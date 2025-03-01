@@ -82,6 +82,9 @@ export default function Portfolio({ style: propStyle, user, preview }: { style?:
                 </div>
             )}
 
+            {!preview && session.data?.user?.id === u_id && <div className="absolute top-4 z-50 left-4 flex items-center gap-x-2"><div className="w-3 h-3 rounded-full bg-orange-500 border ring-orange-500 ring-1 ring-offset-2 border-yellow-500 animate-pulse"></div>Preview mode</div>}
+
+
             {/* Background Image - only show if backgroundImage exists */}
             {style?.backgroundImage && (
                 <img

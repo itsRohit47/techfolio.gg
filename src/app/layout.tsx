@@ -22,7 +22,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className={`${GeistSans.variable} scroll-smooth`} >
-      <body className="w-full font-row min-h-screen h-full text-sm mx-auto relative ">
+      <body className="w-full min-h-screen h-full text-sm mx-auto relative ">
         <SessionProviderClientComponent>
           <TRPCReactProvider>
             <AppContextProvider>

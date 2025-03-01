@@ -14,8 +14,14 @@ export default function Footer({ style, preview }: FooterProps) {
                 return `mailto:${style.footerButtonEmail}`;
             case 'phone':
                 return `tel:${style.footerButtonPhone}`;
+            case 'link':
+                const url = style.footerButtonUrl;
+                if (!url) return '#';
+                return url.startsWith('http://') || url.startsWith('https://')
+                    ? url
+                    : `https://${url}`;
             default:
-                return style.footerButtonUrl;
+                return '#';
         }
     };
 
