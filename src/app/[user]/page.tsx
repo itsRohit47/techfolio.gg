@@ -8,16 +8,9 @@ export default async function PortfolioPage({
     params: Promise<{ user: string }>
 }) {
     const user = (await params).user
-    const links = [
-        { name: 'Home', href: '/dashboard', iconName: 'Home' },
-        { name: "Build", href: "/dashboard/build", iconName: "Hammer" },
-        { name: "Design", href: "/dashboard/design", iconName: "PaintBucket" },
-        { name: "Settings", href: "/dashboard/settings", iconName: "Cog" },
-        { name: "Sign out", href: "/api/auth/signout", iconName: "Power" },
-    ]
 
     return <div className="relative h-screen overflow-scroll">
-        <NavBar links={links} />
+        <NavBar />
         <Portfolio style={defaultStyle} user={user} />
     </div>
 }

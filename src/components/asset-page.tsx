@@ -3,7 +3,20 @@
 'use client';
 import { useRouter } from "next/router";
 import { api } from "@/trpc/react";
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState, useEffect, useCallback } from "react";
+// Add these new imports at the top
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import Placeholder from '@tiptap/extension-placeholder';
+import Underline from '@tiptap/extension-underline';
+import Heading from '@tiptap/extension-heading';
+import Link from '@tiptap/extension-link';
+import Image from '@tiptap/extension-image';
+import CodeBlock from '@tiptap/extension-code-block';
+import ListItem from '@tiptap/extension-list-item';
+import OrderedList from '@tiptap/extension-ordered-list';
+import Blockquote from '@tiptap/extension-blockquote';
+import Youtube from '@tiptap/extension-youtube';
 import Button from "./button";
 import {
     Trash2Icon,
@@ -15,20 +28,26 @@ import {
     ListOrderedIcon,
     ImageIcon,
     Heading1Icon,
-    PlusIcon
+    PlusIcon,
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    ExpandIcon
 } from "lucide-react";
 import { Status } from "@prisma/client";
 import Loader from "./loader";
+import { useSession } from "next-auth/react";
+import { TagInput } from "./tag-input"; // Add this new import
+import { ImageViewer } from "./image-viewer"; // Add to imports
 
 export default function AssetPage(
     { id }: { id: string }
 ) {
+    const { data: session } = useSession();
     const ctx = api.useUtils();
-    const { data: asset, isLoading } = api.asset.getAsset.useQuery({ id });
+    const { data: asset, isLoading } = api.asset.getAsset.useQuery({ id: id });
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [tags, setTags] = useState<string[]>([]);
-    const [tagInput, setTagInput] = useState("");
     const [files, setFiles] = useState<File[]>([]);
     const [dragActive, setDragActive] = useState(false);
     const [status, setStatus] = useState<Status>(Status.DRAFT);
@@ -37,19 +56,60 @@ export default function AssetPage(
     const [savingDraft, setSavingDraft] = useState(false);
     const [existingMedia, setExistingMedia] = useState<string[]>([]);
     const [editMode, setEditMode] = useState(false);
+    const [fullScreenImage, setFullScreenImage] = useState<string | null>(null); // Add new state near other state declarations
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(false);
+    const [isImageUploading, setIsImageUploading] = useState(false); // Add this state
+
+    const editor = useEditor({
+        extensions: [
+            StarterKit,
+            Placeholder.configure({ placeholder: "Add a detailed description of your asset..." }),
+            Underline,
+            Heading.configure({ levels: [1, 2, 3] }),
+            CodeBlock,
+            Image.configure({
+                HTMLAttributes: {
+                    class: 'rounded-lg max-w-full',
+                },
+            }),
+            ListItem,
+            OrderedList,
+            Blockquote,
+            Youtube.configure({
+                controls: false,
+                nocookie: true,
+                inline: false,
+                allowFullscreen: true,
+            }),
+            Link.configure({
+                openOnClick: true,
+                autolink: true,
+                defaultProtocol: 'https',
+                protocols: ['http', 'https'],
+                validate: url => /^https?:\/\//.test(url),
+            }),
+        ],
+        content: '',
+        editorProps: {
+            attributes: {
+                class: 'w-full rounded-md h-full border border-gray-300 bg-white px-3 py-2 placeholder-gray-400 hover:shadow-sm focus:bg-white focus:shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-200 overflow-y-auto',
+            },
+        },
+    });
 
     // Add useEffect to update form values when asset data is loaded
     useEffect(() => {
-        if (asset) {
+        if (asset && editor) {
             setTitle(asset.title || "");
             setDescription(asset.description || "");
             setTags(asset.tags || []);
             setExistingMedia(asset.media || []);
             setIconFile(asset.icon || null);
             setStatus(asset.status || Status.DRAFT);
+            editor.commands.setContent(asset.body || '');
         }
-    }, [asset]);
-
+    }, [asset, editor]);
 
     const { mutate: saveAsset } = api.asset.updateAsset.useMutation({
         onSuccess: () => {
@@ -76,7 +136,7 @@ export default function AssetPage(
 
     const handleSave = async (e: React.FormEvent, draft: boolean) => {
         e.preventDefault();
-        if (!title) return;
+        if (!title || !editor) return;
 
         if (draft) {
             setSavingDraft(true);
@@ -99,6 +159,9 @@ export default function AssetPage(
             // Combine existing and new media URLs
             const allMediaUrls = [...existingMedia, ...newMediaUrls];
 
+            // Get the editor content
+            const editorContent = editor.getHTML();
+
             saveAsset({
                 id,
                 title,
@@ -107,37 +170,13 @@ export default function AssetPage(
                 icon: iconFile instanceof File ? await uploadImage(iconFile) : (iconFile === null ? null : asset?.icon),
                 media: allMediaUrls,
                 status: Status[draft ? 'DRAFT' : 'PUBLISHED'],
-                body: null
-            }, {
-                onError: (error) => {
-                    alert(`Failed to save asset: ${error.message}`);
-                }
+                body: editorContent  // Save the editor content
             });
 
         } catch (error) {
             alert('Failed to upload images or save asset');
             console.error(error);
         }
-    };
-
-    const handleTagInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        if (value.endsWith(', ')) {
-            const newTag = value.slice(0, -2).trim();
-            if (newTag && !tags.includes(newTag) && tags.length < 6) {
-                setTags([...tags, newTag]);
-                setTagInput("");
-            } else if (tags.length >= 6) {
-                alert('Maximum 6 tags allowed');
-                setTagInput("");
-            }
-        } else {
-            setTagInput(value);
-        }
-    };
-
-    const removeTag = (tagToRemove: string) => {
-        setTags(tags.filter(tag => tag !== tagToRemove));
     };
 
     const handleDrag = (e: React.DragEvent) => {
@@ -199,27 +238,215 @@ export default function AssetPage(
         document.getElementById('file-input')?.click();
     };
 
-    if (isLoading) {
+    const scrollGallery = (direction: 'left' | 'right') => {
+        const gallery = document.getElementById('media-gallery');
+        if (gallery) {
+            const scrollAmount = gallery.clientWidth;
+            gallery.scrollBy({
+                left: direction === 'left' ? -scrollAmount : scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    const updateScrollButtons = () => {
+        const gallery = document.getElementById('media-gallery');
+        if (gallery) {
+            setCanScrollLeft(gallery.scrollLeft > 0);
+            setCanScrollRight(
+                gallery.scrollLeft < gallery.scrollWidth - gallery.clientWidth
+            );
+        }
+    };
+
+    useEffect(() => {
+        const gallery = document.getElementById('media-gallery');
+        if (gallery) {
+            gallery.addEventListener('scroll', updateScrollButtons);
+            // Initial check
+            updateScrollButtons();
+            // Also check after images load
+            gallery.querySelectorAll('img').forEach(img => {
+                img.addEventListener('load', updateScrollButtons);
+            });
+        }
+        return () => {
+            const gallery = document.getElementById('media-gallery');
+            if (gallery) {
+                gallery.removeEventListener('scroll', updateScrollButtons);
+            }
+        };
+    }, [asset?.media]); // Only re-run when media changes
+
+    const setURL = useCallback(() => {
+        const previousUrl = editor?.getAttributes('link').href;
+        const url = window.prompt('URL', previousUrl);
+
+        if (url === null) {
+            return;
+        }
+
+        if (url === '') {
+            editor?.chain().focus().extendMarkRange('link').unsetLink().run();
+            return;
+        }
+
+        try {
+            editor?.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+        } catch (e: any) {
+            alert(e.message);
+        }
+    }, [editor]);
+
+    const addImage = async () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/jpeg, image/png, image/jpg, image/gif';
+        input.onchange = async () => {
+            const file = input.files?.[0];
+            if (file) {
+                setIsImageUploading(true); // Set loading state
+                try {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    const res = await fetch('/api/image/upload', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                    const data = await res.json();
+                    if (data.url) {
+                        editor?.chain().focus().setImage({ src: data.url }).run();
+                    }
+                } catch (error) {
+                    alert('Failed to upload image');
+                    console.error(error);
+                } finally {
+                    setIsImageUploading(false); // Reset loading state
+                }
+            }
+        };
+        input.click();
+    };
+
+    // Modify the first loading check to also prevent any content render
+    if (isLoading || !asset) {
         return <div className="flex items-center justify-center h-screen">
             <Loader />
         </div>;
     }
 
-    if (!asset) {
-        return <div className="flex items-center justify-center h-screen">
-            <p className="text-gray-800">Asset not found</p>
-        </div>;
-    }
+    // Modify the published view condition to be more explicit
+    if (asset.status === Status.PUBLISHED && !editMode && !saving && !savingDraft) {
+        const isOwner = session?.user?.id === asset.userId;
 
-    if (status === Status.PUBLISHED && !editMode) {
-        return <div className="flex items-center justify-center h-screen">
-            <button
-                onClick={() => setEditMode(true)}
-                className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded"
-            >
-                Edit
-            </button>
-        </div>;
+        return (
+            <div className="max-w-xl mx-auto gap-y-6 flex flex-col">
+                <div className="flex items-center justify-between">
+                    <a href={`/${asset.username}`} className="text-blue-500 hover:underline">
+                        view {asset.username}&apos;s portfolio
+                    </a>
+                    {isOwner && (
+                        <button
+                            onClick={() => setEditMode(true)}
+                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                        >
+                            Edit
+                        </button>
+                    )}
+                </div>
+                <div className="flex items-start gap-6">
+                    {asset.icon && (
+                        <img
+                            src={asset.icon}
+                            alt={asset.title}
+                            className="w-16 h-16 rounded-lg object-cover border border-gray-200"
+                        />
+                    )}
+                    <div className="flex-1">
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                            {asset.title}
+                        </h1>
+                        <p className="text-gray-600">
+                            {asset.description}
+                        </p>
+
+                    </div>
+                </div>
+
+                {asset.tags && asset.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                        {asset.tags.map((tag, index) => (
+                            <span
+                                key={index}
+                                className="bg-gray-200 text-gray-600 px-3 py-1 rounded-lg text-sm"
+                            >
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )}
+
+                {asset.body && (
+                    <div  id="content" className="max-w-none space-y-4 pb-32" dangerouslySetInnerHTML={{ __html: asset.body }}>
+                    </div>
+                )}
+
+                {asset.media && asset.media.length > 0 && (
+                    <div className="relative group">
+                        <div
+                            id="media-gallery"
+                            className="flex overflow-x-auto scrollbar-hide scroll-smooth snap-x snap-mandatory"
+                        >
+                            {asset.media.map((url, index) => (
+                                <div
+                                    key={index}
+                                    className="flex-none w-full snap-center relative group/image"
+                                >
+                                    <img
+                                        src={url}
+                                        alt={`Project media ${index + 1}`}
+                                        className="w-full h-[300px] object-cover rounded-lg"
+                                    />
+                                    <button
+                                        onClick={() => setFullScreenImage(url)}
+                                        className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 p-2 rounded-lg text-white opacity-0 group-hover/image:opacity-100 transition-opacity"
+                                    >
+                                        <ExpandIcon size={20} />
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                        {asset.media.length > 1 && (
+                            <>
+                                {canScrollLeft && (
+                                    <button
+                                        onClick={() => scrollGallery('left')}
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <ChevronLeftIcon size={24} />
+                                    </button>
+                                )}
+                                {canScrollRight && (
+                                    <button
+                                        onClick={() => scrollGallery('right')}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                                    >
+                                        <ChevronRightIcon size={24} />
+                                    </button>
+                                )}
+                            </>
+                        )}
+                    </div>
+                )}
+
+                {fullScreenImage && (
+                    <ImageViewer
+                        src={fullScreenImage}
+                        onClose={() => setFullScreenImage(null)}
+                    />
+                )}
+            </div>
+        );
     }
 
     return <div>
@@ -227,7 +454,7 @@ export default function AssetPage(
             <a href="/dashboard/build" className="hover:underline">All Assets</a> / {asset?.title}
         </div>
         <div>
-            <div className="grid grid-cols-2 mt-4 gap-4 h-[calc(100vh-5rem)]">
+            <div className="grid lg:grid-cols-2 mt-4 gap-4 lg:h-[calc(100vh-5rem)]">
                 <div className="space-y-4 h-full flex flex-col">
                     <div className="flex items-center gap-4">
                         {(iconFile) ? (
@@ -271,32 +498,16 @@ export default function AssetPage(
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                             />
+
                         </div>
+
                     </div>
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            placeholder="Add tags (comma separated)"
-                            value={tagInput}
-                            onChange={handleTagInput}
-                        />
-                    </div>
-                    {tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                            {tags.map((tag, index) => (
-                                <div key={index} className="flex items-center bg-white px-3 py-1 rounded border border-gray-200">
-                                    <span className="text-sm text-gray-600">{tag}</span>
-                                    <button
-                                        type="button"
-                                        onClick={() => removeTag(tag)}
-                                        className="ml-2 text-gray-400 hover:text-red-500"
-                                    >
-                                        ×
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    <TagInput
+                        tags={tags}
+                        setTags={setTags}
+                        placeholder="Press enter to add tags"
+                        maxTags={6}
+                    />
                     <div
                         className={`bg-white border-2 border-dashed ${dragActive ? 'border-blue-500' : 'border-gray-300'} 
                                   rounded-lg p-4 hover:shadow-sm hover:bg-white/80 flex  gap-4 cursor-pointer justify-between items-center`}
@@ -320,7 +531,7 @@ export default function AssetPage(
                                 {existingMedia.map((mediaUrl, index) => (
                                     <div
                                         key={`existing-${index}`}
-                                        className="relative group border border-gray-300 rounded-lg p-1 overflow-hidden border-dashed h-52"
+                                        className="relative group border border-gray-300 rounded-lg p-1 overflow-hidden border-dashed h-28 lg:h-52"
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <img
@@ -345,7 +556,7 @@ export default function AssetPage(
                                 {files.map((file, index) => (
                                     <div
                                         key={index}
-                                        className="relative group border border-gray-300 rounded-lg p-1 overflow-hidden border-dashed h-52"
+                                        className="relative group border border-gray-300 rounded-lg p-1 overflow-hidden border-dashed h-28 lg:h-52"
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         <img
@@ -386,49 +597,68 @@ export default function AssetPage(
                 </div>
                 <div className="h-full space-y-2 flex flex-col justify-between">
                     <div className="bg-white border border-gray-200 rounded-t-lg p-2 flex gap-2">
-                        <button className="p-2 hover:bg-gray-100 rounded">
+                        <button
+                            onClick={() => editor?.chain().focus().toggleBold().run()}
+                            className={`p-2 hover:bg-gray-100 rounded ${editor?.isActive('bold') ? 'bg-gray-200' : ''}`}
+                        >
                             <BoldIcon size={16} />
                         </button>
-                        <button className="p-2 hover:bg-gray-100 rounded">
+                        <button
+                            onClick={() => editor?.chain().focus().toggleItalic().run()}
+                            className={`p-2 hover:bg-gray-100 rounded ${editor?.isActive('italic') ? 'bg-gray-200' : ''}`}
+                        >
                             <ItalicIcon size={16} />
                         </button>
                         <div className="w-px bg-gray-200"></div>
-                        <button className="p-2 hover:bg-gray-100 rounded">
+                        <button
+                            onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
+                            className={`p-2 hover:bg-gray-100 rounded ${editor?.isActive('heading', { level: 1 }) ? 'bg-gray-200' : ''}`}
+                        >
                             <Heading1Icon size={16} />
                         </button>
                         <div className="w-px bg-gray-200"></div>
-                        <button className="p-2 hover:bg-gray-100 rounded">
+                        <button
+                            onClick={() => editor?.chain().focus().toggleBulletList().run()}
+                            className={`p-2 hover:bg-gray-100 rounded ${editor?.isActive('bulletList') ? 'bg-gray-200' : ''}`}
+                        >
                             <ListIcon size={16} />
                         </button>
-                        <button className="p-2 hover:bg-gray-100 rounded">
+                        <button
+                            onClick={() => editor?.chain().focus().toggleOrderedList().run()}
+                            className={`p-2 hover:bg-gray-100 rounded ${editor?.isActive('orderedList') ? 'bg-gray-200' : ''}`}
+                        >
                             <ListOrderedIcon size={16} />
                         </button>
                         <div className="w-px bg-gray-200"></div>
-                        <button className="p-2 hover:bg-gray-100 rounded">
+                        <button
+                            onClick={setURL}
+                            className={`p-2 hover:bg-gray-100 rounded ${editor?.isActive('link') ? 'bg-gray-200' : ''}`}
+                        >
                             <LinkIcon size={16} />
                         </button>
-                        <button className="p-2 hover:bg-gray-100 rounded">
-                            <ImageIcon size={16} />
+                        <button
+                            onClick={addImage}
+                            disabled={isImageUploading}
+                            className={`p-2 hover:bg-gray-100 rounded flex items-center justify-center ${isImageUploading ? 'opacity-50' : ''}`}
+                        >
+                            {isImageUploading ? (
+                                <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                            ) : (
+                                <ImageIcon size={16} />
+                            )}
                         </button>
                     </div>
-                    <textarea
-                        name="description"
-                        id="description"
-                        placeholder="Description"
-                        className="w-full h-full rounded-t-none"
-                        defaultValue={asset?.body || ""}
-                        onChange={(e) => {
-                            // Add state and handler for body if needed
-                        }}
-                    ></textarea>
+                    <div className="flex-1 h-full overflow-y-auto max-h-[calc(100vh-11rem)]">
+                        <EditorContent editor={editor} className="h-full overflow-y-auto" />
+                    </div>
                     <div className="flex gap-2">
                         <Button className="w-full bg-white hover:bg-white/70 border border-gray-300 disabled:opacity-50 flex items-center justify-center gap-2"
-                            disabled={!title || savingDraft}
+                            disabled={!title || savingDraft || saving}
                             onClick={(e: FormEvent<Element>) => handleSave(e, true)}>
                             Save Draft {savingDraft && <Loader />}
                         </Button>
                         <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 flex items-center justify-center gap-2"
-                            disabled={!title || saving}
+                            disabled={!title || saving || savingDraft}
                             onClick={(e: FormEvent<Element>) => handleSave(e, false)}
                         >
                             Save {saving && <Loader />}
@@ -437,5 +667,5 @@ export default function AssetPage(
                 </div>
             </div>
         </div >
-    </div >;
+    </div >
 }

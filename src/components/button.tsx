@@ -18,7 +18,7 @@ export default function Button({
                 px-3 py-2
                 rounded-lg 
                 text-nowrap 
-                text-sxs
+                text-xs lg:text-sm
                 transition-colors
                 duration-200
                 focus:outline-none 

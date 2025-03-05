@@ -44,27 +44,28 @@ model VerificationToken {
 }
 
 model User {
-    id             String          @id @default(cuid())
-    name           String?
-    username       String?         @unique
-    customDomain   String?         @unique
-    email          String?         @unique
-    emailVerified  DateTime?
-    image          String?
-    bio            String?         @default("I'm a developer!")
-    location       String?         @default("Earth")
-    github         String?         @default("github.com/itsrohit47")
-    linkedin       String?         @default("linkedin.com/in/itsrohitbajaj")
-    isPro          Boolean?
-    accounts       Account[]
-    sessions       Session[]
-    projectsId     String?
-    assets         Asset[]
-    createdAt      DateTime        @default(now())
-    updatedAt      DateTime        @updatedAt
-    portfolioStyle PortfolioStyle?
-    links          UserLink[]
-    stylePresets   StylePreset[]
+    id               String          @id @default(cuid())
+    name             String?
+    username         String?         @unique @default(cuid())
+    username_updated Boolean         @default(false)
+    customDomain     String?         @unique
+    email            String?         @unique
+    emailVerified    DateTime?
+    image            String?
+    bio              String?         @default("I'm a developer!")
+    location         String?         @default("Earth")
+    github           String?         @default("github.com/itsrohit47")
+    linkedin         String?         @default("linkedin.com/in/itsrohitbajaj")
+    isPro            Boolean?
+    accounts         Account[]
+    sessions         Session[]
+    projectsId       String?
+    assets           Asset[]
+    createdAt        DateTime        @default(now())
+    updatedAt        DateTime        @updatedAt
+    portfolioStyle   PortfolioStyle?
+    links            UserLink[]
+    stylePresets     StylePreset[]
 }
 
 enum Status {
@@ -138,7 +139,7 @@ model PortfolioStyle {
 
     // Footer Button Settings
     footerButtonText        String  @default("Follow me on LinkedIn")
-    footerButtonUrl         String  @default("linkedin.conm/in/itsrohitbajaj")
+    footerButtonUrl         String  @default("linkedin.com/in/itsrohitbajaj")
     footerButtonType        String  @default("link")
     footerButtonPhone       String  @default("")
     footerButtonEmail       String  @default("")

@@ -8,6 +8,7 @@ import { api } from '@/trpc/react';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import Loader from '@/components/loader';
+import useDebounce from '@/lib/hooks/use-debounce';
 
 const ProfileContent = () => {
     const fields = ['Image', 'Display Name', 'Username', 'Bio', 'Location', 'LinkedIn', 'GitHub'];
@@ -48,6 +49,7 @@ const ProfileContent = () => {
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const [linkChanged, setLinkChanged] = useState(false);
     const requiredFields = ['name', 'username'];
 
     const { data: userData, isLoading } = api.asset.getProfile.useQuery();
@@ -115,10 +117,17 @@ const ProfileContent = () => {
             return value !== initialData.formData[key as keyof typeof formData];
         });
 
-        const linksChanged = JSON.stringify(links) !== JSON.stringify(initialData.links);
+        // Improved link comparison
+        const linksChanged = links.some((currentLink) => {
+            const originalLink = initialData.links.find(l => l.id === currentLink.id);
+            if (!originalLink) return true;
+            return currentLink.label !== originalLink.label ||
+                currentLink.url !== originalLink.url;
+        });
+
         const imageChanged = selectedImage !== null;
         setHasChanges(formDataChanged || linksChanged || imageChanged);
-    }, [formData, links, initialData, selectedImage]);
+    }, [formData, links, initialData, selectedImage, requiredFields]);
 
     useEffect(() => {
         if (params.has('onboarding')) {
@@ -126,10 +135,12 @@ const ProfileContent = () => {
         }
     }, [params, router]);
 
+    const debouncedUsername = useDebounce(formData.username, 500);
+
     const { data: isUsernameAvailable, isFetching } = api.asset.isUsernameAvailable.useQuery(
-        { username: formData.username },
+        { username: debouncedUsername },
         {
-            enabled: !!formData.username && formData.username !== initialData.formData.username
+            enabled: !!debouncedUsername && debouncedUsername !== initialData.formData.username
         }
     );
 
@@ -144,9 +155,11 @@ const ProfileContent = () => {
         };
         const key = mapping[field];
         if (key) {
+            // Sanitize username input: remove spaces and convert to lowercase
+            const finalValue = key === 'username' ? value.replace(/\s+/g, '').toLowerCase() : value;
             setFormData(prev => ({
                 ...prev,
-                [key]: value
+                [key]: finalValue
             }));
         }
     };
@@ -293,21 +306,19 @@ const ProfileContent = () => {
 
     return (
         <div className="w-full h-full py-6 px-4">
-            {onboarding && (
+            {onboarding && !formData.username ? (
                 <div className="mb-6 py-4  rounded-lg">
                     <h3 className="text-lg font-medium text-blue-800">🎉 Welcome!</h3>
                     <p className="text-sm text-red-700 mt-2 flex items-center gap-1">
                         <AlertCircleIcon size={14} /> To get started, please update your username
                     </p>
                 </div>
-            )}
-
-            {!onboarding && <h1 className="text-sm font-semibold mb-10">Profile Settings</h1>}
+            ) : <h1 className="text-sm font-semibold mb-10">Profile Settings</h1>}
             <form onSubmit={handleSubmit} className='flex flex-col h-full w-full r'>
                 <div className="grid grid-cols-1 gap-y-6 ">
                     {fields.map((field) => (
                         <div key={field} className='flex gap-y-6 w-full items-center'>
-                            <label htmlFor={field} className={`block text-sm font-medium  w-1/3 ${field === "Username" ? 'text-red-500' : 'text-gray-700'}`}>
+                            <label htmlFor={field} className={`block text-sm font-medium  w-1/3 text-gray-700`}>
                                 {field}
                                 {(field === 'Display Name' || field === 'Username') && (
                                     <span className="text-red-500 ml-1">*</span>
@@ -437,7 +448,11 @@ const ProfileContent = () => {
                                 type="text"
                                 placeholder="Label (e.g. HackerRank)"
                                 value={link.label}
-                                onChange={(e) => updateLink(index, 'label', e.target.value)}
+                                onChange={(e) => {
+                                    setLinkChanged(true);
+
+                                    updateLink(index, 'label', e.target.value)
+                                }}
                                 className="flex-1 p-2 border rounded-md w-1/4"
                             />
                             <input
@@ -459,7 +474,12 @@ const ProfileContent = () => {
                 <div className="mt-6 flex justify-end items-center gap-4 pb-20">
                     <button
                         type="submit"
-                        disabled={isSaving || isFetching || !isUsernameAvailable || uploadingImage || formData.username === '' || formData.name === ''}
+                        disabled={
+                            isSaving ||
+                            uploadingImage ||
+                            (formData.username === '' || formData.name === '') ||
+                            (formData.username !== initialData.formData.username && (!isUsernameAvailable || isFetching)) || !linkChanged
+                        }
                         className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isSaving ? 'Saving...' : 'Save Changes'}

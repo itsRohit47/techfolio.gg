@@ -27,13 +27,13 @@ h1 {
 }
 
 .pg {
-  @apply mt-2 max-w-xl text-base text-gray-500;
+  @apply mx-auto mt-2 w-full max-w-sm text-center text-gray-500 lg:max-w-xl lg:text-base;
 }
 
-input, textarea {
-  @apply w-full rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-200 bg-white hover:shadow-sm focus:shadow-sm focus:bg-white;
+input,
+textarea {
+  @apply w-full rounded-md border border-gray-300 bg-white px-3 py-2 placeholder-gray-400 hover:shadow-sm focus:bg-white focus:shadow-sm focus:outline-none focus:ring-1 focus:ring-gray-200;
 }
-
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-in;
@@ -54,4 +54,42 @@ input, textarea {
 
 *::-webkit-scrollbar {
   display: none;
+}
+
+
+/* image in div with id content have max h of 96 */
+
+#content img {
+  @apply mx-auto my-4 rounded-lg w-full h-60 border p-2 border-gray-200 object-cover;
+}
+
+/* tiptal list styles and image and link */
+.tiptap ul {
+  @apply list-disc pl-4;
+}
+
+.tiptap ol {
+  @apply list-decimal pl-4;
+}
+
+.tiptap li {
+  @apply mb-1;
+}
+
+.tiptap img {
+  @apply mx-auto my-4 rounded-lg w-full h-60 border p-2 border-gray-200 object-cover;
+}
+
+.tiptap a {
+  @apply text-blue-500 underline;
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }

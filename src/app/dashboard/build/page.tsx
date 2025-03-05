@@ -76,7 +76,7 @@ function UserAssets() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
     const [deleteAssetId, setDeleteAssetId] = useState<string | null>(null);
-    const [showArchived, setShowArchived] = useState(false);
+    const [showArchived, setShowArchived] = useState(true);
 
     // Load showArchived state from localStorage on mount
     useEffect(() => {

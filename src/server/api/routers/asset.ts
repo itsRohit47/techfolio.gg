@@ -22,11 +22,15 @@ export const userRouter = createTRPCRouter({
 
       if (user) {
         return false;
-      }
-      else {
+      } else {
         return true;
       }
     }),
+
+  getTotalUsers: publicProcedure.query(async ({ ctx }) => {
+    const totalUsers = await ctx.db.user.count();
+    return totalUsers - 1;
+  }),
 
   getProfile: protectedProcedure.query(async ({ ctx }) => {
     const userData = await ctx.db.user.findUnique({
@@ -78,7 +82,7 @@ export const userRouter = createTRPCRouter({
     return assets;
   }),
 
-  getAsset: protectedProcedure
+  getAsset: publicProcedure
     .input(
       z.object({
         id: z.string().min(1),
@@ -88,10 +92,23 @@ export const userRouter = createTRPCRouter({
       const asset = await ctx.db.asset.findFirst({
         where: {
           id: input.id,
-          userId: ctx.session.user.id,
         },
       });
-      return asset;
+
+      
+      const username = await ctx.db.user.findUnique({
+        where: {
+          id: asset?.userId,
+        },
+        select: {
+          username: true,
+        },
+      });
+
+      return {
+        ...asset,
+        username: username?.username || "",
+      };
     }),
 
   addAsset: protectedProcedure
@@ -399,7 +416,7 @@ export const userRouter = createTRPCRouter({
         location: z.string().nullish(),
         linkedin: z.string().nullish(),
         github: z.string().nullish(),
-        image: z.string().optional(), // Change to optional instead of nullish
+        image: z.string().optional(),
         links: z
           .array(
             z.object({
@@ -412,10 +429,18 @@ export const userRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
+      // Sanitize username if provided
+      const sanitizedUsername = input.username
+        ?.replace(/\s+/g, "")
+        .toLowerCase();
+
       // Only include fields that are explicitly provided
       const updateData = {
         ...(input.name !== undefined && { name: input.name }),
-        ...(input.username !== undefined && { username: input.username }),
+        ...(sanitizedUsername !== undefined && {
+          username: sanitizedUsername,
+          username_updated: true,
+        }),
         ...(input.bio !== undefined && { bio: input.bio }),
         ...(input.location !== undefined && { location: input.location }),
         ...(input.linkedin !== undefined && { linkedin: input.linkedin }),

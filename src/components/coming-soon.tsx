@@ -13,8 +13,8 @@ export default function ComingSoon() {
     ];
 
     return (
-        <div className="w-full h-full items-center relative gap-10 flex flex-col lg:flex-row lg:justify-center pt-20 lg:pt-0">
-            <div className="">
+        <div className="w-full h-full items-center relative gap-10 flex flex-col  lg:justify-center pt-20 lg:pt-0 max-w-xl mx-auto">
+            <div className="w-full">
                 <span className="text-sm font-light">Dashboard & Analytics</span>
                 <h2 className="text-4xl font-normal">New features on the way </h2>
                 <div className="flex items-center max-w-md space-x-2 mt-2">
@@ -27,7 +27,7 @@ export default function ComingSoon() {
                     <Link href={'/dashboard/design'} className="px-4 py-2 bg-white text-black border text-sm shadow-sm rounded-md hover:bg-white/60">Design portfolio</Link>
                 </div>
             </div>
-            <div className="">
+            <div className="w-full">
                 <ul className="space-y-2 text-left">
                     {features.map((feature, index) => (
                         <li key={index} className="flex items-center gap-2">
@@ -38,9 +38,9 @@ export default function ComingSoon() {
                 </ul>
             </div>
             <div className="flex flex-col items-center text-center text-gray-600 text-xs justify-center space-x-1 absolute bottom-20 lg:bottom-0 left-1/2 transform -translate-x-1/2">
-                <div className="flex items-center space-x-1"><a href="" className="underline text-blue-500">Opt out </a> <span>of the mailing list</span> </div>
+                {/* <div className="flex items-center space-x-1"><a href="" className="underline text-blue-500">Opt out </a> <span>of the mailing list</span> </div> */}
                 <div className="mt-2">
-                    Follow us on <a href="https://twitter.com/creativetim" className="text-blue-500">Linkedin</a> and <a href="https://www.instagram.com/creativetimofficial/" className="text-blue-500">X.com</a> for the insights!
+                    Follow me on <a href="https://www.linkedin.com/in/itsrohitbajaj/" className="text-blue-500">Linkedin</a> for the insights!
                 </div>
             </div>
         </div>

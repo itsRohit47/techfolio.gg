@@ -179,7 +179,7 @@ export default function ThemePresets({ onSelect, currentThemeId }: ThemePresetPr
 
     if (isLoading) return <div className="h-96 flex items-center justify-center">Loading presets...</div>;
 
-    if (!allPresets.length) return <div className="h-96 flex text-center px-20 items-center justify-">No presets found, switch to the custom design tab to save your current design as a preset.</div>;
+    if (!allPresets.length) return <div className="h-96 flex text-center px-20 items-center justify-center">No presets found, switch to the custom design tab to save your current design as a preset.</div>;
 
 
     return (

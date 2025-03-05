@@ -7,13 +7,14 @@ import { TbSpacingVertical } from "react-icons/tb";
 import { api } from "@/trpc/react";
 import { PencilIcon, ChevronDown, ChevronUp } from 'lucide-react';
 import ThemePresets from './ThemePresets';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { ImageIcon, Loader, UploadIcon, Trash2 } from 'lucide-react';
 import toast from "react-hot-toast";
 import { headerOptions } from '../headers';
 import Toggle from "../toogle";
 import SavePresetModal from './SavePresetModal';
 import { useSession } from "next-auth/react";
+import debounce from 'lodash/debounce';
 
 // Updated SectionTitle component
 function SectionTitle({ title, isOpen, onClick }: {
@@ -79,54 +80,38 @@ export default function SettingsPanel({ style }: SettingsPanelProps) {
         }
     }, [savedStyle?.themeId]);
 
-    const { mutate: updateStyle } = api.asset.updatePortfolioStyle.useMutation({
-        onMutate: async (newStyle) => {
-            // Cancel outgoing fetches for both queries
-            await utils.asset.getPortfolioStyle.cancel();
-            await utils.asset.getUserPortfolioWithStyle.cancel();
+    const handleOptimisticUpdate = async (updates: Partial<StyleObject>) => {
+        // Cancel outgoing fetches for both queries
+        await utils.asset.getPortfolioStyle.cancel();
+        await utils.asset.getUserPortfolioWithStyle.cancel();
 
-            // Snapshot previous values
-            const previousStyle = utils.asset.getPortfolioStyle.getData();
-            const previousPortfolio = utils.asset.getUserPortfolioWithStyle.getData({ username: session.data?.user?.username ?? '' });
+        // Update PortfolioStyle cache
+        utils.asset.getPortfolioStyle.setData({ username: session.data?.user?.username ?? '' }, old => {
+            if (!old) return old;
+            return {
+                ...old,
+                ...updates
+            };
+        });
 
-            // Update PortfolioStyle cache
-            utils.asset.getPortfolioStyle.setData({ username: session.data?.user?.username ?? '' }, old => {
-                if (!old) return old;
+        // Update Portfolio with Style cache
+        utils.asset.getUserPortfolioWithStyle.setData(
+            { username: session.data?.user?.username ?? '' },
+            old => {
+                if (!old?.style) return old;
                 return {
                     ...old,
-                    ...newStyle
+                    style: {
+                        ...old.style,
+                        ...updates,
+                        id: old.style.id // Preserve the required id field
+                    }
                 };
-            });
+            }
+        );
+    };
 
-            // Update Portfolio with Style cache
-            utils.asset.getUserPortfolioWithStyle.setData(
-                { username: session.data?.user?.username ?? '' },
-                old => {
-                    if (!old?.style) return old;
-                    return {
-                        ...old,
-                        style: {
-                            ...old.style,
-                            ...newStyle,
-                            id: old.style.id // Preserve the required id field
-                        }
-                    };
-                }
-            );
-
-            return { previousStyle, previousPortfolio };
-        },
-        onError: (err, newStyle, context) => {
-            // Revert both caches on error
-            utils.asset.getPortfolioStyle.setData(
-                { username: session.data?.user?.username ?? '' },
-                context?.previousStyle
-            );
-            utils.asset.getUserPortfolioWithStyle.setData(
-                { username: session.data?.user?.username ?? '' },
-                context?.previousPortfolio
-            );
-        },
+    const { mutate: updateStyle } = api.asset.updatePortfolioStyle.useMutation({
         onSettled: () => {
             // Invalidate both queries after settling
             void utils.asset.getPortfolioStyle.invalidate();
@@ -141,12 +126,56 @@ export default function SettingsPanel({ style }: SettingsPanelProps) {
         },
     });
 
+    // Create a debounced version of updateStyle
+    const debouncedUpdateStyle = useCallback(
+        debounce((updates: Partial<StyleObject>) => {
+            updateStyle({
+                ...updates,
+                themeId: null
+            });
+        }, 100),
+        [updateStyle]
+    );
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            debouncedUpdateStyle.cancel();
+        };
+    }, [debouncedUpdateStyle]);
+
     const handleCustomStyleUpdate = (updates: Partial<StyleObject>) => {
-        // Simply call updateStyle directly without debouncing
-        updateStyle({
-            ...updates,
-            themeId: null // Explicitly remove theme when making custom changes
-        });
+        // Immediate optimistic update
+        void handleOptimisticUpdate(updates);
+
+        // Debounced server update only for color-related changes
+        if ('background' in updates ||
+            'nameColor' in updates ||
+            'descriptionColor' in updates ||
+            'linkColor' in updates ||
+            'locationColor' in updates ||
+            'assetCardBackground' in updates ||
+            'assetCardTextColor' in updates ||
+            'assetCardDescriptionColor' in updates ||
+            'assetCardBorderColor' in updates ||
+            'assetTabBackground' in updates ||
+            'assetTabSelectedBg' in updates ||
+            'assetTabTextColor' in updates ||
+            'assetTabSelectedTextColor' in updates ||
+            'assetTabHoverBg' in updates ||
+            'assetTabBorderColor' in updates ||
+            'footerButtonColor' in updates ||
+            'footerButtonBg' in updates) {
+            debouncedUpdateStyle(updates);
+        } else {
+            // For non-color updates, use immediate update with delay
+            setTimeout(() => {
+                updateStyle({
+                    ...updates,
+                    themeId: null
+                });
+            }, 100);
+        }
         setActiveTab('custom');
     };
 
@@ -240,7 +269,6 @@ export default function SettingsPanel({ style }: SettingsPanelProps) {
         const updates = {
             [`${type}${type === 'background' ? '' : 'Color'}`]: selectedColor
         };
-        console.log('Color update:', updates); // Add this for debugging
         handleCustomStyleUpdate(updates);
     };
 
