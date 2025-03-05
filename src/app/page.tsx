@@ -95,10 +95,10 @@ function HeroSection() {
           </div>
         )}
         <iframe
-          src="https://www.loom.com/share/8b5553c99cd5430fa2383c9230b9c3c1?sid=a2db495b-ae7c-4de5-a047-53a440cf420e&hideEmbedTopBar=true"
+          src="https://www.loom.com/embed/8b5553c99cd5430fa2383c9230b9c3c1?sid=184532ae-1e34-4175-9047-c3bc2114af0c&hideEmbedTopBar=true"
           className="w-full h-full rounded-lg"
           allowFullScreen
-          onLoad={() => setIsLoading(false)}
+          onLoad={() => setIsLoading(false)} 
         ></iframe>
       </div>
     </div>
