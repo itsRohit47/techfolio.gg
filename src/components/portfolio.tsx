@@ -73,19 +73,19 @@ export default function Portfolio({ style: propStyle, user, preview }: { style?:
 
             {!preview && session.data?.user?.id === u_id && (
                 <div className="flex fixed z-50 top-4 right-4 gap-2">
-                    <Link href={`/dashboard`} passHref className="bg-white text-black px-2 py-1 rounded-md shadow-md hover:bg-gray-100">
+                    <Link href={`/dashboard`} passHref className="bg-white text-black px-2 py-1 rounded-md shadow-md hover:bg-gray-100 border border-gray-200">
                         Dashboard
                     </Link>
-                    <Link href={`/dashboard/design`} passHref className="bg-white text-black px-2 py-1 rounded-md shadow-md hover:bg-gray-100">
+                    <Link href={`/dashboard/design`} passHref className="bg-white text-black px-2 py-1 rounded-md shadow-md hover:bg-gray-100 border border-gray-200">
                         Edit design
                     </Link>
-                    <Link href={`/dashboard/build`} passHref className="bg-white text-black px-2 py-1 rounded-md shadow-md hover:bg-gray-100">
+                    <Link href={`/dashboard/build`} passHref className="bg-white text-black px-2 py-1 rounded-md shadow-md hover:bg-gray-100 border border-gray-200">
                         Edit content
                     </Link>
                 </div>
             )}
 
-            {preview || session.data?.user?.id === u_id && <div className="absolute top-4 z-50 left-4 flex items-center gap-x-2"><div className="w-3 h-3 rounded-full bg-orange-500 border ring-orange-500 ring-1 ring-offset-2 border-yellow-500 animate-pulse"></div>Preview mode</div>}
+            {preview || session.data?.user?.id === u_id && <div className="absolute bg-gray-800 text-white rounded-lg px-3 text-xs py-1.5 top-4 z-50 left-4 flex items-center gap-x-2"><div className="w-2 h-2 rounded-full bg-orange-500 border ring-orange-500 ring-1 ring-offset-2 border-yellow-500 animate-pulse"></div>Preview mode</div>}
 
 
             {/* Background Image - only show if backgroundImage exists */}
