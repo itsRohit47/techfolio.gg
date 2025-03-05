@@ -1,18 +1,23 @@
+'use client';
 import { Size, Spacing, StyleObject } from "@/types/common";
 import { sizeMap } from "@/types/common";
+import { useRouter } from "next/navigation";
 
 export interface AssetCardProps {
     asset: {
+        id: string;
         title: string;
         description?: string;
         icon?: string;
         type: string;
     };
     style?: StyleObject;
+    preview?: boolean;
 }
 
-export function AssetCard({ asset, style }: AssetCardProps) {
+export function AssetCard({ asset, style, preview }: AssetCardProps) {
     const size = style?.layoutSize ?? Size.MD;
+    const router = useRouter();
     type AssetType = 'certificate' | 'project' | 'lab' | 'article' | 'assignment';
     const typeConfig: Record<AssetType, { emoji: string, color: string }> = {
         certificate: { emoji: '🏆', color: 'text-yellow-600' },
@@ -26,6 +31,7 @@ export function AssetCard({ asset, style }: AssetCardProps) {
 
     return (
         <div
+            onClick={() => !preview ? router.push(`/asset/${asset.id}`) : null}
             className={`
                 group transition-all duration-200 cursor-pointer ${style?.assetCardBorderRadius}
                 ${style?.assetCardBorder ? 'border' : 'border-none'}

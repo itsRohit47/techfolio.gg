@@ -192,6 +192,7 @@ export default function Portfolio({ style: propStyle, user, preview }: { style?:
                                     <div className={`flex flex-grow px-4 py-4 pb-4 max-w-xl mx-auto w-full flex-col  ${sizeMap.elementSpacing[spacing]} ${sizeMap.sectionSpacing[spacing]}`}>
                                         {filteredAssets?.map((asset, index) => (
                                             <AssetCard
+                                                preview={preview}
                                                 key={index}
                                                 asset={asset as any}
                                                 style={style as StyleObject}
