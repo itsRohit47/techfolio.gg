@@ -340,7 +340,7 @@ export default function AssetPage(
         const isOwner = session?.user?.id === asset.userId;
 
         return (
-            <div className="max-w-xl mx-auto gap-y-6 flex flex-col">
+            <div className="max-w-2xl mx-auto gap-y-6 flex flex-col">
                 <div className="flex items-center justify-between">
                     <a href={`/${asset.username}`} className="text-blue-500 hover:underline">
                         view {asset.username}&apos;s portfolio
@@ -354,7 +354,7 @@ export default function AssetPage(
                         </button>
                     )}
                 </div>
-                <div className="flex items-start gap-6">
+                <div className="flex items-center gap-6">
                     {asset.icon && (
                         <img
                             src={asset.icon}
@@ -383,11 +383,6 @@ export default function AssetPage(
                                 {tag}
                             </span>
                         ))}
-                    </div>
-                )}
-
-                {asset.body && (
-                    <div  id="content" className="max-w-none space-y-4 pb-32" dangerouslySetInnerHTML={{ __html: asset.body }}>
                     </div>
                 )}
 
@@ -438,6 +433,12 @@ export default function AssetPage(
                         )}
                     </div>
                 )}
+
+                {asset.body && (
+                    <div id="content" className="max-w-none space-y-4 pb-32" dangerouslySetInnerHTML={{ __html: asset.body }}>
+                    </div>
+                )}
+
 
                 {fullScreenImage && (
                     <ImageViewer
