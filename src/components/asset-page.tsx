@@ -343,7 +343,7 @@ export default function AssetPage(
             <div className="max-w-2xl mx-auto gap-y-6 flex flex-col">
                 <div className="flex items-center justify-between">
                     <a href={`/${asset.username}`} className="text-blue-500 hover:underline">
-                        view {asset.username}&apos;s portfolio
+                        View {asset.username}&apos;s portfolio
                     </a>
                     {isOwner && (
                         <button
