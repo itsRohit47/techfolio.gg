@@ -346,12 +346,20 @@ export default function AssetPage(
                         View {asset.username}&apos;s portfolio
                     </a>
                     {isOwner && (
-                        <button
-                            onClick={() => setEditMode(true)}
-                            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
-                        >
-                            Edit
-                        </button>
+                        <div className="flex gap-4 items-center">
+                            <button
+                                onClick={() => setEditMode(true)}
+                                className="bg-white text-black px-4 py-2 rounded-lg hover:bg-white/80 shadow-sm"
+                            >
+                                Add more projects
+                            </button>
+                            <button
+                                onClick={() => setEditMode(true)}
+                                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                            >
+                                Edit
+                            </button>
+                        </div>
                     )}
                 </div>
                 <div className="flex items-center gap-6">
