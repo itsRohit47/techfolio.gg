@@ -56,7 +56,7 @@ export default function Portfolio({ style: propStyle, user, preview }: { style?:
 
     if (isLoading || !portfolio) {
         return <div className="h-full flex items-center justify-center w-full gap-x-2">
-            <span>Loading portfolio...</span>
+            <Loader />
         </div>;
     }
 

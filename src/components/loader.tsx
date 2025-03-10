@@ -1,25 +1,9 @@
 'use client'
-import { useEffect, useState } from "react";
+
 export default function Loader() {
-    const [activeIndex, setActiveIndex] = useState(0);
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setActiveIndex((current) => (current + 1) % 3);
-        }, 500);
-        return () => clearInterval(timer);
-    }, []);
     return (
-        <div className="flex items-center justify-center h-full gap-1">
-            {[0, 1, 2].map((index) => {
-                const isActive = index === activeIndex;
-                return (
-                    <div
-                        key={index}
-                        className={`w-1 h-1 rounded-full transition-all duration-300 ${isActive ? 'bg-blue-500 scale-110 ' : 'bg-gray-300'
-                            }`}
-                    ></div>
-                );
-            })}
+        <div className="flex items-center justify-center h-full">
+            <div className="w-6 h-6 border-2 border-gray-200 border-t-gray-900 rounded-full animate-spin"></div>
         </div>
     );
 }
