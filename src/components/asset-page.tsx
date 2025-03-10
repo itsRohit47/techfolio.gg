@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-html-link-for-pages */
 /* eslint-disable @next/next/no-img-element */
 'use client';
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { api } from "@/trpc/react";
 import { FormEvent, useState, useEffect, useCallback } from "react";
 // Add these new imports at the top
@@ -44,6 +44,7 @@ export default function AssetPage(
 ) {
     const { data: session } = useSession();
     const ctx = api.useUtils();
+    const router = useRouter();
     const { data: asset, isLoading } = api.asset.getAsset.useQuery({ id: id });
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -348,7 +349,7 @@ export default function AssetPage(
                     {isOwner && (
                         <div className="flex gap-4 items-center">
                             <button
-                                onClick={() => setEditMode(true)}
+                                onClick={() => router.push(`/dashboard/build`)}
                                 className="bg-white text-black px-4 py-2 rounded-lg hover:bg-white/80 shadow-sm"
                             >
                                 Add more projects
