@@ -29,7 +29,7 @@ export const userRouter = createTRPCRouter({
 
   getTotalUsers: publicProcedure.query(async ({ ctx }) => {
     const totalUsers = await ctx.db.user.count();
-    return totalUsers - 1;
+    return totalUsers - 3;
   }),
 
   getProfile: protectedProcedure.query(async ({ ctx }) => {

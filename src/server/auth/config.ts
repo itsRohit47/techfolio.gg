@@ -30,6 +30,10 @@ GitHubProvider({
   clientId: process.env.GITHUB_ID,
   clientSecret: process.env.GITHUB_SECRET,
 });
+GoogleProvider({
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+});
 /**
  * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
  *
