@@ -52,7 +52,7 @@ export default function Home() {
       if (!data?.user) {
         setShowPopup(true);
       }
-    }, 2000);
+    }, 5000);
 
     return () => clearTimeout(timer);
   }, [data?.user]);
@@ -85,8 +85,8 @@ function HeroSection() {
       <h1 className="lg:text-6xl text-5xl font-semibold">Build & share your tech portfolio</h1>
       <p className="mt-3 max-w-xl text-center w-full lg:text-base mx-auto  text-gray-500">Techfolio is an all in one platform for tech professionals, to build a professional technical portfolio, and showcase their work to the world.</p>
       <div className="flex gap-2 mt-4 items-center justify-center mb-10">
-        <Link href={'/api/auth/signin'} className="px-4 py-2 bg-gray-900 text-white border shadow-sm text-xs lg:text-sm rounded-md hover:bg-gray-800">Add projects</Link>
-        <Link href={'/api/auth/signin'} className="px-4 py-2 bg-white text-black border text-xs lg:text-sm shadow-sm rounded-md hover:bg-white/60">Design portfolio</Link>
+        <Link href={'/api/auth/signin'} className="px-4 py-2 bg-gray-900 text-white border shadow-sm text-xs lg:text-sm rounded-md hover:bg-gray-800">Get Started</Link>
+        <Link href={'/rohit'} className="px-4 py-2 bg-white text-black border text-xs lg:text-sm shadow-sm rounded-md hover:bg-white/60">View Example</Link>
       </div>
       <div className="bg-white/40 rounded-xl shadow-2xl flex items-center justify-center gap-4 h-[300px] lg:h-[660px] border-2 max-w-5xl mx-auto p-1 relative">
         {isLoading && (
