@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 import { useSession, signIn } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -59,7 +60,7 @@ export default function Home() {
 
   return (
     <main className="max-w-7xl relative mx-auto h-[300px] lg:h-[660px] ">
-      <Popup isOpen={showPopup} onClose={() => setShowPopup(false)} />
+      {/* <Popup isOpen={showPopup} onClose={() => setShowPopup(false)} /> */}
       <div className="space-y-20 flex flex-col justify-center px-4">
         <NavBar />
         <HeroSection />
@@ -81,7 +82,7 @@ function HeroSection() {
       {/* <Image src="/example1.png" width={800} height={400} alt="Hero" className="w-auto h-[400px] border-2 object-cover rounded-xl absolute -rotate-[20deg] translate-x-60 right-0 top-32" /> */}
       {/* <div className="w-full h-full bg-white/40 rounded-lg fixed -left-[1000px] -bottom-14 rotate-45  blur-sm -z-10"></div> */}
       <div className="w-full h-full bg-white/40 rounded-lg shadow-sm fixed -right-[600px] top-20 blur-[2px] rotate-45 -z-10"></div>
-      <strong>Hurrrrry 🎉 Free until we hit 20 users</strong>
+      <a href="https://startupfa.me/s/techfolio?utm_source=techfolio.gg" className="" target="_blank"><img src="https://startupfa.me/badges/featured-badge.webp" alt="Techfolio - Build & Share Your Tech Portfolio | Startup Fame" className="mx-auto" width="171" height="54" /></a>
       <h1 className="lg:text-6xl text-5xl font-semibold">Build & share your tech portfolio</h1>
       <p className="mt-3 max-w-xl text-center w-full lg:text-base mx-auto  text-gray-500">Techfolio is an all in one platform for tech professionals, to build a professional technical portfolio, and showcase their work to the world.</p>
       <div className="flex gap-2 mt-4 items-center justify-center mb-10">

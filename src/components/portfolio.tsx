@@ -203,7 +203,7 @@ export default function Portfolio({ style: propStyle, user, preview }: { style?:
                             )}
                         </>
                     )}
-                    {!preview && <div className="h-32"></div>}
+                    {!preview && <div className="h-52 mb-32"></div>}
                     <Footer style={style as StyleObject} preview={preview} />
                 </div>
             </div>
